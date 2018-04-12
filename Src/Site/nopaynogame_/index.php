@@ -13,6 +13,13 @@
   </head>
   
   <header>
+
+  <?php
+	
+	include connection.php;
+	
+	?>
+
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">NoPayNoGame</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,10 +39,18 @@
           Genere
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
+                    
+          <?php 
+            $lista_generi = mysql_query("select * from my_nopaynogame.DOM_GENRE");
+            
+            while($genere=mysql_fetch_row($lista_generi)){
+              $id_genere = $genere[0];
+              $nome = $genere[1];
+              echo"<a class='dropdown-item' value=".$id_genere." href='#'>".$nome."</a>";
+              //echo "<option data-subtext='generi' value='".$id_genere."'>".$nome."</option>";
+            }
+          ?>
+
         </div>
       </li>
       <li class="nav-item dropdown">
