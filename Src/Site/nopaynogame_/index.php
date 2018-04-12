@@ -16,7 +16,58 @@
   <?php	include 'header.php'; ?>
   </header>
   <body>
-    <h1>Hello, world!</h1>
+
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Prezzo</th>
+      <th scope="col">Piattaforma</th>
+      <th scope="col">Genere</th>
+      <th scope="col">Novità</th>
+      <th scope="col">Acquista</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+  <?php 
+      $lista_giochi_home = mysql_query("
+      select * 
+      from my_nopaynogame.GAMES 
+      where flag_sale = 'Y' or flag_news = 'Y' ");
+      
+      while($gioco=mysql_fetch_row($lista_giochi_home)){
+        $cod_gioco = $gioco[0];
+        $nome_gioco = $gioco[1];
+        $prezzo_gioco = $gioco[2];
+        $prezzo_saldo = $gioco[4];
+        $console = $gioco[3];
+        $novità = $gioco[6];
+        //$console = mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$gioco[3]'");
+        //echo"<a>".$nome_gioco."</a>";
+        echo"<tr>";
+        echo"<th></th>";
+        echo"<td>".$nome_gioco."</td>";
+        if($prezzo_saldo < $prezzo_gioco){
+          echo"<td><del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</td>";
+        }else{
+          echo"<td>".$prezzo_gioco."</td>";
+        }
+        echo"<td>".$console."</td>";
+        echo"<td></td>";
+        if($novità == 'Y'){
+          echo"<td>NOVITA!!!</td>";
+        }else{
+          echo"<td></td>";
+        }
+        echo"<td><button type='button' class='btn btn-warning'>Aggiungi al Carrello</button></td>";
+        echo"</tr>";
+      }
+    ?>
+  </tbody>
+</table>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
