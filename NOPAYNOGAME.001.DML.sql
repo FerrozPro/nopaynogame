@@ -83,13 +83,13 @@ VALUES ('PAY4','CONTRASSEGNO');
 --VALUES ('','');
 
 INSERT INTO DOM_ROLE (COD_ROLE, DESC_ROLE)
-VALUES ('ROL1','USER');
+VALUES ('RL1','USER');
 INSERT INTO DOM_ROLE (COD_ROLE, DESC_ROLE)
-VALUES ('ROL2','MAGAZZINIERE');
+VALUES ('RL2','MAGAZZINIERE');
 INSERT INTO DOM_ROLE (COD_ROLE, DESC_ROLE)
-VALUES ('ROL3','AMMINISTRATORE');
+VALUES ('RL3','AMMINISTRATORE');
 INSERT INTO DOM_ROLE (COD_ROLE, DESC_ROLE)
-VALUES ('ROL4','SUPERUSER');
+VALUES ('RL4','SUPERUSER');
 
 
 -- INSERT FOR TABLE GAMES
@@ -121,13 +121,13 @@ VALUES ('','');
 --VALUES ('', '', '', , '', '', '');
 
 INSERT INTO USERS (NAME, SURNAME, ADDRESS, PHONE, USERNAME, PASSSWORD, COD_ROLE)
-VALUES ('Pino', 'Abete', 'via Paradiso 666', 9801234567, 'superuser', 'superuser', 'ROL4');
+VALUES ('Pino', 'Abete', 'via Paradiso 666', 9801234567, 'superuser', 'superuser', 'RL4');
 INSERT INTO USERS (NAME, SURNAME, ADDRESS, PHONE, USERNAME, PASSSWORD, COD_ROLE)
-VALUES ('Utente', 'Normale', 'via Fossa 40', 1234567890, 'utente', 'utente', 'ROL1');
+VALUES ('Utente', 'Normale', 'via Fossa 40', 1234567890, 'utente', 'utente', 'RL1');
 INSERT INTO USERS (NAME, SURNAME, ADDRESS, PHONE, USERNAME, PASSSWORD, COD_ROLE)
-VALUES ('Luca', 'Magazziniere', 'via Pozzo 1', 1234569870, 'magazziniere', 'magazziniere', 'ROL2');
+VALUES ('Luca', 'Magazziniere', 'via Pozzo 1', 1234569870, 'magazzino', 'magazzino', 'RL2');
 INSERT INTO USERS (NAME, SURNAME, ADDRESS, PHONE, USERNAME, PASSSWORD, COD_ROLE)
-VALUES ('Tobia', 'Amministratore', 'via Cielo 234', 9871236540, 'amministratore', 'amministratore', 'ROL3');
+VALUES ('Tobia', 'Amministratore', 'via Cielo 234', 9871236540, 'admin', 'admin', 'RL3');
 
 
 
