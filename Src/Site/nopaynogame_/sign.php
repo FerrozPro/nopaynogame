@@ -39,7 +39,7 @@ if($preparata->rowCount() > 0){
 	$role=RL1;
 	$phone = $_POST['inputPhone'];
 	$email = $_POST['inputEmail'];
-	$password = $_POST['inputPassword'];
+	$password = MD5($_POST['inputPassword']);
 	
 	echo "$name";
 	$query = $conn -> prepare("INSERT INTO USERS(name, surname, address, phone, username, password, cod_role,email)

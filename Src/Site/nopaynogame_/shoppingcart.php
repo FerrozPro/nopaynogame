@@ -1,5 +1,10 @@
 <!doctype html>
 <html lang="en">
+
+<?php
+session_start();
+
+?>
   
   <head>
     <!-- Required meta tags -->
@@ -19,39 +24,13 @@
   <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-      <div class="container">
-        <a class="navbar-brand" href="#">Start Bootstrap</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home
-                <span class="sr-only">(current)</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Contact</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
+   
     <!-- Page Content -->
     <div class="container">
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Shopping cart</h1>
-          <p class="lead">Hi Bob this is your shopping cart!</p>
+          <p class="lead">Hi <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo "Utente loggato";}?> this is your shopping cart</p>
        <!--Tabella prodotti-->
 		<table id="cart" class="table table-hover table-condensed">
     				<thead>
@@ -93,14 +72,138 @@
 							<td><a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
 							<td colspan="2" class="hidden-xs"></td>
 							<td class="hidden-xs text-center"><strong>Total $1.99</strong></td>
-							<td><a href="#" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a></td>
+							<?php if(!isset($_SESSION['user'])) echo " <td><button type='button' class='btn btn-sucess btn-md' data-toggle='modal' data-target='#myModalregistrazione'>Checkout con registrazione</button></a></td>" ;
+							else echo" <td><button type='button' class='btn btn-success btn-md' data-toggle='modal' data-target='#myModal'>Checkout</button></td>"; ?>
 						</tr>
 					</tfoot>
 				</table>
 				
 				
-				
-				<!--- APPARE SOLO SE NON HA ANCORA FATTO L'ACCESSO -->
+	
+
+
+			<!-- Modal con accesso -->
+			<div id="myModal" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Modal Header</h4>
+				  </div>
+				  <div class="modal-body">
+					<p>ciao.</p>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				  </div>
+				</div>
+
+			  </div>
+			</div>
+			
+			<!-- Modal senza accesso -->
+			<div id="myModalregistrazione" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">OPS! Abbiamo notato che non hai effettuato l'accesso..</h4>
+					
+				  </div>
+								
+					
+					<div id="accordion">
+						  <div class="card">
+							<div class="card-header" id="headingOne">
+							  <h5 class="mb-0">
+								<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								  Accedi
+								</button>
+							  </h5>
+							</div>
+
+							<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+							  <div class="card-body">
+							  <form>
+								  <div class="form-group">
+									<label for="exampleInputEmail1">Email address</label>
+									<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+									<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+								  </div>
+								  <div class="form-group">
+									<label for="exampleInputPassword1">Password</label>
+									<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+								  </div>
+								  
+								  <button type="submit" class="btn btn-primary">Submit</button>
+								</form>
+							  </div>
+							</div>
+						  </div>
+						  <div class="card">
+							<div class="card-header" id="headingTwo">
+							  <h5 class="mb-0">
+								<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								  Sei nuovo? Registrati!
+								</button>
+							  </h5>
+							</div>
+							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+							  <div class="card-body">
+							  <form>
+								  <div class="form-row">
+									<div class="form-group col-md-6">
+									  <label for="inputEmail4">Email</label>
+									  <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+									</div>
+									<div class="form-group col-md-6">
+									  <label for="inputPassword4">Password</label>
+									  <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+									</div>
+								  </div>
+								  <div class="form-group">
+									<label for="inputAddress">Username</label>
+									<input type="text" class="form-control" id="inputUsername" placeholder="@Jonny">
+								  </div>
+								  <div class="form-group">
+									<label for="inputAddress2">Address</label>
+									<input type="text" class="form-control" id="inputAddress" placeholder="Apartment, studio, or floor">
+								  </div>
+								  <div class="form-row">
+									<div class="form-group col-md-6">
+									  <label for="inputCity">City</label>
+									  <input type="text" class="form-control" id="inputCity">
+									</div>
+									<div class="form-group col-md-4">
+									  <label for="inputState">State</label>
+									  <select id="inputState" class="form-control">
+										<option selected>Choose...</option>
+										<option>...</option>
+									  </select>
+									</div>
+									<div class="form-group col-md-2">
+									  <label for="inputZip">Zip</label>
+									  <input type="text" class="form-control" id="inputZip">
+									</div>
+								  </div>
+								  <button type="submit" class="btn btn-primary">Sign in</button>
+								</form>
+							  </div>
+							</div>
+						  </div>
+						 
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+				</div>
+
+			  </div>
+			</div>
+
 				
         </div>
       </div>
