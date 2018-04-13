@@ -27,19 +27,24 @@
 				
 			  $tipo_ricerca = $_GET["tipo_ricerca"];
 			  $id = $_GET["id"];
-			  
+				
 			  switch ($tipo_ricerca) {
 					case 'catalogo':
 						$lista_giochi = mysql_query("select * from my_nopaynogame.GAMES");
+						echo"<h1>Catalogo Completo</h1></div><div class='row'>";
 						break;
 					case 'genere':
 						$lista_giochi = mysql_query("select g.* from my_nopaynogame.GAMES g, my_nopaynogame.GAME_GENRE gg where gg.cod_genre = '$id' and g.cod_game = gg.cod_game");
+						$nome_genere = mysql_fetch_row(mysql_query("select desc_genre from my_nopaynogame.DOM_GENRE where cod_genre = '$id'"));
+						echo"<h1>Genere ".$nome_genere[0]."</h1></div><div class='row'>";
 						break;
 					case 'console':
 						$lista_giochi = mysql_query("select * from my_nopaynogame.GAMES where cod_console = '$id'");
+						$nome_console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$id'"));
+						echo"<h1>Piattaforma ".$nome_console[0]."</h1></div><div class='row'>";						
 						break;
 				}
-
+				
 			  while($gioco=mysql_fetch_row($lista_giochi)){
 				$cod_gioco = $gioco[0];
 				$nome_gioco = $gioco[1];
@@ -55,7 +60,7 @@
 					echo"<a href='game.php?game=".$cod_gioco."'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
 					echo"<div class='card-body'>";
 					  echo"<h4 class='card-title'>";
-						echo"<a href='game=".$cod_gioco."'>".$nome_gioco."</a>";
+						echo"<a href='game.php?game=".$cod_gioco."'>".$nome_gioco."</a>";
 					  echo"</h4>";
 					  if($prezzo_saldo < $prezzo_gioco){
 						  echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
