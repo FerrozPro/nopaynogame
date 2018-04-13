@@ -83,7 +83,12 @@
 					echo"</div>";
 					echo"<div class='card-footer'>";
 					  echo"<small class='text-muted'>&#9733; &#9733; &#9733; &#9733; &#9734;</small>";
-					  echo"<p><a href='#' class='btn btn-warning' role='button'>Aggiungi al Carrello</a></p>";
+					  
+						echo"<form method='POST' action='addtocart.php'>
+							<input type='hidden' name='cod_gioco' value=".$cod_gioco." />
+							<button type='submit' class='btn btn-warning'>Aggiungi al Carrello</button>
+						</form>";
+					  					  
 					echo"</div>";
 				  echo"</div>";
 				echo"</div>";
@@ -106,3 +111,4 @@
   </body>
 
 </html>
+
