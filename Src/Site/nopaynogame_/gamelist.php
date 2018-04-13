@@ -16,13 +16,77 @@
   <?php	include 'header.php'; ?>
   </header>
   <body>
-    <h1>Hello, world!</h1>
+  
+  
+      <!-- Page Content -->
+    <div class="container">
 
+      <div class="row">
+
+          
+
+			<?php 
+				
+			  $tipo_ricerca = $_GET["tipo_ricerca"];
+			  $id = $_GET["id"];
+			  
+			  switch ($tipo_ricerca) {
+					case 'catalogo':
+						$lista_giochi = mysql_query("select * from my_nopaynogame.GAMES");
+						break;
+					case 'genere':
+						$lista_giochi = mysql_query("select g.* from my_nopaynogame.GAMES g, my_nopaynogame.GAME_GENRE gg where gg.cod_genre = '$id' and g.cod_game = gg.cod_game");
+						break;
+					case 'console':
+						$lista_giochi = mysql_query("select * from my_nopaynogame.GAMES where cod_console = '$id'");
+						break;
+				}
+
+			  while($gioco=mysql_fetch_row($lista_giochi)){
+				$cod_gioco = $gioco[0];
+				$nome_gioco = $gioco[1];
+				$prezzo_gioco = $gioco[2];
+				$prezzo_saldo = $gioco[4];
+				$novita = $gioco[6];
+				$img = $gioco[7];
+				$console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$gioco[3]'"));
+				
+				
+				echo"<div class='col-lg-3 col-md-4 col-sm-6'>";
+				  echo"<div class='card h-100'>";
+					echo"<a href='game.php'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
+					echo"<div class='card-body'>";
+					  echo"<h4 class='card-title'>";
+						echo"<a href='game.php'>".$nome_gioco."</a>";
+					  echo"</h4>";
+					  if($prezzo_saldo < $prezzo_gioco){
+						  echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+						}else{
+						  echo"<h5>€".$prezzo_gioco."</h5>";
+						}
+					  echo"<p class='card-text'>".$console[0]."</p>";
+					echo"</div>";
+					echo"<div class='card-footer'>";
+					  echo"<small class='text-muted'>&#9733; &#9733; &#9733; &#9733; &#9734;</small>";
+					  echo"<p><a href='#' class='btn btn-warning' role='button'>Aggiungi al Carrello</a></p>";
+					echo"</div>";
+				  echo"</div>";
+				echo"</div>";
+			  }
+				
+			?>
+
+          
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+  
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <?php include 'script.php'; ?>
   </body>
 
 </html>
