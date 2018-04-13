@@ -23,8 +23,6 @@
 
       <div class="row">
 
-          
-
 			<?php 
 				
 			  $tipo_ricerca = $_GET["tipo_ricerca"];
@@ -54,10 +52,10 @@
 				
 				echo"<div class='col-lg-3 col-md-4 col-sm-6'>";
 				  echo"<div class='card h-100'>";
-					echo"<a href='game.php'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
+					echo"<a href='game.php?game=".$cod_gioco."'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
 					echo"<div class='card-body'>";
 					  echo"<h4 class='card-title'>";
-						echo"<a href='game.php'>".$nome_gioco."</a>";
+						echo"<a href='game=".$cod_gioco."'>".$nome_gioco."</a>";
 					  echo"</h4>";
 					  if($prezzo_saldo < $prezzo_gioco){
 						  echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
@@ -68,16 +66,16 @@
 					echo"</div>";
 					echo"<div class='card-footer'>";
 					  echo"<small class='text-muted'>&#9733; &#9733; &#9733; &#9733; &#9734;</small>";
-					  echo"<p><a href='#' class='btn btn-warning' role='button'>Aggiungi al Carrello</a></p>";
+					  echo"<form method='POST' action='addtocart.php'>
+							<input type='hidden' name='cod_gioco' value=".$cod_gioco." />
+							<button type='submit' class='btn btn-warning'>Aggiungi al Carrello</button>
+						</form>";
 					echo"</div>";
 				  echo"</div>";
 				echo"</div>";
 			  }
 				
 			?>
-
-          
-
       </div>
       <!-- /.row -->
 
