@@ -42,19 +42,20 @@
         $nome_gioco = $gioco[1];
         $prezzo_gioco = $gioco[2];
         $prezzo_saldo = $gioco[4];
-        $console = $gioco[3];
+        //$console = $gioco[3];
         $novità = $gioco[6];
-        //$console = mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$gioco[3]'");
+		$img = $gioco[7];
+        $console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$gioco[3]'"));
         //echo"<a>".$nome_gioco."</a>";
         echo"<tr>";
-        echo"<th></th>";
+        echo"<th><img src='".$img."'/></th>";
         echo"<td>".$nome_gioco."</td>";
         if($prezzo_saldo < $prezzo_gioco){
           echo"<td><del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</td>";
         }else{
           echo"<td>".$prezzo_gioco."</td>";
         }
-        echo"<td>".$console."</td>";
+        echo"<td>".$console[0]."</td>";
         echo"<td></td>";
         if($novità == 'Y'){
           echo"<td>NOVITA!!!</td>";
