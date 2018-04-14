@@ -16,13 +16,55 @@
   <?php	include 'header.php'; ?>
   </header>
   <body>
-    <h1>Hello, world!</h1>
+    <div class="container">
+        <h1>Amministrazione</h1>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="magazzino-tab" data-toggle="tab" href="#magazzino" role="tab" aria-controls="magazzino" aria-selected="true">Magazzino</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="ordini-tab" data-toggle="tab" href="#ordini" role="tab" aria-controls="ordini" aria-selected="false">Gestione Ordini</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="profili-tab" data-toggle="tab" href="#profili" role="tab" aria-controls="profili" aria-selected="false">Gestione Profili</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
 
+          <div class="tab-pane fade show active" id="magazzino" role="tabpanel" aria-labelledby="magazzino-tab">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Codice</th>
+                <th scope="col">Titolo</th>
+                <th scope="col">Prezzo</th>
+                <th scope="col">Prezzo Saldo</th>
+                <th scope="col">Console</th>
+                <th scope="col">Quantità</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <div class="tab-pane fade" id="ordini" role="tabpanel" aria-labelledby="ordini-tab">
+          </div>
+
+          <div class="tab-pane fade" id="profili" role="tabpanel" aria-labelledby="profili-tab">
+          </div>
+        </div>
+
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <?php include 'script.php'; ?>
   </body>
 
 </html>
