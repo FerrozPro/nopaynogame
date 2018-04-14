@@ -3,48 +3,8 @@
 
 <?php
 session_start();
-require 'connection.php';
-$first=1;
-		
-		if(isset($_POST['buttoncheck'])){
-			$step2=1;
-			$back=0;
-		}else if(isset($_POST['buttonaddress'])){
-			$step3=1;
-			$step2=0;
-			$step5=0;
-			$step4=0;
-			$back=0;
-		}else if(isset($_POST['buttonpay'])){
-			$step4=1;
-			$step2=0;
-			$step3=0;
-			$step5=0;
-			$back=0;
-		}else if(isset($_POST['confirm'])){
-			$step5=1;
-			$step4=0;
-			$step2=0;
-			$step3=0;
-			$back=0;
-			
-		}else if(isset($_POST['back'])){
-			$back=1;
-		}
-		
-		
-$utente=$_SESSION['user'];
-$query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
-$ris = ($conn->query($query));
-foreach($ris as $riga){
-  $surname = $riga ['SURNAME'];
-  $name = $riga ['NAME'];
-  $email= $riga ['EMAIL'];
-  $username= $riga ['USERNAME'];
-  $address= $riga ['ADDRESS'];
-  $phone= $riga ['PHONE'];
-  }
-		?>
+
+?>
   
   <head>
     <!-- Required meta tags -->
@@ -53,10 +13,7 @@ foreach($ris as $riga){
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <title>NoPayNoGame</title>
   </head>
   
@@ -73,14 +30,8 @@ foreach($ris as $riga){
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Shopping cart</h1>
-          <p class="lead">Hi <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo $name;}?> this is your shopping cart</p>
+          <p class="lead">Hi <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo "Utente loggato";}?> this is your shopping cart</p>
        <!--Tabella prodotti-->
-	   
-	   <?php if(($step2==0 && $step3==0 && $step4==0 & $step5==0) || $back==1){ ?>
-	    <div class="progress">
-  <div class="progress-bar progress-bar-striped" style="width:20%"></div>
-</div>
-	   
 		<table id="cart" class="table table-hover table-condensed">
     				<thead>
 						<tr>
@@ -108,8 +59,8 @@ foreach($ris as $riga){
 							</td>
 							<td data-th="Subtotal" class="text-center">1.99</td>
 							<td class="actions" data-th="">
-								<button class="btn btn-info btn-sm"><i class="material-icons">autorenew</i></button>
-								<button class="btn btn-danger btn-sm"><i class="material-icons">delete_forever</i></button>								
+								<button class="btn btn-info btn-sm"><i class="material-icons">refresh</i></button>
+								<button class="btn btn-danger btn-sm"><i class="material-icons">cancel</i></button>								
 							</td>
 						</tr>
 					</tbody>
@@ -118,154 +69,39 @@ foreach($ris as $riga){
 							<td class="text-center"><strong>Total 1.99</strong></td>
 						</tr>
 						<tr>
-							<td><a href="http://nopaynogame.altervista.org/nopaynogame_/gamelist.php?cp=cat&tipo_ricerca=catalogo" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
+							<td><a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
 							<td colspan="2" class="hidden-xs"></td>
 							<td class="hidden-xs text-center"><strong>Total $1.99</strong></td>
-							<?php if(!isset($_SESSION['user'])) echo " <td><button type='submit' name='buttoncheck' class='btn btn-sucess btn-md' data-toggle='modal' data-target='#myModalregistrazione'>Checkout con registrazione</button></a></td>" ;
-							else echo" <form method=post><td><button type='submit' class='btn btn-success btn-md' name='buttoncheck' >Checkout</button></td></form>"; ?>
+							<?php if(!isset($_SESSION['user'])) echo " <td><button type='button' class='btn btn-sucess btn-md' data-toggle='modal' data-target='#myModalregistrazione'>Checkout con registrazione</button></a></td>" ;
+							else echo" <td><button type='button' class='btn btn-success btn-md' data-toggle='modal' data-target='#myModal'>Checkout</button></td>"; ?>
 						</tr>
 					</tfoot>
 				</table>
-	   <?php }else if($step2==1 && $step3==0 && $step4==0 & $step5==0){ ?>
-	   <div class="progress">
-		<div class="progress-bar progress-bar-striped" style="width:40%"></div>
-		</div>
-	    Il tuo indirizzo:
-	     <table class="table">
-			  <thead>
-				<tr>
-				  <th scope="col">#</th>
-				  <th scope="col">First</th>
-				  <th scope="col">Last</th>
-				  <th scope="col">Handle</th>
-				</tr>
-			  </thead>
-			  <tbody>
-				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  <td>Otto</td>
-				  <td>@mdo</td>
-				</tr>
-				<tr>
-				  <th scope="row">2</th>
-				  <td>Jacob</td>
-				  <td>Thornton</td>
-				  <td>@fat</td>
-				</tr>
-				<tr>
-				  <th scope="row">3</th>
-				  <td>Larry</td>
-				  <td>the Bird</td>
-				  <td>@twitter</td>
-				</tr>
-			  </tbody>
-			</table>
-			<form method='post'>
-			<button type='submit' class='btn btn-warning btn-md' name='back'>Torna indietro</button>
-			<button type='submit' class='btn btn-success btn-md' name='buttonaddress'>Procedi al pagamento</button>
-			
-			</form>
-	   
-	   <?php }else if($step2==0 && $step3==1 && $step4==0 & $step5==0){ ?>
-	   <div class="progress">
-		<div class="progress-bar progress-bar-striped" style="width:60%"></div>
-		</div>
-	      Metodo di pagamento:
-	     <table class="table">
-			  <thead>
-				<tr>
-				  <th scope="col">#</th>
-				  <th scope="col">First</th>
-				  <th scope="col">Last</th>
-				  <th scope="col">Handle</th>
-				</tr>
-			  </thead>
-			  <tbody>
-				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  <td>Otto</td>
-				  <td>@mdo</td>
-				</tr>
-				<tr>
-				  <th scope="row">2</th>
-				  <td>Jacob</td>
-				  <td>Thornton</td>
-				  <td>@fat</td>
-				</tr>
-				<tr>
-				  <th scope="row">3</th>
-				  <td>Larry</td>
-				  <td>the Bird</td>
-				  <td>@twitter</td>
-				</tr>
-			  </tbody>
-			</table>
-			<form method='post'>
-               <button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
-				<button type='submit' class='btn btn-success btn-md' name='buttonpay'>Ultimo step!</button>
 				
-			</form>
-	   
-	   <?php }else if($step2==0 && $step3==0 && $step4==1 & $step5==0){ ?>
-	   <div class="progress">
-		<div class="progress-bar progress-bar-striped" style="width:100%"></div>
-	   </div>
-	    
-	      Riepilogo:
-	     <table class="table">
-			  <thead>
-				<tr>
-				  <th scope="col">#</th>
-				  <th scope="col">First</th>
-				  <th scope="col">Last</th>
-				  <th scope="col">Handle</th>
-				</tr>
-			  </thead>
-			  <tbody>
-				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  <td>Otto</td>
-				  <td>@mdo</td>
-				</tr>
-				<tr>
-				  <th scope="row">2</th>
-				  <td>Jacob</td>
-				  <td>Thornton</td>
-				  <td>@fat</td>
-				</tr>
-				<tr>
-				  <th scope="row">3</th>
-				  <td>Larry</td>
-				  <td>the Bird</td>
-				  <td>@twitter</td>
-				</tr>
-			  </tbody>
-			</table>
-			
-			<form method='post'>
-			<button type='submit' class='btn btn-warning btn-md' name='buttonaddress'>Torna indietro</button>
-			<button type='submit' class='btn btn-success btn-md' name='confirm'>Invia ordine</button>
-			
-			</form>
-		    
-		  </div>
-		  
-	   
-	   <?php }else if($step2==0 && $step3==0 && $step4==0 & $step5==1){ ?>
-	     <h2>Ordine ricevuto!</h2>
-		 <p>Id ordine: $idordine</p>
-		 <p>Saldo punti: $punti </p>
-	      <img src="img/check.png"></img>
-		 <p> Riceverai il tuo ordine tra 48h</p>
-	   
-	   <?php }?>
 				
 	
 
-       
+
+			<!-- Modal con accesso -->
+			<div id="myModal" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Modal Header</h4>
+				  </div>
+				  <div class="modal-body">
+					<p>ciao.</p>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				  </div>
+				</div>
+
+			  </div>
+			</div>
 			
 			<!-- Modal senza accesso -->
 			<div id="myModalregistrazione" class="modal fade" role="dialog">
