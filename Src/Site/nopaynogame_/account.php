@@ -9,8 +9,12 @@ $utente=$_SESSION['user'];
 $query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
-  echo $riga ['SURNAME']. ' ';
-  echo $riga ['NAME']. '<br>';
+  $surname = $riga ['SURNAME'];
+  $name = $riga ['NAME'];
+  $email= $riga ['EMAIL'];
+  $username= $riga ['USERNAME'];
+  $address= $riga ['ADDRESS'];
+  $phone= $riga ['PHONE'];
   }
 ?>
 <html lang="en">
@@ -42,7 +46,7 @@ foreach($ris as $riga){
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">My account</h1>
-          <p class="lead">Hi <?php echo $nome; ?> this is your personal account!</p>
+          <p class="lead">Hi <?php echo $name; ?> this is your personal account!</p>
 		  <a href="javascript:;" class="uploadcontainer" onClick="javascript:setnewpicidvalue('1');">
 			<img class="rounded-circle img-fluid d-block mx-auto" style="margin-bottom:10px;" src="http://placehold.it/200x200" alt="">
 		  </a>
@@ -76,7 +80,9 @@ foreach($ris as $riga){
 					<th> <i class="material-icons">account_circle</i> </th>
 					  <th scope="row">Name</th>
 					  <td><?php echo $name; ?></td>
-					  <td><i class="material-icons">&#xe418;</i></td>
+					  <td>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					  
 					</tr>
 					<tr>
@@ -259,6 +265,36 @@ foreach($ris as $riga){
 		  </div>
       </div>
     
+	
+	<!-- MODAL MODIFICHE DEI DATI UTENTE -->
+	
+		
+		  <div class="modal fade" id="myModal">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  Modal body..
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+  
+	
+	
 
     <!-- Bootstrap core JavaScript -->
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

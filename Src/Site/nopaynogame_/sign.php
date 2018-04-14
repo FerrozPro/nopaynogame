@@ -3,33 +3,31 @@
 <?php
 session_start();
 include_once 'connection.php';
-
+if(isset($_SESSION['user'])){
+	header('Location: index.php');
+}
 $registrati=$_POST['registrati'];
 $accedi=$_POST['accedi'];
 $registrato=0;
 $first=1;
 if(isset($accedi)){
 /*QUERY PER L'ACCESSO*/	
-$emaila = $_POST['inputEmailA'];
-$passworda = MD5($_POST['inputPasswordA']);
 
-$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && EMAIL='$emaila'";
+$emaila = $_POST['inputEmailA'];
+$passworda = $_POST['inputPasswordA'];
+
+echo "$emaila";
+
+$sql = "SELECT password,email FROM USERS WHERE password='$passworda' && email='$emaila'";
 $preparata = $conn->prepare($sql);
 $preparata->execute();
-
 if($preparata->rowCount() > 0){	
-	while($user = $preparata->fetch()){
-		$_SESSION['role']=$user[0];
-		$_SESSION['id']=$user[1];
-		$_SESSION['name']=$user[2];
-		$_SESSION['surname']=$user[3];
-	}
+
 	$_SESSION['user']=$emaila;
-	
-	header("Location: index.php");
+	header("Location: account.php");
 }else{
 	echo "<script> alert('Account non esistente'); </script>";
-} 	
+}
 }else if(isset($registrati)){
 /*QUERY PER LA REGISTRAZIONE*/
 	$name = $_POST['inputName'];
@@ -39,7 +37,7 @@ if($preparata->rowCount() > 0){
 	$role=RL1;
 	$phone = $_POST['inputPhone'];
 	$email = $_POST['inputEmail'];
-	$password = MD5($_POST['inputPassword']);
+	$password = $_POST['inputPassword'];
 	
 	echo "$name";
 	$query = $conn -> prepare("INSERT INTO USERS(name, surname, address, phone, username, password, cod_role,email)
@@ -228,8 +226,13 @@ if($preparata->rowCount() > 0){
 			  
 			</div>
 	
+	
+	
+
     <!-- Bootstrap core JavaScript -->
-    <?php include 'script.php'; ?>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
   </body>
 
 </html>
