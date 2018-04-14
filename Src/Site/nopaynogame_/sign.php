@@ -4,30 +4,35 @@
 session_start();
 include_once 'connection.php';
 if(isset($_SESSION['user'])){
-	header('Location: index.php');
-}
+		header('Location: index.php');
+	}
+
 $registrati=$_POST['registrati'];
 $accedi=$_POST['accedi'];
 $registrato=0;
 $first=1;
 if(isset($accedi)){
 /*QUERY PER L'ACCESSO*/	
-
 $emaila = $_POST['inputEmailA'];
-$passworda = $_POST['inputPasswordA'];
+$passworda = MD5($_POST['inputPasswordA']);
 
-echo "$emaila";
-
-$sql = "SELECT password,email FROM USERS WHERE password='$passworda' && email='$emaila'";
+$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && EMAIL='$emaila'";
 $preparata = $conn->prepare($sql);
 $preparata->execute();
-if($preparata->rowCount() > 0){	
 
+if($preparata->rowCount() > 0){	
+	while($user = $preparata->fetch()){
+		$_SESSION['role']=$user[0];
+		$_SESSION['id']=$user[1];
+		$_SESSION['name']=$user[2];
+		$_SESSION['surname']=$user[3];
+	}
 	$_SESSION['user']=$emaila;
-	header("Location: account.php");
+	
+	header("Location: index.php");
 }else{
 	echo "<script> alert('Account non esistente'); </script>";
-}
+} 	
 }else if(isset($registrati)){
 /*QUERY PER LA REGISTRAZIONE*/
 	$name = $_POST['inputName'];
@@ -37,7 +42,7 @@ if($preparata->rowCount() > 0){
 	$role=RL1;
 	$phone = $_POST['inputPhone'];
 	$email = $_POST['inputEmail'];
-	$password = $_POST['inputPassword'];
+	$password = MD5($_POST['inputPassword']);
 	
 	echo "$name";
 	$query = $conn -> prepare("INSERT INTO USERS(name, surname, address, phone, username, password, cod_role,email)
@@ -79,7 +84,7 @@ if($preparata->rowCount() > 0){
 				<div class="row">
 				 <?php if($first==1){ ?> <div class="col-sm-5 col-md-6"> <?php } else { ?>
 				 <h2>Complimenti ti sei registrato! Ora effettua l'accesso con i tuoi dati </h2>
-				 <div class="col-sm-12 col-md-12"> <?php } ?>
+			 <div class="col-sm-12 col-md-12"> <?php } ?>
 				 
 				  <h3>Accedi:</h3>
 				  <form method='post'>
@@ -87,7 +92,7 @@ if($preparata->rowCount() > 0){
 					<label for="exampleInputEmail1">Email address</label>
 					<input type="email" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email">
 					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-				  </div>
+			  </div>
 				  <div class="form-group">
 					<label for="exampleInputPassword1">Password</label>
 					<input type="password" class="form-control" name="inputPasswordA" placeholder="Password">
@@ -102,7 +107,7 @@ if($preparata->rowCount() > 0){
 				</form>
 				  
 				  </div>
-			<?php } ?>
+		<?php } ?>
 				  <?php if($registrato==0 || $first==1){?>
 				  <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
 					<h3>Registrati:</h3>
@@ -115,9 +120,9 @@ if($preparata->rowCount() > 0){
 							<div class="form-group col-md-6">
 							  <label for="inputSurname">Surname</label>
 							  <input type="text" class="form-control" name="inputSurname" placeholder="Rossi">
-							</div>
+						</div>
 						  </div>
-						  <div class="form-row">
+					  <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputEmail">Email</label>
 							  <input type="email" class="form-control" name="inputEmail" placeholder="Email">
@@ -136,7 +141,7 @@ if($preparata->rowCount() > 0){
 							<input type="text" class="form-control" name="inputAddress" placeholder="1234 Main St">
 						  </div>
 						 
-						  <div class="form-row">
+					  <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputPhone">Phone</label>
 							  <input type="text" class="form-control" name="inputPhone" placeholder="3294252886">
@@ -212,7 +217,7 @@ if($preparata->rowCount() > 0){
 						  <button type="submit" class="btn btn-primary">Submit</button>
 						</form>
 					 
-					 
+				 
 					 
 					</div>
 					<div class="modal-footer">
@@ -226,13 +231,8 @@ if($preparata->rowCount() > 0){
 			  
 			</div>
 	
-	
-	
-
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+    <?php include 'script.php'; ?>
   </body>
 
 </html>

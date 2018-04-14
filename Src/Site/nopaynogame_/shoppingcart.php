@@ -414,6 +414,3 @@ foreach($ris as $riga){
   </body>
 
 </html>
-
-
-
