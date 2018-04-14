@@ -9,8 +9,12 @@ $utente=$_SESSION['user'];
 $query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
-  echo $riga ['SURNAME']. ' ';
-  echo $riga ['NAME']. '<br>';
+  $surname = $riga ['SURNAME'];
+  $name = $riga ['NAME'];
+  $email= $riga ['EMAIL'];
+  $username= $riga ['USERNAME'];
+  $address= $riga ['ADDRESS'];
+  $phone= $riga ['PHONE'];
   }
 ?>
 <html lang="en">
@@ -42,7 +46,7 @@ foreach($ris as $riga){
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">My account</h1>
-          <p class="lead">Hi <?php echo $nome; ?> this is your personal account!</p>
+          <p class="lead">Hi <?php echo $name; ?> this is your personal account!</p>
 		  <a href="javascript:;" class="uploadcontainer" onClick="javascript:setnewpicidvalue('1');">
 			<img class="rounded-circle img-fluid d-block mx-auto" style="margin-bottom:10px;" src="http://placehold.it/200x200" alt="">
 		  </a>
@@ -76,42 +80,54 @@ foreach($ris as $riga){
 					<th> <i class="material-icons">account_circle</i> </th>
 					  <th scope="row">Name</th>
 					  <td><?php echo $name; ?></td>
-					  <td><i class="material-icons">&#xe418;</i></td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$name"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					  
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
 					  <th scope="row">Surname</th>
-					  <td><?php echo $surname; ?></td>
-					   <td><i class="material-icons">&#xe418;</i></td>
+					  <td><?php echo $surname;?></td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$surname"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					  
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
 					  <th scope="row">Username</th>
 					  <td><?php echo $username; ?></td>
-					   <td><i class="material-icons">&#xe418;</i></td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$username"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					  
 					</tr>
 					<tr>
 					<th><i class="material-icons">fingerprint</i></th>
 					  <th scope="row">Password</th>
 					  <td>******</td>
-					   <td><i class="material-icons">&#xe418;</i></td>
+					   <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$modal"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					  
 					</tr>
 					<tr>
 					<th><i class="material-icons">home</i></th>
 					  <th scope="row">Shipping address</th>
-					  <td><?php echo $address; ?></td>
-					  <td><i class="material-icons">&#xe418;</i></td>
+					  <td><?php echo $address;  ?></td>
+					 <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$address"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					 
 					</tr>
 					<tr>
 					<th><i class="material-icons">phone</i></th>
 					  <th scope="row">Phone</th>
-					  <td><?php echo $phone; ?></td>
-					  <td><i class="material-icons">&#xe418;</i></td>
+					  <td><?php echo $phone;?></td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$phone"><i class="material-icons">&#xe418;</i></button>
+					  </td>
 					 
 					</tr>
 					<tr>
@@ -259,6 +275,160 @@ foreach($ris as $riga){
 		  </div>
       </div>
     
+	
+	<!-- MODAL MODIFICHE DEI DATI UTENTE -->
+	
+		
+		  <div class="modal fade" id="$name">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $name; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  
+		<div class="modal fade" id="$surname">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $surname; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  <div class="modal fade" id="$email">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $email; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  <div class="modal fade" id="$phone">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $phone; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  
+		  <div class="modal fade" id="$address">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $address; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  <div class="modal fade" id="$username">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modal Heading</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				  <?php echo $username; ?>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		  
+  
+	
+	
 
     <!-- Bootstrap core JavaScript -->
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
