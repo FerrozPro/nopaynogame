@@ -70,8 +70,7 @@
 							g.title like '%".$cod_t."%'
 							and g.flag_news like '%".$cod_n."%'
 							and g.flag_sale like '%".$cod_s."%'
-							and gg.cod_genre like '%".$cod_g."%'
-							or gg.cod_genre IS NULL
+							and (gg.cod_genre like '%".$cod_g."%'	or gg.cod_genre IS NULL)
 							and g.cod_console like '%".$cod_c."%'
 							and g.price_on_sale between $cod_p and $cod_p+$range
 						group by g.cod_game
