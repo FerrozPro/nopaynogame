@@ -55,19 +55,41 @@
 						$cod_n = $_POST['cod_novita'];
 						$cod_t = $_POST['cod_testo'];
 						$cod_p = $_POST['cod_prezzo'];
+						$cod_r = $_POST['cod_review'];
+						$range = 15;
 
+						if ($cod_p < 0){
+							$cod_p = 0;
+							$range = 15000;
+						}
+						
 						$lista_giochi = mysql_query("
-						select distinct g.* 
-						from my_nopaynogame.GAMES g, my_nopaynogame.GAME_GENRE gg 
+						select g.* 
+						from my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_GENRE gg ON	g.cod_game = gg.cod_game LEFT JOIN my_nopaynogame.REVIEW r ON g.cod_game = r.cod_game
 						where 
-							g.cod_game = gg.cod_game 
-							and g.title like '%".$cod_t."%'
+							g.title like '%".$cod_t."%'
 							and g.flag_news like '%".$cod_n."%'
 							and g.flag_sale like '%".$cod_s."%'
 							and gg.cod_genre like '%".$cod_g."%'
+							or gg.cod_genre IS NULL
 							and g.cod_console like '%".$cod_c."%'
-							and g.price_on_sale between $cod_p and $cod_p+15
+							and g.price_on_sale between $cod_p and $cod_p+$range
+						group by g.cod_game
+						having (AVG(r.stars) >= $cod_r) or ($cod_r < 1)
 						");
+
+						/*$lista_giochi = mysql_query("
+						select distinct g.* 
+						from my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_GENRE gg ON	g.cod_game = gg.cod_game 
+						where 
+							g.title like '%".$cod_t."%'
+							and g.flag_news like '%".$cod_n."%'
+							and g.flag_sale like '%".$cod_s."%'
+							and gg.cod_genre like '%".$cod_g."%'
+							or gg.cod_genre IS NULL
+							and g.cod_console like '%".$cod_c."%'
+							and g.price_on_sale between $cod_p and $cod_p+$range
+						");*/
 
 						echo"<h1>Risultati Ricerca</h1></div><div class='row'>";						
 						break;
@@ -98,10 +120,16 @@
 								echo'<span class="fa fa-star'; if($stars[0] == 5 ) { echo' checked'; } echo'"></span>';
 
 								if($prezzo_saldo < $prezzo_gioco){
-									echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+                  echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+                  echo'<span class="badge badge-pill badge-danger">SALDO</span>';
 								}else{
 									echo"<h5>€".$prezzo_gioco."</h5>";
+                }
+
+								if($novita == 'Y'){
+                  echo'<span class="badge badge-pill badge-success">NUOVO!</span>';
 								}
+
 								echo"<p class='card-text'>".$console[0]."</p>";
 							echo"</div>";
 

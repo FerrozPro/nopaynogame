@@ -33,7 +33,8 @@
         </div>
       </div>
       <div class="row">
-        <div class='col-md-3'>
+
+        <div class='col-md-2'>
         <label for="cod_piattaforma">Piattaforma</label>
         <select id="cod_piattaforma" name='cod_console' class="form-control">
           <option selected></option>
@@ -48,7 +49,8 @@
           ?>
         </select>
         </div>
-        <div class='col-md-3'>
+
+        <div class='col-md-2'>
         <label for="cod_genere">Genere</label>
         <select id="cod_genere" name='cod_genere' class="form-control">
           <option selected></option>
@@ -63,6 +65,7 @@
           ?>
         </select>
         </div>
+
         <div class='col-md-2'>
         <label for="cod_saldo">Saldo</label>
         <select id="cod_saldo" name='cod_saldo' class="form-control">
@@ -71,6 +74,7 @@
           <option  value="N">NO</option>
         </select>
         </div>
+
         <div class='col-md-2'>
         <label for="cod_novita">Novità</label>
         <select id="cod_novita" name='cod_novita' class="form-control">
@@ -79,10 +83,11 @@
           <option  value="N">NO</option>
         </select>
         </div>
+
         <div class='col-md-2'>
         <label for="cod_prezzo">Prezzo</label>
         <select id="cod_prezzo" name='cod_prezzo' class="form-control">
-          <option selected></option>
+          <option value="-1" selected></option>
           <option  value="0">0 - 15 €</option>
           <option  value="15">15 - 30 €</option>
           <option  value="30">30 - 45 €</option>
@@ -90,6 +95,19 @@
           <option  value="60">60 - 75 €</option>
         </select>
         </div>
+
+        <div class='col-md-2'>
+        <label for="cod_review">Rating</label>
+        <select id="cod_review" name='cod_review' class="form-control">
+          <option value="-1" selected></option>
+          <option  value="0">0+ stelle</option>
+          <option  value="1">1+ stelle</option>
+          <option  value="2">2+ stelle</option>
+          <option  value="3">3+ stelle</option>
+          <option  value="4">4+ stelle</option>
+        </select>
+        </div>
+
       </div>
     </form>
 
@@ -158,10 +176,16 @@
 								echo'<span class="fa fa-star'; if($stars[0] == 5 ) { echo' checked'; } echo'"></span>';
 
 								if($prezzo_saldo < $prezzo_gioco){
-									echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+                  echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+                  echo'<span class="badge badge-pill badge-danger">SALDO</span>';
 								}else{
 									echo"<h5>€".$prezzo_gioco."</h5>";
+                }
+
+								if($novita == 'Y'){
+                  echo'<span class="badge badge-pill badge-success">NUOVO!</span>';
 								}
+                
 								echo"<p class='card-text'>".$console[0]."</p>";
 							echo"</div>";
 
