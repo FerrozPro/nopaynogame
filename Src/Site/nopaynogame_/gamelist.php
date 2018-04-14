@@ -43,6 +43,27 @@
 						$nome_console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$id'"));
 						echo"<h1>Piattaforma ".$nome_console[0]."</h1></div><div class='row'>";						
 						break;
+					case 'search':
+						$cod_c = $_POST['cod_console'];
+						$cod_g = $_POST['cod_genere'];
+						$cod_s = $_POST['cod_saldo'];
+						$cod_n = $_POST['cod_novita'];
+						$cod_t = $_POST['cod_testo'];
+
+						$lista_giochi = mysql_query("
+						select distinct g.* 
+						from my_nopaynogame.GAMES g, my_nopaynogame.GAME_GENRE gg 
+						where 
+							g.cod_game = gg.cod_game 
+							and g.title like '%".$cod_t."%'
+							and g.flag_news like '%".$cod_n."%'
+							and g.flag_sale like '%".$cod_s."%'
+							and gg.cod_genre like '%".$cod_g."%'
+							and g.cod_console like '%".$cod_c."%'
+						");
+
+						echo"<h1>Risultati Ricerca</h1></div><div class='row'>";						
+						break;
 				}
 				
 			  while($gioco=mysql_fetch_row($lista_giochi)){

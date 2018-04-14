@@ -18,10 +18,10 @@
     <div class="container">
     <h1>Ricerca</h1>
     
-    <form method='POST' action='search.php'>
+    <form method='POST' action='gamelist.php?tipo_ricerca=search'>
       <div class="row">
         <div class='col-md-9'>
-        <input type="text" class="form-control" placeholder="Cerca...">
+        <input type="text" name="cod_testo" class="form-control" placeholder="Cerca...">
         </div>
         <div class='col-md-3'>
         <button type="submit" class="btn btn-block btn-primary">Cerca</button>
@@ -30,48 +30,48 @@
       <div class="row">
         <div class='col-md-3'>
         <label for="cod_piattaforma">Piattaforma</label>
-        <select id="cod_piattaforma" class="form-control">
+        <select id="cod_piattaforma" name='cod_console' class="form-control">
           <option selected></option>
           <?php
             $lista= mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
             
             while($elem=mysql_fetch_row($lista)){
             $cod = $elem[1];
-            $cod_value = elem[0];
-            echo"<option value=".$cod_value.">".$cod."</option>";
+            $cod_value = $elem[0];
+            echo"<option value='".$cod_value."'>".$cod."</option>";
             }
           ?>
         </select>
         </div>
         <div class='col-md-3'>
         <label for="cod_genere">Genere</label>
-        <select id="cod_genere" class="form-control">
+        <select id="cod_genere" name='cod_genere' class="form-control">
           <option selected></option>
           <?php
             $lista= mysql_query("select * from my_nopaynogame.DOM_GENRE");
             
             while($elem=mysql_fetch_row($lista)){
             $cod = $elem[1];
-            $cod_value = elem[0];
-            echo"<option value=".$cod_value.">".$cod."</option>";
+            $cod_value = $elem[0];
+            echo"<option  value='".$cod_value."'>".$cod."</option>";
             }
           ?>
         </select>
         </div>
         <div class='col-md-3'>
         <label for="cod_saldo">Saldo</label>
-        <select id="cod_saldo" class="form-control">
+        <select id="cod_saldo" name='cod_saldo' class="form-control">
           <option selected></option>
-          <option value="Y">SI</option>
-          <option value="N">NO</option>
+          <option  value="Y">SI</option>
+          <option  value="N">NO</option>
         </select>
         </div>
         <div class='col-md-3'>
         <label for="cod_novita">Novità</label>
-        <select id="cod_novita" class="form-control">
+        <select id="cod_novita" name='cod_novita' class="form-control">
           <option selected></option>
-          <option value="Y">SI</option>
-          <option value="N">NO</option>
+          <option  value="Y">SI</option>
+          <option  value="N">NO</option>
         </select>
         </div>
       </div>
