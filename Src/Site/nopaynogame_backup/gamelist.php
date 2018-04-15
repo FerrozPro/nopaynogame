@@ -121,7 +121,7 @@
 									echo'<span class="fa fa-star'; if($stars[0] == 5 ) { echo' checked'; } echo'"></span>';
 	
 									if($prezzo_saldo < $prezzo_gioco){
-										echo"<h5>€<del>".$prezzo_gioco."</del> -->".$prezzo_saldo."</h5>";
+										echo"<h5>€<del>".$prezzo_gioco."</del> <i class='fa fa-chevron-right'></i> €".$prezzo_saldo."</h5>";
 										echo'<span class="badge badge-pill badge-danger">SALDO</span>';
 									}else{
 										echo"<h5>€".$prezzo_gioco."</h5>";
@@ -136,9 +136,15 @@
 	
 								echo"<div class='card-footer'>";
 								echo"<form method='POST' action='addtocart.php'>
-									<input type='hidden' name='cod_gioco' value=".$cod_gioco." />
-									<button type='submit' class='btn btn-block btn-warning'>Aggiungi al Carrello</button>
-								</form>";
+									<input type='hidden' name='cod_gioco' value=".$cod_gioco." />";
+									$quantita = mysql_fetch_row(mysql_query("select SUM(quantity) from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$cod_gioco'"));
+									echo"<button type='submit' class='btn btn-block ";
+									if($quantita[0] == 0){
+									echo"btn-danger' disabled>Non Disponibile</button>";
+									}else{
+									echo"btn-warning'>Aggiungi al Carrello</button>";
+									} echo"
+							</form>";
 								echo"</div>";
 	
 							echo"</div>";

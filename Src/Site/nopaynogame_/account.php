@@ -17,6 +17,40 @@ foreach($ris as $riga){
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
   }
+  
+  
+ //QUERY MODIFICA DATI//
+ /*$newcognome=$_POST['newsurname'];
+ $newname = $_POST['newname'];
+if(isset($_POST['modificacognome'])){
+	$query ="UPDATE USERS SET surname='$newcognome'";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificanome'])){
+	$query ="UPDATE USERS SET NAME='$newname'";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificausername'])){
+	$query ="UPDATE USERS SET username=$_POST['newusername']";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificaemail'])){
+	$query ="UPDATE USERS SET EMAIL=$_POST['newemail']";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificaindirizzo'])){
+	$query ="UPDATE USERS SET address=$_POST['newaddress']";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificacell'])){
+	$query ="UPDATE USERS SET phone=$_POST['newphone']";
+	$ris = ($conn->query($query));
+	
+}else if(isset($_POST['modificapassword'])){
+	$query ="UPDATE USERS SET password=$_POST['newpassword']";
+	$ris = ($conn->query($query));
+	
+}*/
 ?>
 <html lang="en">
 
@@ -48,10 +82,7 @@ foreach($ris as $riga){
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">My account</h1>
           <p class="lead">Hi <?php echo $name; ?> this is your personal account!</p>
-		  <a href="javascript:;" class="uploadcontainer" onClick="javascript:setnewpicidvalue('1');">
-			<img class="rounded-circle img-fluid d-block mx-auto" style="margin-bottom:10px;" src="http://placehold.it/200x200" alt="">
-		  </a>
-		  <input class="imageselectinput" id="imageuploadform1" type="file" name="picture" style='display:none;' />
+		 
 		 </div>
 		 
 		 <div class="col-12 .col-md-4">
@@ -138,6 +169,14 @@ foreach($ris as $riga){
 					  <td><a href="#"><i class="material-icons">arrow_forward</i></a></td>
 					 
 					</tr>
+					<form method='get' action="delete_account.php">
+					<tr>
+ 					<th><i class="material-icons"></i></th>
+					  <th scope="row">Drop account</th>
+					  <td></td>
+					  <td><button type='submit' class="btn btn-danger" name='eliminaccount' value=<?php echo "$id_utente"; ?>>Elimina</button></td>
+					  </tr>
+					</form>
 				  </tbody>
 				</table>
 				</div>
@@ -270,8 +309,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <input class="form-control" type=text >
-				  <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				  <input class="form-control" type=text name="newname" >
+				  <button type="submit" class="btn btn-warning" name="modificanome">Modifica</button>
+				</form>
 				</div>
 				
 				<!-- Modal footer -->
@@ -296,8 +337,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				   <input class="form-control" type=text >
-				   <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				   <input class="form-control" type=text name="newsurname" >
+				   <button type="submit" class="btn btn-warning" name="modificacognome">Modifica</button>
+				</form>
 				</div>
 				
 				<!-- Modal footer -->
@@ -321,8 +364,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <input class="form-control" type=text >
-				  <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				  <input class="form-control" type=text name="newemail" >
+				  <button type="submit" class="btn btn-warning" name="modificaemail">Modifica</button>
+				</form>
 				</div>
 				
 				<!-- Modal footer -->
@@ -346,8 +391,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				   <input class="form-control" type=text >
-				   <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				   <input class="form-control" type=text name="newphone" >
+				   <button type="submit" class="btn btn-warning" name="modificacell">Modifica</button>
+				</form>
 				</div>
 				
 				<!-- Modal footer -->
@@ -372,8 +419,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				   <input class="form-control" type=text value=<?php echo $address; ?>>
-				   <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				   <input class="form-control" type=text name="newaddress">
+				   <button type="button" class="btn btn-warning" name="modificaindirizzo">Modifica</button>
+				</form>
 				</div>
 				
 				<!-- Modal footer -->
@@ -397,8 +446,10 @@ foreach($ris as $riga){
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				   <input class="form-control" type=text value=<?php echo $username; ?>>
-				   <button type="button" class="btn btn-warning">Modifica</button>
+				<form method=post>
+				   <input class="form-control" type=text name="newusername">
+				   <button type="submit" class="btn btn-warning" name="modificausername">Modifica</button>
+				 </form>
 				</div>
 				
 				<!-- Modal footer -->

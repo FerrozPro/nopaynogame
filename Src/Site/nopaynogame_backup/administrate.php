@@ -4,6 +4,7 @@
 
   $adduser = $_POST['adduser'];
   $addgame = $_POST['addgame'];
+  $save_user = $_POST['save_user'];
 
   if(isset($adduser)){
   /*QUERY PER NUOVO UTENTE*/
@@ -46,8 +47,8 @@
 
     $cod_game_query= ("SELECT cod_game FROM GAMES ORDER BY cod_game DESC LIMIT 1");
     $ris = ($conn->query($cod_game_query));  
-        foreach($ris as $riga){
-          $cod_game_result=$riga['cod_game'];
+      foreach($ris as $riga){
+        $cod_game_result=$riga['cod_game'];
     }
 
     $generi = isset($_POST['inputGeneri']) ? $_POST['inputGeneri'] : array();
@@ -68,6 +69,15 @@
       $i = $i + 1;
     }
 
+  }elseif(isset($save_user)){
+    /*QUERY PER MODIFCA USER*/ 
+    $save_user = $_POST['user'];
+    $save_role = $_POST['role'];
+    $save_active = $_POST['active'];
+    $save_deleted = $_POST['deleted'];
+
+    $query = $conn -> prepare("UPDATE USERS SET cod_role = '$save_role', flag_deleted = '$save_deleted', flag_active = '$save_active' WHERE id_user = '$save_user'");
+    $query -> execute();
   }
 ?>
 
@@ -78,6 +88,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>NoPayNoGame</title>
   </head>
   
@@ -109,6 +120,184 @@
         <div class="tab-content" id="myTabContent">
           <!-- Inizio magazzino -->
           <div class="tab-pane fade show active" id="magazzino" role="tabpanel" aria-labelledby="magazzino-tab">
+            <div id="accordion">
+            <?php 
+              $i = 0;
+              $lista_giochi = mysql_query("select g.*, SUM(gw.quantity) from my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_WAREHOUSE gw ON g.cod_game = gw.cod_game group by g.cod_game order by g.title");
+              while($gioco=mysql_fetch_row($lista_giochi)){
+                $cod_game = $gioco[0];
+                $title = $gioco[1];
+                $price = $gioco[2];
+                $cod_console = $gioco[3];
+                $nome_console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$cod_console'"));
+                $price_on_sale = $gioco[4];
+                $flag_sale = $gioco[5];
+                $flag_news = $gioco[6];
+                $image = $gioco[7];
+                $description = $gioco[8];
+                $spec_req = $gioco[9];
+                $trailer = $gioco[10];
+                $insertion_date = $gioco[11];
+                $quantita_totale = $gioco[12];
+            
+                echo'
+                <div class="card '; 
+                if($quantita_totale == 0){
+                  echo'border-danger';
+                }elseif($quantita_totale <= 10){
+                  echo'border-warning';
+                } 
+                echo'">
+                  <div class="card-header" id="heading'.$cod_game.'">
+                    <h5 class="mb-0">
+                      <button class="btn" data-toggle="collapse" data-target="#collapse'.$cod_game.'" aria-expanded="true" aria-controls="collapse'.$cod_game.'">';
+                      if($quantita_totale == 0){
+                        echo'<i class="fa fa-times" style="color:red"></i><i class="fa fa-times" style="color:red"></i><i class="fa fa-times" style="color:red"></i>';
+                      }elseif($quantita_totale <= 10){
+                        echo'<i class="fa fa-exclamation-triangle" style="color:yellow"></i>';
+                      } 
+                      
+
+                      echo' <i class="fa fa-chevron-right"></i> '.$title.' - '.$nome_console[0].' - Copie attuali : '.$quantita_totale.'
+                      </button>
+                    </h5>
+                  </div>
+                ';
+                
+                echo'
+                  <div id="collapse'.$cod_game.'" class="collapse '; 
+                  //if($i == 0){echo'show';} 
+                  echo'" aria-labelledby="heading'.$cod_game.'" data-parent="#accordion">
+                    <div class="card-body">
+                      <form method="post">
+                        <!--Righe Gioco-->
+                        <div class="form-row">
+                          <div class="form-group col-md-2">
+                            <label for="modTitle">Titolo</label>
+                            <input type="text" class="form-control" name="modTitle" placeholder="'.$title.'">
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="modPrice">Prezzo</label>
+                            <input type="text" class="form-control" name="modPrice" placeholder="'.$price.'">
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="modPriceSale">Prezzo in Saldo</label>
+                            <input type="text" class="form-control" name="modPriceSale" placeholder="'.$price_on_sale.'">
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="modNovita">Novità</label>
+                            <select id="modNovita" name="modNovita" class="form-control">
+                              <option value="'.$flag_news.'" selected>'.$flag_news.'</option>
+                              <option  value="Y">SI</option>
+                              <option  value="N">NO</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="modConsole">Console</label>
+                            <select id="modConsole" name="modConsole" class="form-control">
+                              <option value="'.$cod_console.'" selected>'.$nome_console[0].'</option>';
+                              
+                                $lista= mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
+                                while($elem = mysql_fetch_row($lista)){
+                                $cod = $elem[1];
+                                $cod_value = $elem[0];
+                                echo"<option value='".$cod_value."'>".$cod."</option>";
+                                }
+
+                            echo'  
+                            </select>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="modImmagine">Immagine</label>
+                            <input type="text" class="form-control" name="modImmagine" placeholder="'.$image.'">
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-group col-md-4">
+                            <label for="modDesc">Descrizione</label>
+                            <textarea type="text" class="form-control" name="modDesc" placeholder="'.$description.'" rows="3"></textarea>
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="modReq">Requisiti Minimi</label>
+                            <textarea type="text" class="form-control" name="modReq" placeholder="'.$spec_req.'" rows="3"></textarea>
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="modTrailer">Trailer</label>
+                            <input type="text" class="form-control" name="modTrailer" placeholder="'.$trailer.'">
+                          </div>
+                        </div>
+
+                        <!--Riga Generi-->
+                        <div class="form-row">
+                          <div class="form-group col-md-12">';
+                                                        
+                              $lista= mysql_query("select * from my_nopaynogame.DOM_GENRE");
+                              while($elem = mysql_fetch_row($lista)){
+                                $nome_genere = $elem[1];
+                                $codice_genere = $elem[0];
+                                $lista_generi = mysql_query("select dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
+                                echo'<div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="checkbox" name="inputGeneri[]" value="'.$codice_genere.'" '; 
+                                  while($gen = mysql_fetch_row($lista_generi)){
+                                    $cc = $gen[0];
+                                    if($codice_genere == $cc){
+                                      echo'checked';
+                                      break;
+                                    }  
+                                  }
+                                  echo'>
+                                    <label class="form-check-label">'.$nome_genere.'</label>
+                                  </div>';
+                              }
+                          echo'
+                          </div>
+                        </div>
+
+                        <!--Riga Magazzini-->
+                        <div class="form-row">';
+                          
+                          $lista= mysql_query("select * from my_nopaynogame.WAREHOUSE");
+                          while($elem = mysql_fetch_row($lista)){
+                            $cod_magazzino = $elem[0];
+                            $indi_maga = $elem[1];
+                            $quantita_per_magazzino = mysql_fetch_row(mysql_query("select quantity from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$cod_game' and cod_warehouse = '$cod_magazzino'"));
+                            echo'
+                            <div class="form-group col-md-3">
+                              <label for="magazzini[]">'.$cod_magazzino.' '.$indi_maga.'</label>
+                              <input class="form-control" type="number" name="inputQuantita[]" value="'.$quantita_per_magazzino[0].'">
+                              <input class="form-control" type="hidden" name="inputMagazzini[]" value="'.$cod_magazzino.'">
+                            </div>
+                            ';
+                          }
+                        echo'   
+                        </div>
+                        <button type="submit" name="updategame" class="btn btn-primary">Aggiorna</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                ';
+                $i = $i +1;
+              }
+            ?>
+            </div>  
+
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <table class="table table-sm">
               <thead>
                 <tr>
@@ -393,11 +582,141 @@
 
           <!-- Inizio gestione ordini -->
           <div class="tab-pane fade" id="ordini" role="tabpanel" aria-labelledby="ordini-tab">
+          <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Numero Ordine</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Pagamento</th>
+                  <th scope="col">Data</th>
+                  <th scope="col">Codice Gioco</th>
+                  <th scope="col">Nome Gioco</th>
+                  <th scope="col">Quantità</th>
+                  <th scope="col">Elimina</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php 
+                  $lista= mysql_query("select * from my_nopaynogame.ORDERS o, my_nopaynogame.GAME_ORDER go where o.id_order = go.id_order");
+                  while($elem = mysql_fetch_row($lista)){
+                    $id_order = $elem[0];
+                    $id_user = $elem[1];
+                    $username= mysql_fetch_row(mysql_query("select username from my_nopaynogame.USERS where id_user = '$id_user'"));
+                    $id_pagamento = $elem[2];
+                    $pagamento = mysql_fetch_row(mysql_query("select desc_payment from my_nopaynogame.DOM_PAYMENT where cod_payment = '$id_pagamento'"));
+                    $data = $elem[3];
+                    $cod_game = $elem[6];
+                    $nome_game = mysql_fetch_row(mysql_query("select title from my_nopaynogame.GAMES where cod_game = '$cod_game'"));
+                    $quantita = $elem[7];
+                    echo'
+                    <tr><form method="post">
+                    <th scope="row">'.$id_order.'</th>
+                    <td>'.$username[0].'</td>
+                    <td>'.$pagamento[0].'</td>
+                    <td>'.$data.'</td>
+                    <td>'.$cod_game.'</td>
+                    <td>'.$nome_game[0].'</td>
+                    <td>'.$quantita.'</td>
+                    <td>
+                      <button type="submit" name="save_user" class="btn btn-danger">Elimina</button>
+                    </td>
+                    </form>
+                    </tr>
+                    ';
+                  }
+                ?>
+              </tbody>
+            </table>
           </div>
           <!-- Fine gestione ordini -->
 
           <!-- Inizio gestione profilo -->
           <div class="tab-pane fade" id="profili" role="tabpanel" aria-labelledby="profili-tab">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Username</th>
+                  <th scope="col">Ruolo</th>
+                  <th scope="col">Punti</th>
+                  <th scope="col">Attivo?</th>
+                  <th scope="col">Cancellato?</th>
+                  <th scope="col">Salva</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php 
+                  $lista= mysql_query("select * from my_nopaynogame.USERS");
+                  while($elem = mysql_fetch_row($lista)){
+                    $username = $elem[5];
+                    $role = $elem[8];
+                    $name_role= mysql_fetch_row(mysql_query("select * from my_nopaynogame.DOM_ROLE where cod_role = '$role'"));
+                    $points = $elem[10];
+                    $flag_deleted = $elem[11];
+                    $flag_active = $elem[12];
+                    echo'
+                    <tr';
+                    if($flag_deleted == 'Y'){
+                      echo' class="table-danger"';
+                    }elseif($flag_active == 'N'){
+                      echo' class="table-warning"';
+                    }elseif($role == 'RL4'){
+                      echo' class="table-primary"';
+                    }elseif($role == 'RL3'){
+                      echo' class="table-info"';
+                    }elseif($role == 'RL2'){
+                      echo' class="table-secondary"';
+                    }
+                    echo'><form method="post">
+                    <th scope="row">'.$username.'
+                      <input type="hidden" name="user" value="'.$elem[0].'">
+                    </th>
+                    <td>
+                      <select name="role" class="form-control">
+                        <option value="'.$name_role[0].'" selected>'.$name_role[1].'</option>';
+                        $lista_role= mysql_query("select * from my_nopaynogame.DOM_ROLE");
+                        while($ruolo=mysql_fetch_row($lista_role)){
+                        $cod = $ruolo[1];
+                        $cod_value = $ruolo[0];
+                        echo"<option  value='".$cod_value."'>".$cod."</option>";
+                        }
+                      echo'
+                      </select>
+                    </td>
+                    <td>'.$points.'</td>
+                    <td>
+                      <select name="active" class="form-control">
+                        <option value="'.$flag_active.'" selected>'.$flag_active.'</option>';
+                        if($flag_active == 'Y'){
+                          $choice = 'N';
+                        }else{
+                          $choice = 'Y';
+                        }
+                        echo"<option  value='".$choice."'>".$choice."</option>";
+                      echo'
+                      </select>
+                    </td>
+                    <td>
+                      <select name="deleted" class="form-control">
+                        <option value="'.$flag_deleted.'" selected>'.$flag_deleted.'</option>';
+                        if($flag_deleted == 'Y'){
+                          $choice = 'N';
+                        }else{
+                          $choice = 'Y';
+                        }
+                        echo"<option  value='".$choice."'>".$choice."</option>";
+                      echo'
+                      </select>
+                    </td>
+                    <td>
+                      <button type="submit" name="save_user" class="btn btn-success">Salva</button>
+                    </td>
+                    </form>
+                    </tr>
+                    ';
+                  }
+                ?>
+              </tbody>
+            </table>
           </div>
           <!-- Fine gestione profilo -->
 
