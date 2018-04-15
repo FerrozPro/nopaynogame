@@ -215,3 +215,35 @@ VALUES ('WH3', 'via Fretello 3', '0147852369');
 -- COD_GAME VARCHAR(4) NOT NULL
 INSERT INTO GAME_WAREHOUSE (QUANTITY, COD_WAREHOUSE, COD_GAME)
 VALUES ();
+
+
+
+INSERT INTO `my_nopaynogame`.`GAME_WAREHOUSE` (`ID_GAME_WAREHOUSE`, `QUANTITY`, `COD_WAREHOUSE`, `COD_GAME`) 
+VALUES 
+(NULL, '0', 'WH1', 'G004'), 
+(NULL, '0', 'WH2', 'G004'), 
+(NULL, '0', 'WH3', 'G004');
+(NULL, '0', 'WH1', 'G005'), 
+(NULL, '0', 'WH2', 'G005'), 
+(NULL, '0', 'WH3', 'G005');
+(NULL, '0', 'WH1', 'G006'), 
+(NULL, '0', 'WH2', 'G006'), 
+(NULL, '0', 'WH3', 'G006');
+(NULL, '0', 'WH1', 'G007'), 
+(NULL, '0', 'WH2', 'G007'), 
+(NULL, '0', 'WH3', 'G007');
+(NULL, '0', 'WH1', 'G008'), 
+(NULL, '0', 'WH2', 'G008'), 
+(NULL, '0', 'WH3', 'G008');
+(NULL, '0', 'WH1', 'G009'), 
+(NULL, '0', 'WH2', 'G009'), 
+(NULL, '0', 'WH3', 'G009');
+(NULL, '0', 'WH1', 'G010'), 
+(NULL, '0', 'WH2', 'G010'), 
+(NULL, '0', 'WH3', 'G010');
+(NULL, '0', 'WH1', 'G011'), 
+(NULL, '0', 'WH2', 'G011'), 
+(NULL, '0', 'WH3', 'G011');
+(NULL, '0', 'WH1', 'G012'), 
+(NULL, '0', 'WH2', 'G012'), 
+(NULL, '0', 'WH3', 'G012');
