@@ -34,7 +34,7 @@ $first=1;
 		
 		
 $utente=$_SESSION['user'];
-$query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
+$query ="SELECT * FROM USERS WHERE USERNAME='$utente' || EMAIL='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
   $surname = $riga ['SURNAME'];
@@ -44,7 +44,23 @@ foreach($ris as $riga){
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
   }
-		?>
+ 
+$max=count($_SESSION['carrello']); 
+$i=0;
+//while($max==0){ 
+		$gioco=$_SESSION['carrello'][$i];
+		//echo $gioco;
+		$query ="SELECT * FROM GAMES WHERE COD_GAME='$gioco'";
+		$ris = ($conn->query($query));  
+		foreach($ris as $riga){
+			$title=$riga['TITLE'];
+		}
+		$i++;
+		//$max--;
+//}
+
+  
+?>
   
   <head>
     <!-- Required meta tags -->
@@ -53,6 +69,9 @@ foreach($ris as $riga){
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>NoPayNoGame</title>
   </head>
@@ -79,7 +98,10 @@ foreach($ris as $riga){
 </div>
 	   
 		<table id="cart" class="table table-hover table-condensed">
-    				<thead>
+    				<?php if(!isset($_SESSION['carrello'])){?>
+					<p> Il tuo carrello è vuoto! </p>
+					<?php }else{ ?>
+					<thead>
 						<tr>
 							<th style="width:50%">Product</th>
 							<th style="width:10%">Price</th>
@@ -88,40 +110,100 @@ foreach($ris as $riga){
 							<th style="width:10%"></th>
 						</tr>
 					</thead>
+					
+					<?php
+					$max=count($_SESSION['carrello']);
+					
+					for($i=0;$i<$max;$i++){
+						$array[$i]=1;
+					}
+					
+					for($i=0;$i<$max;$i++){
+						for($j=1;$j<$max;$j++){
+							
+							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] )
+								$array[$i]=$array[$i]+1;
+							else $array[$i]=$array[$i]+0;
+						}
+					}
+		
+					$i=0;
+					$result = array_unique($_SESSION['carrello']);
+					$max=count($result);
+					while($max!=0 && $array[$i]!=0){ 
+							$gioco=$result[$i];
+							$query ="SELECT *,count(*) AS quantita_aggiunta FROM GAMES WHERE COD_GAME='$gioco'";
+							$ris = ($conn->query($query));  
+							foreach($ris as $riga){
+								
+							
+					//}?>
 					<tbody>
 						<tr>
 							<td data-th="Product">
 								<div class="row">
-									<div class="col-sm-2 hidden-xs"><img src="http://placehold.it/100x100" alt="..." class="img-responsive"/></div>
+									<div class="col-sm-2 hidden-xs"><img src=<?php echo $riga['IMAGE']; ?> alt=<?php echo $riga['TITLE']; ?> class="img-responsive" style="width:200px; heigth:200px;"/></div>
 									<div class="col-sm-10">
-										<h4 class="nomargin">Product 1</h4>
-										<p>Lorem ipsum dolor sit amet.</p>
+										<h4 class="nomargin"><?php echo $riga['TITLE']; ?></h4>
+										<p><?php echo $riga['DESCRIPTION']; ?></p>
 									</div>
 								</div>
 							</td>
-							<td data-th="Price">$1.99</td>
+							<td data-th="Price"><?php echo $riga['PRICE']; ?></td>
 							<td data-th="Quantity">
-								<input type="number" class="form-control text-center" value="1">
+								<input type="number" class="form-control text-center" value=<?php 
+								$max=count($result);
+								$max_bis=count($_SESSION['carrello']);
+								 /* if(isset($_GET['delete'])){
+									for($i=0;$i<$max_bis;$i++){
+										print_r($_SESSION['carrello'][$i]);
+										if($_SESSION['carrello'][$i] == $_GET['delete'] )
+											unset($_SESSION['carrello'][$i]);
+										}
+									
+								}*/
+									echo $array[$i]; ?>>
 							</td>
-							<td data-th="Subtotal" class="text-center">1.99</td>
+							<td data-th="Subtotal" class="text-center"><?php $riga['PRICE']; ?></td>
 							<td class="actions" data-th="">
-								<button class="btn btn-info btn-sm"><i class="material-icons">autorenew</i></button>
-								<button class="btn btn-danger btn-sm"><i class="material-icons">delete_forever</i></button>								
+								<form method='get'><button type='submit' class="btn btn-info btn-sm" name=refresh value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">autorenew</i></button>
+								<button type='submit' class="btn btn-danger btn-sm" name=delete value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">delete_forever</i></button></form>								
 							</td>
 						</tr>
 					</tbody>
+					
+					<?php }
+						$i++;
+						$max--; 
+						$total=$total+($riga['PRICE']*$array[$i]);
+						
+					}
+					
+					
+						  /* $max=count($result);
+							if(isset($_GET['delete'])){
+								for($i=0;$i<$max;$i++){
+									print_r($result[$i]);
+									if($result[$i] == $_GET['delete']){
+										$array[$i]=0;
+									}
+								
+								}
+							}*/
+							
+							?>
 					<tfoot>
 						<tr class="visible-xs">
-							<td class="text-center"><strong>Total 1.99</strong></td>
+							<td class="text-center"><strong></strong></td>
 						</tr>
 						<tr>
 							<td><a href="http://nopaynogame.altervista.org/nopaynogame_/gamelist.php?cp=cat&tipo_ricerca=catalogo" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
 							<td colspan="2" class="hidden-xs"></td>
-							<td class="hidden-xs text-center"><strong>Total $1.99</strong></td>
+							<td class="hidden-xs text-center"><strong><?php echo $total; ?></strong></td>
 							<?php if(!isset($_SESSION['user'])) echo " <td><button type='submit' name='buttoncheck' class='btn btn-sucess btn-md' data-toggle='modal' data-target='#myModalregistrazione'>Checkout con registrazione</button></a></td>" ;
 							else echo" <form method=post><td><button type='submit' class='btn btn-success btn-md' name='buttoncheck' >Checkout</button></td></form>"; ?>
 						</tr>
-					</tfoot>
+					</tfoot><?php } ?>
 				</table>
 	   <?php }else if($step2==1 && $step3==0 && $step4==0 & $step5==0){ ?>
 	   <div class="progress">
@@ -157,42 +239,7 @@ foreach($ris as $riga){
 	   <div class="progress">
 		<div class="progress-bar progress-bar-striped" style="width:60%"></div>
 		</div>
-	      Metodo di pagamento:
-	     <table class="table">
-			  <thead>
-				<tr>
-				  <th scope="col">Metodo</th>
-				  <th scope="col">First</th>
-				  
-				</tr>
-			  </thead>
-			  <tbody>
-				<tr>
-				  <th scope="row">1</th>
-				  <td><label>
-					  <input type="radio" name="fb" value="small" />
-					  <img src="fb1.jpg">
-					</label></td>
-				  
-				</tr>
-				<tr>
-				  <th scope="row">2</th>
-				 <td><label>
-					  <input type="radio" name="fb" value="small" />
-					  <img src="fb1.jpg">
-					</label></td>
-				  
-				</tr>
-				<tr>
-				  <th scope="row">3</th>
-				  <td><label>
-					  <input type="radio" name="fb" value="small" />
-					  <img src="fb1.jpg">
-					</label></td>
-				  
-				</tr>
-			  </tbody>
-			</table>
+	   
 			<form method='post'>
                <button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
 				<button type='submit' class='btn btn-success btn-md' name='buttonpay'>Ultimo step!</button>
@@ -203,9 +250,12 @@ foreach($ris as $riga){
 	   <div class="progress">
 		<div class="progress-bar progress-bar-striped" style="width:100%"></div>
 	   </div>
-	    
-	      Riepilogo:
-	     <table class="table">
+	   <div class="row">
+		  <div class="col-6 col-md-4">
+		  
+			 Riepilogo:
+		  <p>Prodotti</p>
+	       <table class="table">
 			  <thead>
 				<tr>
 				  <th scope="col">#</th>
@@ -221,21 +271,74 @@ foreach($ris as $riga){
 				  <td>Otto</td>
 				  <td>@mdo</td>
 				</tr>
+				
+			  </tbody>
+			</table>
+		  </div>
+		  
+		  <div class="col-6 col-md-4">
+			 <p>Indirizzo di spedizione</p>
+			  <table class="table">
+			  <thead>
 				<tr>
-				  <th scope="row">2</th>
-				  <td>Jacob</td>
-				  <td>Thornton</td>
-				  <td>@fat</td>
+				  <th scope="col">#</th>
+				  <th scope="col">First</th>
+				  <th scope="col">Last</th>
+				  <th scope="col">Handle</th>
 				</tr>
+			  </thead>
+			  <tbody>
 				<tr>
-				  <th scope="row">3</th>
-				  <td>Larry</td>
-				  <td>the Bird</td>
-				  <td>@twitter</td>
+				  <th scope="row">1</th>
+				  <td>Mark</td>
+				  <td>Otto</td>
+				  <td>@mdo</td>
 				</tr>
+				
 			  </tbody>
 			</table>
 			
+		  </div>
+		  <div class="col-6 col-md-4">
+				 <p>Pagamento</p>
+				  Metodo di pagamento:
+	     <table class="table">
+			  <thead>
+				<tr>
+				  <th scope="col">Metodo</th>
+				  <th scope="col"><?php echo $metodo_pagamento; ?></th>
+				  
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr>
+				  <th scope="row">Bonifico bancario</th>
+				  <td><label>
+					  <input type="radio" name="bonifico" value="small" />
+					  <img src="img/b.jpg">
+					</label></td>
+				  
+				</tr>
+				<tr>
+				  <th scope="row">PayPal</th>
+				 <td><label>
+					  <input type="radio" name="paypal" value="small" />
+					  <img src="img/p.jpg">
+					</label></td>
+				  
+				</tr>
+				<tr>
+				  <th scope="row">Contrassegno</th>
+				  <td><label>
+					  <input type="radio" name="contrassegno" value="small" />
+					  <img src="img/c.jpg">
+					</label></td>
+				  
+				</tr>
+			  </tbody>
+			</table>
+		  </div>
+		</div> 
 			<form method='post'>
 			<button type='submit' class='btn btn-warning btn-md' name='buttonaddress'>Torna indietro</button>
 			<button type='submit' class='btn btn-success btn-md' name='confirm'>Invia ordine</button>
@@ -382,11 +485,11 @@ foreach($ris as $riga){
 				  <!-- Modal body -->
 				  <div class="modal-body">
 					<label >Name:</label>
-					<input type="text" class="form-control" value= <?php echo $name; ?>>
+					<input type="text" class="form-control" value="">
 					<label>Surname:</label>
-					<input type="text" class="form-control"  value= <?php echo $surname; ?>>
+					<input type="text" class="form-control" value=''>
 					<label >Indirizzo:</label>
-					<input type="text" class="form-control"  value= <?php echo $address; ?>>
+					<input type="text" class="form-control" value=''>
 					
 					
 					
@@ -395,6 +498,7 @@ foreach($ris as $riga){
 
 				  <!-- Modal footer -->
 				  <div class="modal-footer">
+				    <button type="button" class="btn btn-success">Ok</button>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				  </div>
 
@@ -405,7 +509,19 @@ foreach($ris as $riga){
 			
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<?php include 'script.php'; ?>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+       int reply_click(clicked_id)
+		{
+			return clicked_id;
+		}
+	</script>
+  
   </body>
 
 </html>
+
+
+

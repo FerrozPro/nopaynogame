@@ -12,11 +12,13 @@ $accedi=$_POST['accedi'];
 $registrato=0;
 $first=1;
 if(isset($accedi)){
+	
+	
 /*QUERY PER L'ACCESSO*/	
 $emaila = $_POST['inputEmailA'];
 $passworda = MD5($_POST['inputPasswordA']);
 
-$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && EMAIL='$emaila'";
+$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && (EMAIL='$emaila' || USERNAME='$emaila')";
 $preparata = $conn->prepare($sql);
 $preparata->execute();
 
@@ -31,7 +33,7 @@ if($preparata->rowCount() > 0){
 	
 	header("Location: index.php");
 }else{
-	echo "<script> alert('Account non esistente'); </script>";
+	echo "<script> alert('Account non esistente o dati errati'); </script>";
 } 	
 }else if(isset($registrati)){
 /*QUERY PER LA REGISTRAZIONE*/
@@ -44,13 +46,19 @@ if($preparata->rowCount() > 0){
 	$email = $_POST['inputEmail'];
 	$password = MD5($_POST['inputPassword']);
 	
-	echo "$name";
-	$query = $conn -> prepare("INSERT INTO USERS(name, surname, address, phone, username, password, cod_role,email)
-								VALUES('$name','$surname','$address','$phone','$username','$password','$role','$email')");
-	$query -> execute();
-	if($query -> rowCount() > 0){ //se la registrazione è andata a buon fine
-		$registrato=1;
-		$first=0;	
+	$sql = "SELECT * FROM USERS WHERE EMAIL='$email'";
+	$preparata = $conn->prepare($sql);
+	$preparata->execute();
+	if($preparata->rowCount() > 0){
+		echo "<script>alert('Sei gia registrato!');</script>";
+	}else{
+		$query = $conn -> prepare("INSERT INTO USERS(name, surname, address, phone, username, password, cod_role,email)
+									VALUES('$name','$surname','$address','$phone','$username','$password','$role','$email')");
+		$query -> execute();
+		if($query -> rowCount() > 0){ //se la registrazione è andata a buon fine
+			$registrato=1;
+			$first=0;	
+		}
 	}
 
 }
@@ -89,13 +97,13 @@ if($preparata->rowCount() > 0){
 				  <h3>Accedi:</h3>
 				  <form method='post'>
 				  <div class="form-group">
-					<label for="exampleInputEmail1">Email address</label>
-					<input type="email" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email">
+					<label for="exampleInputEmail1">Email address or Username</label>
+					<input type="text" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email" required >
 					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
 			  </div>
 				  <div class="form-group">
 					<label for="exampleInputPassword1">Password</label>
-					<input type="password" class="form-control" name="inputPasswordA" placeholder="Password">
+					<input type="password" class="form-control" name="inputPasswordA" placeholder="Password" required>
 				  </div>
 				  <div class="form-group">
 					<p><a data-toggle="modal" href="#myModalEmail">Dimenticata l'email?</a></p>
@@ -115,36 +123,36 @@ if($preparata->rowCount() > 0){
 						 <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputName">Name</label>
-							  <input type="text" class="form-control" name="inputName" placeholder="Mario">
+							  <input type="text" class="form-control" name="inputName" placeholder="Mario" required>
 							</div>
 							<div class="form-group col-md-6">
 							  <label for="inputSurname">Surname</label>
-							  <input type="text" class="form-control" name="inputSurname" placeholder="Rossi">
+							  <input type="text" class="form-control" name="inputSurname" placeholder="Rossi" required>
 						</div>
 						  </div>
 					  <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputEmail">Email</label>
-							  <input type="email" class="form-control" name="inputEmail" placeholder="Email">
+							  <input type="email" class="form-control" name="inputEmail" placeholder="Email" required>
 							</div>
 							<div class="form-group col-md-6">
 							  <label for="inputPassword4">Password</label>
-							  <input type="password" class="form-control" name="inputPassword" placeholder="Password">
+							  <input type="password" class="form-control" name="inputPassword" placeholder="Password" required>
 							</div>
 						  </div>
 						  <div class="form-group">
 							<label for="inputUsername">Username</label>
-							<input type="text" class="form-control" name="inputUsername" placeholder="MarioRossi">
+							<input type="text" class="form-control" name="inputUsername" placeholder="MarioRossi" required>
 						  </div>
 						  <div class="form-group">
 							<label for="inputAddress">Address</label>
-							<input type="text" class="form-control" name="inputAddress" placeholder="1234 Main St">
+							<input type="text" class="form-control" name="inputAddress" placeholder="1234 Main St" required>
 						  </div>
 						 
 					  <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputPhone">Phone</label>
-							  <input type="text" class="form-control" name="inputPhone" placeholder="3294252886">
+							  <input type="text" class="form-control" name="inputPhone" placeholder="3294252886" required>
 							</div>
 							
 						  </div>

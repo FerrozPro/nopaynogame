@@ -9,6 +9,7 @@ $utente=$_SESSION['user'];
 $query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
+  $id_utente= $riga ['ID_USER'];
   $surname = $riga ['SURNAME'];
   $name = $riga ['NAME'];
   $email= $riga ['EMAIL'];
@@ -79,7 +80,7 @@ foreach($ris as $riga){
 					<tr >
 					<th> <i class="material-icons">account_circle</i> </th>
 					  <th scope="row">Name</th>
-					  <td><?php echo $name; ?></td>
+					  <td><?php echo $name;  ?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$name"><i class="material-icons">&#xe418;</i></button>
 					  </td>
@@ -141,6 +142,19 @@ foreach($ris as $riga){
 				</table>
 				</div>
 				  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+				  
+				  <?php //query per gli ordini//
+				   $query ="SELECT * FROM ORDERS WHERE ID_USER='$id_utente'";
+				   $ris = ($conn->query($query));
+				   $ris->execute();
+				   if($ris->rowCount() <= 0){
+					echo "<center><H2>Non hai ancora effettuato un ordine :( </H2> <img src=img/sad.png style=' width:30%; heigth:30%'></center>";
+				   }else{
+					   foreach($ris as $riga){
+				     
+					?>
+				  
+				  
 						 <table class="table table-striped">
 						  <thead>
 							<tr>
@@ -154,57 +168,22 @@ foreach($ris as $riga){
 
 						  <tbody>
 							<tr >
-							<th>1</th>
-							  <td>12/05/2018</th>
-							  <td>Mark</td>
-							  <td>12</td>
+							<th><?php echo $riga['ID_ORDER'];?></th>
+							  <td><?php echo $riga['DATE_ORDER'];?></th>
+							  <td><?php echo $conta_prodotti;?></td>
+							  <td><?php echo $totale;?></td>
+							  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $riga['ID_ORDER']; ?> ">
+								  Launch demo modal
+								</button>
 							  <td><i class="material-icons">favorite_border</i></td>
 							  
 							</tr>
-							<tr>
-							<th>2</th>
-							  <td>12/05/2018</th>
-							  <td>Jacob</td>
-							   <td>12</td>
-							   <td><i class="material-icons">favorite_border</i></td>
-							  
-							</tr>
-							<tr>
-							<th>3</th>
-							  <td>12/05/2018</th>
-							  <td>Larry</td>
-							   <td>12</td>
-							   <td><i class="material-icons">favorite_border</i></td>
-							  
-							</tr>
-							<tr>
-							<th>4</th>
-							  <td>12/05/2018</th>
-							  <td>******</td>
-							   <td>12</td>
-							  <td><i class="material-icons">favorite_border</i></td>
-							</tr>
-							<tr>
-							<th>5</th>
-							  <td>12/05/2018</th>
-							  <td>Via riviera 18 giugno n 117 meolo 30020 VE</td>
-							  <td>12</td>
-							  <td><i class="material-icons">favorite_border</i></td>
-							 
-							</tr>
-							<tr>
-							<th>6</th>
-							  <td>12/05/2018</th>
-							  <td>Total : count</td>
-							  <td>12</td>
-							  <td><i class="material-icons">favorite_border</i></td>
-							 
-							</tr>
+							
 						  </tbody>
 						</table>
 			
 				  
-				  
+				   <?php } }?>
 				  
 				  </div>
 				  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
@@ -285,13 +264,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				  <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $name; ?>
+				  <input class="form-control" type=text >
+				  <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -310,13 +290,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				   <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $surname; ?>
+				   <input class="form-control" type=text >
+				   <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -334,13 +315,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				   <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $email; ?>
+				  <input class="form-control" type=text >
+				  <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -358,13 +340,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				   <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $phone; ?>
+				   <input class="form-control" type=text >
+				   <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -383,13 +366,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				   <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $address; ?>
+				   <input class="form-control" type=text value=<?php echo $address; ?>>
+				   <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -407,13 +391,14 @@ foreach($ris as $riga){
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Modal Heading</h4>
+				   <h4 class="modal-title">Modifica dati</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				
 				<!-- Modal body -->
 				<div class="modal-body">
-				  <?php echo $username; ?>
+				   <input class="form-control" type=text value=<?php echo $username; ?>>
+				   <button type="button" class="btn btn-warning">Modifica</button>
 				</div>
 				
 				<!-- Modal footer -->
@@ -425,8 +410,28 @@ foreach($ris as $riga){
 			</div>
 		  </div>
 		  
-		  
-  
+		  <!-- MODAL ordini -->
+			<!-- Modal -->
+				<div class="modal fade" id="<?php echo $riga['ID_ORDER']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+
 	
 	
 
