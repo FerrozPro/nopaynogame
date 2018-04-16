@@ -74,7 +74,7 @@
             echo"<li class='nav-item ";
 			if($_GET['cp']=='sign'){echo'active';}
 			echo"'>";
-            echo"<a class='nav-link' href='sign.php?cp=sign'>Log In</a>";
+            echo"<a class='nav-link' href='sign.php?cp=sign'>Accedi</a>";
             echo"</li>";
           }
       ?>
@@ -104,7 +104,7 @@
           echo"</a>";
           echo"<div class='dropdown-menu' aria-labelledby='navbarDropdown'>";
 		  echo"<a class='dropdown-item' href='account.php?cp=user'>Profilo</a>";
-          echo"<a class='dropdown-item' href='disconnection.php'>Log Out</a>";
+          echo"<a class='dropdown-item' href='disconnection.php'>Esci</a>";
 		  echo"</div>";
           echo"</li>";
           

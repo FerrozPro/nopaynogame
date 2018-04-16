@@ -88,7 +88,7 @@ $i=0;
     <div class="container">
       <div class="row">
         <div class="col-lg-12 text-center">
-          <h1 class="mt-5">Shopping cart</h1>
+          <h1 class="mt-5">Carrello</h1>
           <p class="lead">Ciao <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo $name;}?> questo è il tuo carrello</p>
        <!--Tabella prodotti-->
 	   
@@ -98,7 +98,7 @@ $i=0;
     				
 					<h3> Il tuo carrello è vuoto! </h3>
 					<img src='img/sad.png' style='width:30%; heigth:30%;'>
-					<a href='http://nopaynogame.altervista.org/nopaynogame_/index.php?cp=home'><button type='button' class='btn bt-success'>Shopping!</button></a>
+					<a href='http://nopaynogame.altervista.org/nopaynogame_/index.php?cp=home'><button type='button' class='btn bt-success'>Inizia lo Shopping!</button></a>
 					<?php }else{ ?>
 					<div class="progress">
 					  <div class="progress-bar progress-bar-striped" style="width:20%"></div>
@@ -107,10 +107,10 @@ $i=0;
 					<table id="cart" class="table table-hover table-condensed">
 					<thead>
 						<tr>
-							<th style="width:50%">Product</th>
-							<th style="width:10%">Price</th>
-							<th style="width:8%">Quantity</th>
-							<th style="width:22%" class="text-center">Subtotal</th>
+							<th style="width:50%">Prodotto</th>
+							<th style="width:10%">Prezzo</th>
+							<th style="width:8%">Quantità</th>
+							<th style="width:22%" class="text-center">Sub-totale</th>
 							<th style="width:10%"></th>
 						</tr>
 					</thead>
@@ -585,6 +585,7 @@ $i=0;
 			
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<?php include 'script.php'; ?>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

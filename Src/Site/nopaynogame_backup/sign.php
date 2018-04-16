@@ -106,21 +106,21 @@ if($preparata->rowCount() > 0){
 				  <h3>Accedi:</h3>
 				  <form method='post'>
 				  <div class="form-group">
-					<label for="exampleInputEmail1">Email address or Username</label>
+					<label for="exampleInputEmail1">Email o Username</label>
 					<input type="text" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email or your Username" required >
-					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+					<small id="emailHelp" class="form-text text-muted">Non condiviremo la tua email con nessuno.</small>
 			  </div>
 				  <div class="form-group">
 					<label for="exampleInputPassword1">Password</label>
 					<input type="password" class="form-control" name="inputPasswordA" placeholder="Password" required>
 				  </div>
 				  <div class="form-group">
-					<p><a data-toggle="modal" href="#myModalEmail">Dimenticata l'email?</a></p>
-					<p><a data-toggle="modal" href="#myModalPassword">Dimenticata password?</a></p>
+					<p><a data-toggle="modal" href="#myModalEmail">Hai dimenticato l'email?</a></p>
+					<p><a data-toggle="modal" href="#myModalPassword">Hai imenticato password?</a></p>
 					
 					
 				  </div>
-				  <button type="submit" name='accedi' class="btn btn-primary">Submit</button>
+				  <button type="submit" name='accedi' class="btn btn-primary">Accedi</button>
 				</form>
 				  
 				  </div>
@@ -131,11 +131,11 @@ if($preparata->rowCount() > 0){
 						<form method='post'>
 						 <div class="form-row">
 							<div class="form-group col-md-6">
-							  <label for="inputName">Name</label>
+							  <label for="inputName">Nome</label>
 							  <input type="text" class="form-control" name="inputName" placeholder="Mario" required>
 							</div>
 							<div class="form-group col-md-6">
-							  <label for="inputSurname">Surname</label>
+							  <label for="inputSurname">Cosgnome</label>
 							  <input type="text" class="form-control" name="inputSurname" placeholder="Rossi" required>
 						</div>
 						  </div>
@@ -154,21 +154,21 @@ if($preparata->rowCount() > 0){
 							<input type="text" class="form-control" name="inputUsername" placeholder="MarioRossi" required>
 						  </div>
 						  <div class="form-group">
-							<label for="inputAddress">Address</label>
+							<label for="inputAddress">Indirizzo</label>
 							<input type="text" class="form-control" name="inputAddress" placeholder="1234 Main St" required>
 						  </div>
 						 
 					  <div class="form-row">
 							<div class="form-group col-md-6">
-							  <label for="inputPhone">Phone</label>
-							  <input type="text" class="form-control" name="inputPhone" placeholder="3294252886" required>
+							  <label for="inputPhone">Telefono</label>
+							  <input type="tel" class="form-control" name="inputPhone" placeholder="3294252886" required>
 							</div>
 							
 						  </div>
 						  <div class="form-group">
 							
 						  </div>
-						  <button type="submit" name='registrati' class="btn btn-primary">Sign in</button>
+						  <button type="submit" name='registrati' class="btn btn-primary">Registrati</button>
 						</form>
 				  
 				  
@@ -200,14 +200,14 @@ if($preparata->rowCount() > 0){
 							<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
 						  </div>
 						  
-						  <button type="submit" class="btn btn-primary">Submit</button>
+						  <button type="submit" class="btn btn-primary">Invia richiesta</button>
 						</form>
 					  
 					  
 					  
 					</div>
 					<div class="modal-footer">
-					  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
 					</div>
 				  </div>
 				  
@@ -231,14 +231,14 @@ if($preparata->rowCount() > 0){
 							<small id="emailHelp" class="form-text text-muted">invieremo una password momentanea sulla tua email.</small>
 						  </div>
 						
-						  <button type="submit" class="btn btn-primary">Submit</button>
+						  <button type="submit" class="btn btn-primary">Invia richiesta</button>
 						</form>
 					 
 				 
 					 
 					</div>
 					<div class="modal-footer">
-					  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
 					</div>
 				  </div>
 				  

@@ -74,7 +74,7 @@ if(isset($_POST['modificacognome'])){
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>My Account</title>
+    <title>Profilo</title>
 
     <!-- Bootstrap core CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -93,28 +93,27 @@ if(isset($_POST['modificacognome'])){
     <div class="container">
       <div class="row">
         <div class="col-lg-12 text-center">
-          <h1 class="mt-5">My account</h1>
-          <p class="lead">Hi <?php echo $name; ?> this is your personal account!</p>
+          <h1 class="mt-5">Il mio profilo</h1>
+          <p class="lead">Ciao <?php echo $name; ?> questo è il tuo profilo personale!</p>
 		 
 		 </div>
 		 
 		 <div class="col-12 .col-md-4">
 				<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Information</a>
+						<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Informazioni</a>
 					  </li>
 					  <li class="nav-item">
-						<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Orders</a>
+						<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Ordini Effettuati</a>
 					  </li>
 					  <li class="nav-item">
-						<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
+						<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Review e Voti</a>
 					  </li>
 					</ul>
 					<div class="tab-content" id="pills-tabContent">
 					  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 					   
 				  <table class="table table-striped">
-				  Information:
 				  <thead>
 					<tr>
 					
@@ -123,7 +122,7 @@ if(isset($_POST['modificacognome'])){
 				  <tbody>
 					<tr >
 					<th> <i class="material-icons">account_circle</i> </th>
-					  <th scope="row">Name</th>
+					  <th scope="row">Nome:</th>
 					  <td><?php echo $name;  ?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$name"><i class="material-icons">&#xe418;</i></button>
@@ -132,7 +131,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
-					  <th scope="row">Surname</th>
+					  <th scope="row">Cosgnome:</th>
 					  <td><?php echo $surname;?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$surname"><i class="material-icons">&#xe418;</i></button>
@@ -141,7 +140,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
-					  <th scope="row">Username</th>
+					  <th scope="row">Username:</th>
 					  <td><?php echo $username; ?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$username"><i class="material-icons">&#xe418;</i></button>
@@ -150,7 +149,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">fingerprint</i></th>
-					  <th scope="row">Password</th>
+					  <th scope="row">Password:</th>
 					  <td>******</td>
 					   <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$password"><i class="material-icons">&#xe418;</i></button>
@@ -159,7 +158,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">home</i></th>
-					  <th scope="row">Shipping address</th>
+					  <th scope="row">Indirizzo:</th>
 					  <td><?php echo $address;  ?></td>
 					 <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$address"><i class="material-icons">&#xe418;</i></button>
@@ -168,7 +167,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">phone</i></th>
-					  <th scope="row">Phone</th>
+					  <th scope="row">Telefono:</th>
 					  <td><?php echo $phone;?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$phone"><i class="material-icons">&#xe418;</i></button>
@@ -177,7 +176,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">shopping_cart</i></th>
-					  <th scope="row">Orders</th>
+					  <th scope="row">Ordini</th>
 					  <td>Total : count</td>
 					  <td><a href="#"><i class="material-icons">arrow_forward</i></a></td>
 					 
@@ -185,7 +184,7 @@ if(isset($_POST['modificacognome'])){
 					<form method='get' action="delete_account.php">
 					<tr>
  					<th><i class="material-icons"></i></th>
-					  <th scope="row">Drop account</th>
+					  <th scope="row">Cancella Account</th>
 					  <td></td>
 					  <td><button type='submit' class="btn btn-danger" name='eliminaccount' value=<?php echo "$id_utente"; ?>>Elimina</button></td>
 					  </tr>
