@@ -249,7 +249,22 @@
                                   echo'>
                                     <label class="form-check-label">'.$nome_genere.'</label>
                                   </div>';
-                              }
+                              } 
+							  
+							  /*$lista= mysql_query("select * from my_nopaynogame.DOM_GENRE");
+							  $lista_generi = mysql_query("select dg.cod_genre from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
+                              while($elem = mysql_fetch_row($lista)){
+                                $nome_genere = $elem[1];
+                                $codice_genere = $elem[0];
+								echo'<div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="checkbox" name="inputGeneri[]" value="'.$codice_genere.'" ';
+								if (in_array($codice_genere, $lista_generi)){
+									echo'checked';
+								}
+							  echo'>
+								<label class="form-check-label">'.$nome_genere.'</label>
+							  </div>';
+                              }*/
                           echo'
                           </div>
                         </div>
