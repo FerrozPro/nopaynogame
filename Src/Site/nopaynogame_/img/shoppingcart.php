@@ -121,19 +121,13 @@ $i=0;
 					for($i=0;$i<$max;$i++){
 						$array[$i]=1;
 					}
-					print_r($_SESSION['carrello']);
+					
 					for($i=0;$i<$max;$i++){
-						for($j=i+2;$j<$max;$j++){
+						for($j=1;$j<$max;$j++){
 							
-							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] ){
+							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] )
 								$array[$i]=$array[$i]+1;
-								//unset($_SESSION['carrello'][$j]);
-							}
-							
-							else{
-								echo 'no';
-								$array[$i]=$array[$i]+0;
-							}
+							else $array[$i]=$array[$i]+0;
 						}
 					}
 		
@@ -161,7 +155,18 @@ $i=0;
 							</td>
 							<td data-th="Price"><?php echo $riga['PRICE']; ?></td>
 							<td data-th="Quantity">
-								<input type="number" class="form-control text-center" value=<?php echo $array[$i]; ?>>
+								<input type="number" class="form-control text-center" value=<?php 
+								$max=count($result);
+								$max_bis=count($_SESSION['carrello']);
+								 /* if(isset($_GET['delete'])){
+									for($i=0;$i<$max_bis;$i++){
+										print_r($_SESSION['carrello'][$i]);
+										if($_SESSION['carrello'][$i] == $_GET['delete'] )
+											unset($_SESSION['carrello'][$i]);
+										}
+									
+								}*/
+									echo $array[$i]; ?>>
 							</td>
 							<td data-th="Subtotal" class="text-center"><?php $riga['PRICE']; ?></td>
 							<td class="actions" data-th="">
@@ -255,35 +260,20 @@ $i=0;
 	       <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">Codice gioco</th>
-				  <th scope="col">Titolo</th>
-				  <th scope="col">Prezzo</th>
-				  <th scope="col">Quantità</th>
+				  <th scope="col">#</th>
+				  <th scope="col">First</th>
+				  <th scope="col">Last</th>
+				  <th scope="col">Handle</th>
 				</tr>
 			  </thead>
 			  <tbody>
-			  <?PHP 
-			  $i=0;
-			  $result = array_unique($_SESSION['carrello']);
-			  $max=count($result);
-			  while($max!=0){ 
-     		  $gioco=$result[$i];
-			  $query ="SELECT *,count(*) AS quantita_aggiunta FROM GAMES WHERE COD_GAME='$gioco'"; 
-			 
-				$ris = ($conn->query($query));  
-				foreach($ris as $riga){
-			    ?>
 				<tr>
-				  <th scope="row"><?php echo $riga['COD_GAME']; ?></th>
-				  <td><?php echo $riga['TITLE']; ?></td>
-				  <td><?php echo $riga['PRICE']; ?></td>
-				  <td><?php $quantità ?></td>
+				  <th scope="row">1</th>
+				  <td>Mark</td>
+				  <td>Otto</td>
+				  <td>@mdo</td>
 				</tr>
-				<?php }
-					$i++;
-					$max--;
-			     }				
-				?>
+				
 			  </tbody>
 			</table>
 		  </div>
@@ -293,18 +283,18 @@ $i=0;
 			  <table class="table">
 			  <thead>
 				<tr>
-				
-				  <th scope="col">Nome</th>
-				  <th scope="col">Cognome</th>
-				  <th scope="col">Indirizzo</th>
+				  <th scope="col">#</th>
+				  <th scope="col">First</th>
+				  <th scope="col">Last</th>
+				  <th scope="col">Handle</th>
 				</tr>
 			  </thead>
 			  <tbody>
 				<tr>
-				 
-				  <td><?php echo $name; ?></td>
-				  <td><?php echo $surname; ?></td>
-				  <td><?php echo $address; ?></td>
+				  <th scope="row">1</th>
+				  <td>Mark</td>
+				  <td>Otto</td>
+				  <td>@mdo</td>
 				</tr>
 				
 			  </tbody>
@@ -326,7 +316,7 @@ $i=0;
 				  <th scope="row">Bonifico bancario</th>
 				  <td><label>
 					  <input type="radio" name="bonifico" value="small" />
-					  <img src="img/bonifico.png" style='width:20%; heigth:20%;'>
+					  <img src="img/bonifico.png">
 					</label></td>
 				  
 				</tr>
@@ -334,7 +324,7 @@ $i=0;
 				  <th scope="row">PayPal</th>
 				 <td><label>
 					  <input type="radio" name="paypal" value="small" />
-					  <img src="img/paypal.png" style='width:20%; heigth:20%;'>
+					  <img src="img/paypal.png">
 					</label></td>
 				  
 				</tr>
@@ -342,7 +332,7 @@ $i=0;
 				  <th scope="row">Contrassegno</th>
 				  <td><label>
 					  <input type="radio" name="contrassegno" value="small" />
-					  <img src="img/contrassegno.png" style='width:20%; heigth:20%;'>
+					  <img src="img/contrassegno.png">
 					</label></td>
 				  
 				</tr>
@@ -351,7 +341,7 @@ $i=0;
 		  </div>
 		</div> 
 			<form method='post'>
-			<button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
+			<button type='submit' class='btn btn-warning btn-md' name='buttonaddress'>Torna indietro</button>
 			<button type='submit' class='btn btn-success btn-md' name='confirm'>Invia ordine</button>
 			
 			</form>

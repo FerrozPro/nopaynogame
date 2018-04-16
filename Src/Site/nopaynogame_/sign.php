@@ -18,10 +18,19 @@ if(isset($accedi)){
 $emaila = $_POST['inputEmailA'];
 $passworda = MD5($_POST['inputPasswordA']);
 
-$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && (EMAIL='$emaila' || USERNAME='$emaila')";
+$sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passworda' && (EMAIL='$emaila' || USERNAME='$emaila') && FLAG_DELETED='N' ";
 $preparata = $conn->prepare($sql);
 $preparata->execute();
 
+
+/*$ris= $preparata -> fetch();
+foreach($ris as $riga){
+	$delete=$riga['flag_deleted'];
+	}
+if($delete=='Y'){
+	header('Location: riattiva.php');
+}
+*/
 if($preparata->rowCount() > 0){	
 	while($user = $preparata->fetch()){
 		$_SESSION['role']=$user[0];
@@ -33,7 +42,7 @@ if($preparata->rowCount() > 0){
 	
 	header("Location: index.php");
 }else{
-	echo "<script> alert('Account non esistente o dati errati'); </script>";
+	echo "<script> alert('Account non esistente , dati errati, account eliminato'); </script>";
 } 	
 }else if(isset($registrati)){
 /*QUERY PER LA REGISTRAZIONE*/
@@ -98,7 +107,7 @@ if($preparata->rowCount() > 0){
 				  <form method='post'>
 				  <div class="form-group">
 					<label for="exampleInputEmail1">Email address or Username</label>
-					<input type="text" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email" required >
+					<input type="text" class="form-control" name="inputEmailA" aria-describedby="emailHelp" placeholder="Enter email or your Username" required >
 					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
 			  </div>
 				  <div class="form-group">

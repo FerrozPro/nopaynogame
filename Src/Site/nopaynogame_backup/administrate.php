@@ -5,6 +5,9 @@
   $adduser = $_POST['adduser'];
   $addgame = $_POST['addgame'];
   $save_user = $_POST['save_user'];
+  $updategame = $_POST['updategame'];
+  $deletegame = $_POST['deletegame'];
+  $deleteordine = $_POST['deleteordine'];
 
   if(isset($adduser)){
   /*QUERY PER NUOVO UTENTE*/
@@ -78,6 +81,87 @@
 
     $query = $conn -> prepare("UPDATE USERS SET cod_role = '$save_role', flag_deleted = '$save_deleted', flag_active = '$save_active' WHERE id_user = '$save_user'");
     $query -> execute();
+  }elseif(isset($updategame)){
+    /*QUERY PER UPDATE GIOCO*/ 
+    $modCodGame = $_POST['modCodGame'];
+    $modTitle = $_POST['modTitle'];
+    $modPrice = $_POST['modPrice'];
+    $modPriceSale = $_POST['modPriceSale'];
+    if($modPriceSale < $modPrice){
+      $modSale = 'Y';
+    }else{
+      $modSale = 'N';
+    }
+    $modNovita = $_POST['modNovita'];
+    $modConsole = $_POST['modConsole'];
+    $modImmagine = $_POST['modImmagine'];
+    $modDesc = $_POST['modDesc'];
+    $modReq = $_POST['modReq'];
+    $modTrailer = $_POST['modTrailer'];
+
+    $modGeneri = isset($_POST['modGeneri']) ? $_POST['modGeneri'] : array();
+    $modMagazzini = isset($_POST['modMagazzini']) ? $_POST['modMagazzini'] : array();
+    $modQuantita = isset($_POST['modQuantita']) ? $_POST['modQuantita'] : array();
+
+    $query = $conn -> prepare("UPDATE GAMES 
+    SET 
+    title = '$modTitle', 
+    price = '$modPrice', 
+    cod_console = '$modConsole', 
+    price_on_sale = '$modPriceSale', 
+    flag_sale = '$modSale', 
+    flag_news = '$modNovita', 
+    image = '$modImmagine', 
+    description = '$modDesc', 
+    spec_req = '$modReq', 
+    trailer = '$modTrailer'
+    WHERE cod_game = '$modCodGame'");
+    $query -> execute();
+
+    $query = $conn -> prepare("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
+    $query -> execute();
+
+    foreach($modGeneri as $co_genere) {
+      $query = $conn -> prepare("INSERT INTO GAME_GENRE(cod_game, cod_genre)
+      VALUES('$modCodGame', '$co_genere')");
+      $query -> execute();
+    }
+
+    $i = 0;
+    foreach($modMagazzini as $cod_magazzino) {
+      $quantita_magazzino = $modQuantita[$i];
+      $i = $i + 1;
+      $query = $conn -> prepare("UPDATE GAME_WAREHOUSE 
+      SET 
+      quantity = '$quantita_magazzino'
+      WHERE cod_game = '$modCodGame' and cod_warehouse = '$cod_magazzino'");
+      $query -> execute();
+
+    }
+  }elseif(isset($deletegame)){
+    /*QUERY PER ELIMINA GIOCO*/ 
+    $modCodGame = $_POST['modCodGame'];
+
+    $query = $conn -> prepare("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
+    $query -> execute();
+    
+    $query = $conn -> prepare("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
+    $query -> execute();
+    
+    $query = $conn -> prepare("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
+    $query -> execute();
+  }elseif(isset($deleteordine)){
+    /*QUERY PER ELIMINA ORDINE*/ 
+    $del_ordine = $_POST['del_ordine'];
+    $game = $_POST['game'];
+    $quantity_game = $_POST['quantity_game'];
+
+
+    $query = $conn -> prepare("DELETE FROM GAME_ORDER WHERE id_order = '$del_ordine'");
+    $query -> execute();
+    
+    $query = $conn -> prepare("DELETE FROM ORDERS WHERE id_order = '$del_ordine'");
+    $query -> execute();
   }
 ?>
 
@@ -100,21 +184,43 @@
     <div class="container">
       <h1>Amministrazione</h1>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="magazzino-tab" data-toggle="tab" href="#magazzino" role="tab" aria-controls="magazzino" aria-selected="true">Magazzino</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="new-magazzino-tab" data-toggle="tab" href="#new-magazzino" role="tab" aria-controls="new-magazzino" aria-selected="false">Aggiungi Nuovo Gioco</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="ordini-tab" data-toggle="tab" href="#ordini" role="tab" aria-controls="ordini" aria-selected="false">Gestione Ordini</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="profili-tab" data-toggle="tab" href="#profili" role="tab" aria-controls="profili" aria-selected="false">Gestione Profili</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="new-profili-tab" data-toggle="tab" href="#new-profili" role="tab" aria-controls="new-profili" aria-selected="false">Aggiungi Profilo</a>
-          </li>
+        <?php
+          if($_SESSION['role']=="RL4" || $_SESSION['role']=="RL3" || $_SESSION['role']=="RL2"){
+            echo'
+            <li class="nav-item">
+              <a class="nav-link active" id="magazzino-tab" data-toggle="tab" href="#magazzino" role="tab" aria-controls="magazzino" aria-selected="true">Magazzino</a>
+            </li>
+            ';
+          }
+          if($_SESSION['role']=="RL4" || $_SESSION['role']=="RL3" || $_SESSION['role']=="RL2"){
+            echo'
+            <li class="nav-item">
+              <a class="nav-link" id="new-magazzino-tab" data-toggle="tab" href="#new-magazzino" role="tab" aria-controls="new-magazzino" aria-selected="false">Aggiungi Nuovo Gioco</a>
+            </li>
+            ';
+          }
+          if($_SESSION['role']=="RL4" || $_SESSION['role']=="RL3"){
+            echo'
+            <li class="nav-item">
+              <a class="nav-link" id="ordini-tab" data-toggle="tab" href="#ordini" role="tab" aria-controls="ordini" aria-selected="false">Gestione Ordini</a>
+            </li>
+            ';
+          }
+          if($_SESSION['role']=="RL4"){
+            echo'
+            <li class="nav-item">
+              <a class="nav-link" id="profili-tab" data-toggle="tab" href="#profili" role="tab" aria-controls="profili" aria-selected="false">Gestione Profili</a>
+            </li>
+            ';
+          }
+          if($_SESSION['role']=="RL4"){
+            echo'
+            <li class="nav-item">
+              <a class="nav-link" id="new-profili-tab" data-toggle="tab" href="#new-profili" role="tab" aria-controls="new-profili" aria-selected="false">Aggiungi Profilo</a>
+            </li>
+            ';
+          }
+        ?>
         </ul>
         
         <div class="tab-content" id="myTabContent">
@@ -163,7 +269,6 @@
                     </h5>
                   </div>
                 ';
-                
                 echo'
                   <div id="collapse'.$cod_game.'" class="collapse '; 
                   //if($i == 0){echo'show';} 
@@ -174,15 +279,16 @@
                         <div class="form-row">
                           <div class="form-group col-md-2">
                             <label for="modTitle">Titolo</label>
-                            <input type="text" class="form-control" name="modTitle" placeholder="'.$title.'">
+                            <input type="text" class="form-control" name="modTitle" value="'.$title.'" >
+                            <input type="hidden" class="form-control" name="modCodGame" value="'.$cod_game.'">
                           </div>
                           <div class="form-group col-md-2">
                             <label for="modPrice">Prezzo</label>
-                            <input type="text" class="form-control" name="modPrice" placeholder="'.$price.'">
+                            <input type="text" class="form-control" name="modPrice" value="'.$price.'">
                           </div>
                           <div class="form-group col-md-2">
                             <label for="modPriceSale">Prezzo in Saldo</label>
-                            <input type="text" class="form-control" name="modPriceSale" placeholder="'.$price_on_sale.'">
+                            <input type="text" class="form-control" name="modPriceSale" value="'.$price_on_sale.'">
                           </div>
                           <div class="form-group col-md-2">
                             <label for="modNovita">Novità</label>
@@ -209,22 +315,22 @@
                           </div>
                           <div class="form-group col-md-2">
                             <label for="modImmagine">Immagine</label>
-                            <input type="text" class="form-control" name="modImmagine" placeholder="'.$image.'">
+                            <input type="text" class="form-control" name="modImmagine" value="'.$image.'">
                           </div>
                         </div>
 
                         <div class="form-row">
                           <div class="form-group col-md-4">
                             <label for="modDesc">Descrizione</label>
-                            <textarea type="text" class="form-control" name="modDesc" placeholder="'.$description.'" rows="3"></textarea>
+                            <textarea type="text" class="form-control" name="modDesc" rows="3">'.$description.'</textarea>
                           </div>
                           <div class="form-group col-md-4">
                             <label for="modReq">Requisiti Minimi</label>
-                            <textarea type="text" class="form-control" name="modReq" placeholder="'.$spec_req.'" rows="3"></textarea>
+                            <textarea type="text" class="form-control" name="modReq"  rows="3">'.$spec_req.'</textarea>
                           </div>
                           <div class="form-group col-md-4">
                             <label for="modTrailer">Trailer</label>
-                            <input type="text" class="form-control" name="modTrailer" placeholder="'.$trailer.'">
+                            <input type="text" class="form-control" name="modTrailer" value="'.$trailer.'">
                           </div>
                         </div>
 
@@ -238,7 +344,7 @@
                                 $codice_genere = $elem[0];
                                 $lista_generi = mysql_query("select dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
                                 echo'<div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="inputGeneri[]" value="'.$codice_genere.'" '; 
+                                  <input class="form-check-input" type="checkbox" name="modGeneri[]" value="'.$codice_genere.'" '; 
                                   while($gen = mysql_fetch_row($lista_generi)){
                                     $cc = $gen[0];
                                     if($codice_genere == $cc){
@@ -249,7 +355,8 @@
                                   echo'>
                                     <label class="form-check-label">'.$nome_genere.'</label>
                                   </div>';
-                              }
+                              } 
+							  
                           echo'
                           </div>
                         </div>
@@ -265,14 +372,15 @@
                             echo'
                             <div class="form-group col-md-3">
                               <label for="magazzini[]">'.$cod_magazzino.' '.$indi_maga.'</label>
-                              <input class="form-control" type="number" name="inputQuantita[]" value="'.$quantita_per_magazzino[0].'">
-                              <input class="form-control" type="hidden" name="inputMagazzini[]" value="'.$cod_magazzino.'">
+                              <input class="form-control" type="number" name="modQuantita[]" value="'.$quantita_per_magazzino[0].'">
+                              <input class="form-control" type="hidden" name="modMagazzini[]" value="'.$cod_magazzino.'">
                             </div>
                             ';
                           }
                         echo'   
                         </div>
-                        <button type="submit" name="updategame" class="btn btn-primary">Aggiorna</button>
+                        <button type="submit" name="updategame" class="btn btn-primary">Aggiorna Gioco</button>
+                        <button type="submit" name="deletegame" class="btn btn-danger">Cancella Gioco</button>
                       </form>
                     </div>
                   </div>
@@ -282,202 +390,6 @@
               }
             ?>
             </div>  
-
-              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">Codice</th>
-                  <th scope="col">Titolo</th>
-                  <th scope="col">Prezzo</th>
-                  <th scope="col">Console</th>
-                  <th scope="col">Prezzo Saldo</th>
-                  <th scope="col">Flag Saldo</th>
-                  <th scope="col">Flag News</th>
-                  <th scope="col">Immagine</th>
-                  <th scope="col">Descrizione</th>
-                  <th scope="col">Requisiti</th>
-                  <th scope="col">Trailer</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Quantità Totale</th>
-                  <th scope="col">Generi</th>
-                  <th scope="col">Modifca</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                  $lista_giochi = mysql_query("select g.*, SUM(gw.quantity) from my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_WAREHOUSE gw ON g.cod_game = gw.cod_game group by g.cod_game");
-                  while($gioco=mysql_fetch_row($lista_giochi)){
-                    $cod_game = $gioco[0];
-                    $title = $gioco[1];
-                    $price = $gioco[2];
-                    $cod_console = $gioco[3];
-                    $price_on_sale = $gioco[4];
-                    $flag_sale = $gioco[5];
-                    $flag_news = $gioco[6];
-                    $image = $gioco[7];
-                    $description = $gioco[8];
-                    $spec_req = $gioco[9];
-                    $trailer = $gioco[10];
-                    $insertion_date = $gioco[11];
-                    $quantity = $gioco[12];
-                    $console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$cod_console'"));
-                    $lista_generi = mysql_query("select dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
-                  
-                    echo'<tr';
-                    if($quantity == 0 || $quantity == NULL){
-                      echo' class="table-danger"';
-                    }elseif($quantity < 6){
-                      echo' class="table-warning"';
-                    }
-                    
-                    echo'>';
-                    echo'<th scope="row">'.$cod_game.'</th>';
-                    echo'<td>'.$title.'</td>';
-                    echo'<td>'.$price.'</td>';
-                    echo'<td>'.$console[0].'</td>';
-                    echo'<td>'.$price_on_sale.'</td>';
-                    echo'<td>'.$flag_sale.'</td>';
-                    echo'<td>'.$flag_news.'</td>';
-                    echo'<td>'.$image.'</td>';
-                    echo'<td>'.$description.'</td>';
-                    echo'<td>'.$spec_req.'</td>';
-                    echo'<td>'.$trailer.'</td>';
-                    echo'<td>'.$insertion_date.'</td>';
-                    echo'<td>'.$quantity.'</td>';
-                  
-                    echo'<td>';
-                    while($genere=mysql_fetch_row($lista_generi)){
-                      echo $genere[1].' ';
-                    }
-                    echo'</td>';
-
-                    echo'
-                    <td>
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                        Modifica
-                      </button>';
-
-                    echo'
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modifca Gioco</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">';
-                          echo"<form method='POST' action='modifica_game.php'>";
-                          echo'<ul class="list-group">';
-                          
-                          echo'<div class="row">';
-                            //generi
-                            $lista_generi_attivi = mysql_query("select dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
-                            $lista_generi = mysql_query("select dg.* from my_nopaynogame.DOM_GENRE dg");
-                            while($genere=mysql_fetch_row($lista_generi)){
-                              $cod_genre = $genere[0];
-                              $desc_genre = $genere[1];
-                              echo'<div class="col-md-3">';
-                              echo'<li class="list-group-item"><label class="form-check-label">
-                              <input type="checkbox" class="form-check-input" name="'.$cod_genre.'" value="'.$cod_genre.'" ';
-                              while($genere_attivo=mysql_fetch_row($lista_generi_attivi)){
-                                $cod_genre_active = $genere_attivo[0];
-                                if($cod_genre == $cod_genre_active){
-                                  echo'checked="checked"';
-                                }
-                              }
-                                  echo'>
-                                  '.$desc_genre.'
-                                  </label></li>';
-                                  echo'</div>';
-                              }
-
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="title">Titolo</label>
-                              <input type="text" name="title" class="form-control" placeholder="'.$title.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="price">Prezzo</label>
-                              <input type="text" name="price" class="form-control" placeholder="'.$price.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="price_on_sale">Prezzo Saldo</label>
-                              <input type="text" name="price_on_sale" class="form-control" placeholder="'.$price_on_sale.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="flag_news">Novità</label>
-                              <select id="flag_news" name="flag_news" class="form-control">
-                                <option selected></option>
-                                <option  value="Y">SI</option>
-                                <option  value="N">NO</option>
-                              </select>
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="description">Descrizione</label>
-                              <input type="text" name="description" class="form-control" placeholder="'.$description.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="spec_req">Requisiti Minimi</label>
-                              <input type="text" name="spec_req" class="form-control" placeholder="'.$spec_req.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="trailer">Trailer</label>
-                              <input type="text" name="trailer" class="form-control" placeholder="'.$trailer.'">
-                            </li></div>';
-                            echo'<div class="col-md-3"><li class="list-group-item">
-                              <label for="image">Immagine</label>
-                              <input type="text" name="image" class="form-control" placeholder="'.$image.'">
-                            </li></div>';
-                            //quantità
-                            
-                            $lista_warehouse = mysql_query("select w.*, gw.quantity from my_nopaynogame.WAREHOUSE w LEFT JOIN my_nopaynogame.GAME_WAREHOUSE gw ON w.cod_warehouse = gw.cod_warehouse where gw.cod_game = '$cod_game'");
-                            while($warehouse=mysql_fetch_row($lista_warehouse)){
-                              $cod_warehouse = $warehouse[0];
-                              $indirizzo = $warehouse[1];
-                              $quantity = $warehouse[3];
-                              echo'<div class="col-md-3"><li class="list-group-item">';
-                              echo'<label for="quantity_'.$cod_warehouse.'">Mag: '.$cod_warehouse.' '.$indirizzo.'</label>
-                              <input type="text" name="quantity_'.$cod_warehouse.'" class="form-control" placeholder="'.$quantity.'">';
-                              echo'</li></div>';
-                            }
-                            
-                            echo'</row>';
-                            echo'</ul>';
-                            echo"</form>";
-                          echo'</div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                            <button type="submit" class="btn btn-primary">Salva</button>
-                        </div>
-                      </div>
-                    </div>';
-                    //finem modal
-                  echo'
-                  </div>
-                  </td>';
-                  echo'</tr>';
-
-                }
-              
-              ?>
-            </tbody>
-          </table>
           </div>
 
           <!-- Inizio nuovo gioco -->
@@ -618,7 +530,10 @@
                     <td>'.$nome_game[0].'</td>
                     <td>'.$quantita.'</td>
                     <td>
-                      <button type="submit" name="save_user" class="btn btn-danger">Elimina</button>
+                      <input class="form-control" type="hidden" name="del_ordine" value="'.$id_order.'">
+                      <input class="form-control" type="hidden" name="game" value="'.$cod_game.'">
+                      <input class="form-control" type="hidden" name="quantity_game" value="'.$quantita.'">
+                      <button type="submit" name="deleteordine" class="btn btn-danger">Elimina</button>
                     </td>
                     </form>
                     </tr>

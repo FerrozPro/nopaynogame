@@ -20,37 +20,50 @@ foreach($ris as $riga){
   
   
  //QUERY MODIFICA DATI//
- /*$newcognome=$_POST['newsurname'];
+ $newcognome=$_POST['newsurname'];
  $newname = $_POST['newname'];
+ $newusername=$_POST['newusername'];
+ $newemail=$_POST['newemail'];
+ $newaddress=$_POST['newaddress'];
+ $newphone=$_POST['newphone'];
+ $newpassword=$_POST['newpassword'];
 if(isset($_POST['modificacognome'])){
-	$query ="UPDATE USERS SET surname='$newcognome'";
+	$query ="UPDATE USERS SET surname='$newcognome' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificanome'])){
-	$query ="UPDATE USERS SET NAME='$newname'";
+	$query ="UPDATE USERS SET NAME='$newname' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificausername'])){
-	$query ="UPDATE USERS SET username=$_POST['newusername']";
+	$query ="UPDATE USERS SET username='$newusername' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificaemail'])){
-	$query ="UPDATE USERS SET EMAIL=$_POST['newemail']";
+	$query ="UPDATE USERS SET EMAIL='$newemail' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificaindirizzo'])){
-	$query ="UPDATE USERS SET address=$_POST['newaddress']";
+	$query ="UPDATE USERS SET address='$newaddress' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificacell'])){
-	$query ="UPDATE USERS SET phone=$_POST['newphone']";
+	$query ="UPDATE USERS SET phone='$newphone' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificapassword'])){
-	$query ="UPDATE USERS SET password=$_POST['newpassword']";
+	$query ="UPDATE USERS SET password='$newpassword' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 	
-}*/
+}
+
 ?>
 <html lang="en">
 
@@ -140,7 +153,7 @@ if(isset($_POST['modificacognome'])){
 					  <th scope="row">Password</th>
 					  <td>******</td>
 					   <td>
-						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$modal"><i class="material-icons">&#xe418;</i></button>
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$password"><i class="material-icons">&#xe418;</i></button>
 					  </td>
 					  
 					</tr>
@@ -311,6 +324,33 @@ if(isset($_POST['modificacognome'])){
 				<div class="modal-body">
 				<form method=post>
 				  <input class="form-control" type=text name="newname" >
+				  <button type="submit" class="btn btn-warning" name="modificanome">Modifica</button>
+				</form>
+				</div>
+				
+				<!-- Modal footer -->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+				
+			  </div>
+			</div>
+		  </div>
+		  
+		   <div class="modal fade" id="$password">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			  
+				<!-- Modal Header -->
+				<div class="modal-header">
+				  <h4 class="modal-title">Modifica dati</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<!-- Modal body -->
+				<div class="modal-body">
+				<form method=post>
+				  <input class="form-control" type=text name="newpassword" >
 				  <button type="submit" class="btn btn-warning" name="modificanome">Modifica</button>
 				</form>
 				</div>

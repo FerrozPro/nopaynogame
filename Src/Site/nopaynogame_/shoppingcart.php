@@ -89,18 +89,22 @@ $i=0;
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Shopping cart</h1>
-          <p class="lead">Hi <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo $name;}?> this is your shopping cart</p>
+          <p class="lead">Ciao <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo $name;}?> questo è il tuo carrello</p>
        <!--Tabella prodotti-->
 	   
 	   <?php if(($step2==0 && $step3==0 && $step4==0 & $step5==0) || $back==1){ ?>
-	    <div class="progress">
-  <div class="progress-bar progress-bar-striped" style="width:20%"></div>
-</div>
-	   
-		<table id="cart" class="table table-hover table-condensed">
-    				<?php if(!isset($_SESSION['carrello'])){?>
-					<p> Il tuo carrello è vuoto! </p>
+	   <?php if(!isset($_SESSION['carrello'])){?>
+	    
+    				
+					<h3> Il tuo carrello è vuoto! </h3>
+					<img src='img/sad.png' style='width:30%; heigth:30%;'>
+					<a href='http://nopaynogame.altervista.org/nopaynogame_/index.php?cp=home'><button type='button' class='btn bt-success'>Shopping!</button></a>
 					<?php }else{ ?>
+					<div class="progress">
+					  <div class="progress-bar progress-bar-striped" style="width:20%"></div>
+					</div>
+				   
+					<table id="cart" class="table table-hover table-condensed">
 					<thead>
 						<tr>
 							<th style="width:50%">Product</th>
@@ -117,13 +121,19 @@ $i=0;
 					for($i=0;$i<$max;$i++){
 						$array[$i]=1;
 					}
-					
+					print_r($_SESSION['carrello']);
 					for($i=0;$i<$max;$i++){
-						for($j=1;$j<$max;$j++){
+						for($j=i+2;$j<$max;$j++){
 							
-							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] )
+							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] ){
 								$array[$i]=$array[$i]+1;
-							else $array[$i]=$array[$i]+0;
+								//unset($_SESSION['carrello'][$j]);
+							}
+							
+							else{
+								echo 'no';
+								$array[$i]=$array[$i]+0;
+							}
 						}
 					}
 		
@@ -151,18 +161,7 @@ $i=0;
 							</td>
 							<td data-th="Price"><?php echo $riga['PRICE']; ?></td>
 							<td data-th="Quantity">
-								<input type="number" class="form-control text-center" value=<?php 
-								$max=count($result);
-								$max_bis=count($_SESSION['carrello']);
-								 /* if(isset($_GET['delete'])){
-									for($i=0;$i<$max_bis;$i++){
-										print_r($_SESSION['carrello'][$i]);
-										if($_SESSION['carrello'][$i] == $_GET['delete'] )
-											unset($_SESSION['carrello'][$i]);
-										}
-									
-								}*/
-									echo $array[$i]; ?>>
+								<input type="number" class="form-control text-center" value=<?php echo $array[$i]; ?>>
 							</td>
 							<td data-th="Subtotal" class="text-center"><?php $riga['PRICE']; ?></td>
 							<td class="actions" data-th="">
@@ -207,44 +206,42 @@ $i=0;
 				</table>
 	   <?php }else if($step2==1 && $step3==0 && $step4==0 & $step5==0){ ?>
 	   <div class="progress">
-		<div class="progress-bar progress-bar-striped" style="width:40%"></div>
+		<div class="progress-bar progress-bar-striped" style="width:50%"></div>
 		</div>
 	    Il tuo indirizzo:
 	     <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">Nome</th>
-				  <th scope="col">Cognome</th>
-				  <th scope="col">Indirizzo di spedizione</th>
+				  <th scope="col">Nome: <?php echo $name; ?></th>
 				  <th scope="col"></th>
+				  <th scope="col"></th>
+				  <th scope="col"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myname">Modifica</button></th>
 				</tr>
 			  </thead>
 			  <tbody>
 				<tr>
-				  <th scope="row"><?php echo $name; ?></th>
-				  <td><?php echo $surname; ?></td>
-				  <td><?php echo $address; ?></td>
-				  <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Modifica</button></td>
+				  <th scope="row">Cognome: <?php echo $surname; ?></th>
+				  <td></td>
+				  <td></td>
+				  <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mysurname">Modifica</button></td>
+				</tr>
+				<tr>
+				  <th scope="row">Indirizzo: <?php echo $address; ?></th>
+				  <td></td>
+				  <td></td>
+				  <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myaddress">Modifica</button></td>
 				</tr>
 				
 			  </tbody>
 			</table>
 			<form method='post'>
 			<button type='submit' class='btn btn-warning btn-md' name='back'>Torna indietro</button>
-			<button type='submit' class='btn btn-success btn-md' name='buttonaddress'>Procedi al pagamento</button>
+			<button type='submit' class='btn btn-success btn-md' name='buttonpay'>Ultimo step!</button>
 			
 			</form>
 	   
 	   <?php }else if($step2==0 && $step3==1 && $step4==0 & $step5==0){ ?>
-	   <div class="progress">
-		<div class="progress-bar progress-bar-striped" style="width:60%"></div>
-		</div>
 	   
-			<form method='post'>
-               <button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
-				<button type='submit' class='btn btn-success btn-md' name='buttonpay'>Ultimo step!</button>
-				
-			</form>
 	   
 	   <?php }else if($step2==0 && $step3==0 && $step4==1 & $step5==0){ ?>
 	   <div class="progress">
@@ -258,20 +255,35 @@ $i=0;
 	       <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">#</th>
-				  <th scope="col">First</th>
-				  <th scope="col">Last</th>
-				  <th scope="col">Handle</th>
+				  <th scope="col">Codice gioco</th>
+				  <th scope="col">Titolo</th>
+				  <th scope="col">Prezzo</th>
+				  <th scope="col">Quantità</th>
 				</tr>
 			  </thead>
 			  <tbody>
+			  <?PHP 
+			  $i=0;
+			  $result = array_unique($_SESSION['carrello']);
+			  $max=count($result);
+			  while($max!=0){ 
+     		  $gioco=$result[$i];
+			  $query ="SELECT *,count(*) AS quantita_aggiunta FROM GAMES WHERE COD_GAME='$gioco'"; 
+			 
+				$ris = ($conn->query($query));  
+				foreach($ris as $riga){
+			    ?>
 				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  <td>Otto</td>
-				  <td>@mdo</td>
+				  <th scope="row"><?php echo $riga['COD_GAME']; ?></th>
+				  <td><?php echo $riga['TITLE']; ?></td>
+				  <td><?php echo $riga['PRICE']; ?></td>
+				  <td><?php $quantità ?></td>
 				</tr>
-				
+				<?php }
+					$i++;
+					$max--;
+			     }				
+				?>
 			  </tbody>
 			</table>
 		  </div>
@@ -281,18 +293,18 @@ $i=0;
 			  <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">#</th>
-				  <th scope="col">First</th>
-				  <th scope="col">Last</th>
-				  <th scope="col">Handle</th>
+				
+				  <th scope="col">Nome</th>
+				  <th scope="col">Cognome</th>
+				  <th scope="col">Indirizzo</th>
 				</tr>
 			  </thead>
 			  <tbody>
 				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  <td>Otto</td>
-				  <td>@mdo</td>
+				 
+				  <td><?php echo $name; ?></td>
+				  <td><?php echo $surname; ?></td>
+				  <td><?php echo $address; ?></td>
 				</tr>
 				
 			  </tbody>
@@ -301,12 +313,11 @@ $i=0;
 		  </div>
 		  <div class="col-6 col-md-4">
 				 <p>Pagamento</p>
-				  Metodo di pagamento:
 	     <table class="table">
 			  <thead>
 				<tr>
 				  <th scope="col">Metodo</th>
-				  <th scope="col"><?php echo $metodo_pagamento; ?></th>
+				 
 				  
 				</tr>
 			  </thead>
@@ -315,7 +326,7 @@ $i=0;
 				  <th scope="row">Bonifico bancario</th>
 				  <td><label>
 					  <input type="radio" name="bonifico" value="small" />
-					  <img src="img/b.jpg">
+					  <img src="img/bonifico.png" style='width:20%; heigth:20%;'>
 					</label></td>
 				  
 				</tr>
@@ -323,7 +334,7 @@ $i=0;
 				  <th scope="row">PayPal</th>
 				 <td><label>
 					  <input type="radio" name="paypal" value="small" />
-					  <img src="img/p.jpg">
+					  <img src="img/paypal.png" style='width:20%; heigth:20%;'>
 					</label></td>
 				  
 				</tr>
@@ -331,7 +342,7 @@ $i=0;
 				  <th scope="row">Contrassegno</th>
 				  <td><label>
 					  <input type="radio" name="contrassegno" value="small" />
-					  <img src="img/c.jpg">
+					  <img src="img/contrassegno.png" style='width:20%; heigth:20%;'>
 					</label></td>
 				  
 				</tr>
@@ -340,7 +351,7 @@ $i=0;
 		  </div>
 		</div> 
 			<form method='post'>
-			<button type='submit' class='btn btn-warning btn-md' name='buttonaddress'>Torna indietro</button>
+			<button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
 			<button type='submit' class='btn btn-success btn-md' name='confirm'>Invia ordine</button>
 			
 			</form>
@@ -472,22 +483,19 @@ $i=0;
 
 
 			<!-- The Modal -->
-			<div class="modal fade" id="myModal">
+			<div class="modal fade" id="myaddress">
 			  <div class="modal-dialog">
 				<div class="modal-content">
 
 				  <!-- Modal Header -->
 				  <div class="modal-header">
-					<h4 class="modal-title">Modal Heading</h4>
+					<h4 class="modal-title">Modifica dati</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				  </div>
 
 				  <!-- Modal body -->
 				  <div class="modal-body">
-					<label >Name:</label>
-					<input type="text" class="form-control" value="">
-					<label>Surname:</label>
-					<input type="text" class="form-control" value=''>
+					<form method='post'>
 					<label >Indirizzo:</label>
 					<input type="text" class="form-control" value=''>
 					
@@ -498,7 +506,75 @@ $i=0;
 
 				  <!-- Modal footer -->
 				  <div class="modal-footer">
-				    <button type="button" class="btn btn-success">Ok</button>
+				    <button type="submit" class="btn btn-success">Ok</button></form>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				  </div>
+
+				</div>
+			  </div>
+			</div>
+			
+				<!-- The Modal -->
+			<div class="modal fade" id="myname">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+
+				  <!-- Modal Header -->
+				  <div class="modal-header">
+					<h4 class="modal-title">Modifica dati</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				  </div>
+
+				  <!-- Modal body -->
+				  <div class="modal-body">
+				  <form method='post'>
+					<label >Nome:</label>
+					<input type="text" class="form-control" value="">
+					
+					
+					
+					
+					
+				  </div>
+
+				  <!-- Modal footer -->
+				  <div class="modal-footer">
+				    <button type="submit" class="btn btn-success">Ok</button></form>
+
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				  </div>
+
+				</div>
+			  </div>
+			</div>
+			
+			
+				<!-- The Modal -->
+			<div class="modal fade" id="mysurname">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+
+				  <!-- Modal Header -->
+				  <div class="modal-header">
+					<h4 class="modal-title"Modifica dati</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				  </div>
+
+				  <!-- Modal body -->
+				  <div class="modal-body">
+					 <form method='post'>
+					<label>Cognome:</label>
+					<input type="text" class="form-control" value=''>
+					
+					
+					
+					
+					
+				  </div>
+
+				  <!-- Modal footer -->
+				  <div class="modal-footer">
+				   <button type="submit" name='modifica_cognome' class="btn btn-success">Ok</button></form>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				  </div>
 

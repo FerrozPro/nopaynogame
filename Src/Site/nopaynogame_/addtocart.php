@@ -10,7 +10,7 @@
 		}
 		header('Location: index.php');
 	}else{
-		header('Location: sign.php?cp=sign');
+		header('Location: sign.php?cp=sign&msg=cart');
 	}
 
 ?>
