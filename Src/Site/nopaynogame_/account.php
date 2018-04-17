@@ -239,69 +239,67 @@ if(isset($_POST['modificacognome'])){
 				  </div>
 				  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
 				    <div class="container">
-					  <form>
-						<div class="form-group row">
-						<label for="inputSpecifica" class="col-sm-2 col-form-label"></label>
-						 <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect">
-							<option selected>Specifica il tipo di problema...</option>
-							<option value="1">One</option>
-							<option value="2">Two</option>
-							<option value="3">Three</option>
-						  </select>
-						  </label>
-						 </div>
-						 <div class="form-group row">
-						  <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-						  <div class="col-sm-10">
-							<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-						  </div>
-						  </div>
 						
-						<div class="form-group row">
-						  <label for="inputText" class="col-sm-2 col-form-label">Text</label>
-						  <div class="col-sm-10">
-							<textarea rows="4" cols="125"></textarea>
-						  </div>
-						</div>
-						<fieldset class="form-group row">
-						  <legend class="col-form-legend col-sm-2">More information</legend>
-						  <div class="col-sm-10">
-							<div class="form-check">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-								Option one is this and that&mdash;be sure to include why it's great
-							  </label>
-							</div>
-							<div class="form-check">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-								Option two can be something else and selecting it will deselect option one
-							  </label>
-							</div>
-							<div class="form-check disabled">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
-								Option three is disabled
-							  </label>
-							</div>
-						  </div>
-						</fieldset>
+							<?php
+							
+							   $query ="SELECT * FROM REVIEW WHERE ID_USER='$id_utente' ORDER BY ID_REVIEW DESC";
+							   $ris = ($conn->query($query));
+							   $ris->execute();
+							  if($ris->rowCount() > 0){
+								foreach($ris as $riga){
+								  
+								   $idreview=$riga['ID_REVIEW'];
+								   $cod_game=$riga['COD_GAME'];
+								   $stars=$riga['STARS'];
+								   $commento=$riga['COMMENT_TEXT'];
+							
+							
+							?>
 					
-						<div class="form-group row">
-						  <div class="offset-sm-2 col-sm-10">
-							<button type="submit" class="btn btn-primary">Submit</button>
-						  </div>
-						</div>
-					  </form>
+					
+					   <div class="accordion" id="accordion">
+							  <div class="card">
+								<div class="card-header" id="headingOne">
+								  <h5 class="mb-0">
+									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
+									   Commento ( <?php echo $idreview; ?> )
+									</button>
+								  </h5>
+								</div>
+								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+								  <div class="card-body">
+								  <p><?php
+								    for($i=0;$i<$stars;$i++){
+										echo '★';
+									}
+								  ?></p>
+								  <p><b>Commento:</b>
+								  <?php echo $commento; ?></p>
+								  </div>
+								</div>
+							  </div>
+							 <?php 	}
+							  }else echo 'Non hai ancora lasciato un commento';?>
+							  
+							 <!-- <div class="card">
+								<div class="card-header" id="headingTwo">
+								  <h5 class="mb-0">
+									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+									  Commento n^
+									</button>
+								  </h5>
+								</div>
+								<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+								  <div class="card-body">
+								  </div>
+									Testo
+								</div>
+							  </div> -->
+							  
+							  </div>
+							</div>
 					</div>
-				  
-				  
-				  
-				  
-				  </div>
 				</div>
-			</div> 
-		
 		  </div>
       </div>
     
