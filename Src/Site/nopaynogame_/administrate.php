@@ -17,6 +17,7 @@
   <body>
     <div class="container">
       <h1>Amministrazione</h1>
+      
 <!-- INZIO PHP -->
   <?php
   session_start();

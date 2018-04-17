@@ -1,6 +1,31 @@
-<?php
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>NoPayNoGame</title>
+  </head>
+  
+  <header>
+  <?php	include 'header.php'; ?>
+  </header>
+  
+
+  <body>
+    <div class="container">
+      <h1>Amministrazione</h1>
+      
+<!-- INZIO PHP -->
+  <?php
   session_start();
   include_once 'connection.php';
+
+  if($_SESSION['role']=="RL1"|| !isset($_SESSION['role'])){
+    header('Location: sign.php?cp=sign&msg=forbidden');
+  }
 
   $adduser = $_POST['adduser'];
   $addgame = $_POST['addgame'];
@@ -141,20 +166,63 @@
   }elseif(isset($deletegame)){
     /*QUERY PER ELIMINA GIOCO*/ 
     $modCodGame = $_POST['modCodGame'];
+    try {
+      $query = $conn -> prepare("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
+      $query -> execute();
+      
+      $query = $conn -> prepare("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
+      $query -> execute();
+      
+      $query = $conn -> prepare("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
+      $query -> execute();
 
-    $query = $conn -> prepare("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
-    $query -> execute();
+    }catch (Exception $e){
+      echo'
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>ATTENZIONE!</strong> Non è possibile cancellare il gioco poichè è presente in uno o più ordini.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>';
+    }
     
-    $query = $conn -> prepare("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
-    $query -> execute();
-    
-    $query = $conn -> prepare("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
-    $query -> execute();
   }elseif(isset($deleteordine)){
     /*QUERY PER ELIMINA ORDINE*/ 
     $del_ordine = $_POST['del_ordine'];
-    $game = $_POST['game'];
-    $quantity_game = $_POST['quantity_game'];
+    $id_user = $_POST['id_user_order'];
+
+    $order_games= ("SELECT cod_game,quantity,game_price FROM GAME_ORDER WHERE id_order = '$del_ordine'");
+    $ris = ($conn->query($order_games));  
+    foreach($ris as $riga){
+      $cod_game_result = $riga['cod_game'];
+      $quantity_result = $riga['quantity'];
+      $game_price_result = $riga['game_price'];
+      $warehouse = 'WH1';
+      
+      $quantity_warehouse= ("SELECT quantity FROM GAME_WAREHOUSE WHERE cod_game = '$cod_game_result'");
+      $risultato = ($conn->query($quantity_warehouse));  
+      foreach($risultato as $rigas) {
+        $safequantity = $rigas['quantity'];
+      }
+
+      $query = $conn -> prepare("UPDATE GAME_WAREHOUSE 
+      SET 
+      quantity = '$safequantity'+'$quantity_result'
+      WHERE cod_game = '$cod_game_result' and cod_warehouse = '$warehouse'");
+      $query -> execute();
+      
+      $quantity_warehouse= ("SELECT wallet FROM USERS WHERE id_user = '$id_user'");
+      $risultato = ($conn->query($quantity_warehouse));  
+      foreach($risultato as $rigas) {
+        $wallet = $rigas['quantity'];
+      }
+
+      $query = $conn -> prepare("UPDATE USERS 
+      SET 
+      wallet = '$wallet'+'$quantity_result'*'$game_price_result'
+      WHERE id_user = '$id_user'");
+      $query -> execute();
+    }
 
 
     $query = $conn -> prepare("DELETE FROM GAME_ORDER WHERE id_order = '$del_ordine'");
@@ -165,24 +233,7 @@
   }
 ?>
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>NoPayNoGame</title>
-  </head>
-  
-  <header>
-  <?php	include 'header.php'; ?>
-  </header>
-  
-  <body>
-    <div class="container">
-      <h1>Amministrazione</h1>
+<!-- FINE PHP -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
         <?php
           if($_SESSION['role']=="RL4" || $_SESSION['role']=="RL3" || $_SESSION['role']=="RL2"){
@@ -258,7 +309,7 @@
                     <h5 class="mb-0">
                       <button class="btn" data-toggle="collapse" data-target="#collapse'.$cod_game.'" aria-expanded="true" aria-controls="collapse'.$cod_game.'">';
                       if($quantita_totale == 0){
-                        echo'<i class="fa fa-times" style="color:red"></i><i class="fa fa-times" style="color:red"></i><i class="fa fa-times" style="color:red"></i>';
+                        echo'<i class="fa fa-times" style="color:red"></i>';
                       }elseif($quantita_totale <= 10){
                         echo'<i class="fa fa-exclamation-triangle" style="color:yellow"></i>';
                       } 
@@ -497,19 +548,19 @@
           <table class="table table-sm">
               <thead>
                 <tr>
-                  <th scope="col">Numero Ordine</th>
+                  <th scope="col">Nr. Ordine</th>
                   <th scope="col">Username</th>
                   <th scope="col">Pagamento</th>
                   <th scope="col">Data</th>
-                  <th scope="col">Codice Gioco</th>
-                  <th scope="col">Nome Gioco</th>
-                  <th scope="col">Quantità</th>
+                  <th scope="col">Nr. Artitoli</th>
+                  <th scope="col">Totale</th>
+                  <th scope="col">Dettagli</th>
                   <th scope="col">Elimina</th>
                 </tr>
               </thead>
               <tbody>
                 <?php 
-                  $lista= mysql_query("select * from my_nopaynogame.ORDERS o, my_nopaynogame.GAME_ORDER go where o.id_order = go.id_order");
+                  $lista= mysql_query("select *, SUM(go.game_price * go.quantity), SUM(go.quantity) from my_nopaynogame.ORDERS o, my_nopaynogame.GAME_ORDER go where o.id_order = go.id_order group by o.id_order");
                   while($elem = mysql_fetch_row($lista)){
                     $id_order = $elem[0];
                     $id_user = $elem[1];
@@ -517,22 +568,87 @@
                     $id_pagamento = $elem[2];
                     $pagamento = mysql_fetch_row(mysql_query("select desc_payment from my_nopaynogame.DOM_PAYMENT where cod_payment = '$id_pagamento'"));
                     $data = $elem[3];
-                    $cod_game = $elem[6];
-                    $nome_game = mysql_fetch_row(mysql_query("select title from my_nopaynogame.GAMES where cod_game = '$cod_game'"));
-                    $quantita = $elem[7];
+                    $totale = $elem[9];
+                    $quantita = $elem[10];
                     echo'
                     <tr><form method="post">
                     <th scope="row">'.$id_order.'</th>
                     <td>'.$username[0].'</td>
                     <td>'.$pagamento[0].'</td>
                     <td>'.$data.'</td>
-                    <td>'.$cod_game.'</td>
-                    <td>'.$nome_game[0].'</td>
                     <td>'.$quantita.'</td>
+                    <td>'.$totale.'</td>
+                    <td>
+                    <!-- Button to Open the Modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal'.$id_order.'">
+                      Vedi Dettagli
+                    </button>
+                    <!-- The Modal -->
+                    <div class="modal fade" id="myModal'.$id_order.'">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title">Dettagli Ordine Nr. '.$id_order.'</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+
+                          <!-- Modal body -->
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col"><p><b>Username:</b> '.$username[0].'</p></div>
+                              <div class="col"><p><b>Pagamento:</b> '.$pagamento[0].'</p></div>
+                              <div class="col"><p><b>Data:</b> '.$data.'</p></div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                              <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Nome Gioco</th>
+                                      <th scope="col">Console</th>
+                                      <th scope="col">Quantità</th>
+                                      <th scope="col">Prezzo</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>';
+                              $lista_giochi_ordine= mysql_query("select * from my_nopaynogame.GAME_ORDER where id_order ='$id_order'");
+                              while($game = mysql_fetch_row($lista_giochi_ordine)){
+                                $cod_game = $game[2];
+                                $nome_game = mysql_fetch_row(mysql_query("select title from my_nopaynogame.GAMES where cod_game = '$cod_game'"));
+                                $console = mysql_fetch_row(mysql_query("select c.desc_console from my_nopaynogame.GAMES g, my_nopaynogame.DOM_CONSOLE c where g.cod_game = '$cod_game' and g.cod_console = c.cod_console"));
+                                $squantity = $game[3];
+                                $gameprice = $game[4];
+                                echo'
+                                    <tr>
+                                      <th scope="row">'.$nome_game[0].'</th>
+                                      <td>'.$console[0].'</td>
+                                      <td>'.$squantity.'</td>
+                                      <td>'.$gameprice.'</td>
+                                    </tr>
+                                    ';
+                                  }
+                                  
+                                  echo'
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Modal footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                    </td>
                     <td>
                       <input class="form-control" type="hidden" name="del_ordine" value="'.$id_order.'">
-                      <input class="form-control" type="hidden" name="game" value="'.$cod_game.'">
-                      <input class="form-control" type="hidden" name="quantity_game" value="'.$quantita.'">
+                      <input class="form-control" type="hidden" name="id_user_order" value="'.$id_user.'">
                       <button type="submit" name="deleteordine" class="btn btn-danger">Elimina</button>
                     </td>
                     </form>
