@@ -6,7 +6,7 @@ if(!isset($_SESSION['user'])){ //se non è stato ancora fatto un login
 	header("Location: index.php"); //torna all'index
 }
 $utente=$_SESSION['user'];
-$query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
+$query ="SELECT * FROM USERS WHERE EMAIL='$utente' || USERNAME='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
   $id_utente= $riga ['ID_USER'];
@@ -16,6 +16,7 @@ foreach($ris as $riga){
   $username= $riga ['USERNAME'];
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
+  $wallet= $riga ['WALLET'];
   }
   
   
@@ -64,6 +65,27 @@ if(isset($_POST['modificacognome'])){
 	
 }
 
+//MODIFICA E ELIMINA COMMENTO//
+if(isset($_GET['eliminacommento'])){
+	$rev=$_GET['eliminacommento'];
+	$query ="DELETE FROM REVIEW WHERE ID_REVIEW='$rev'";
+	$ris = ($conn->query($query));
+}
+if(isset($_GET['modificacommento'])){
+	$modcommento=$_GET['modificacommento'];
+	$testocommento=
+	$query ="UPDATE REVIEW SET COMMENT_TEXT='$newcommento' WHERE ID_REVIEW='$modcommento'";
+	$ris = ($conn->query($query));
+}
+
+
+//RICARICA CONTO//
+if(isset($_POST['salva_ricarica'])){
+	$ricarica=$_POST['numero_ricarica'];
+	$query ="UPDATE USERS SET WALLET='$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
+}
 ?>
 <html lang="en">
 
@@ -95,6 +117,8 @@ if(isset($_POST['modificacognome'])){
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Il mio profilo</h1>
           <p class="lead">Ciao <?php echo $name; ?> questo è il tuo profilo personale!</p>
+         <p>Portafoglio:<?php echo $wallet; ?></p>
+		  <p class="lead"><img src='img/money.png' style="width:5%; heigth:5%; padding-rigth:20px;"></p>
 		 
 		 </div>
 		 
@@ -131,7 +155,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
-					  <th scope="row">Cosgnome:</th>
+					  <th scope="row">Cognome:</th>
 					  <td><?php echo $surname;?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$surname"><i class="material-icons">&#xe418;</i></button>
@@ -179,6 +203,14 @@ if(isset($_POST['modificacognome'])){
 					  <th scope="row">Ordini</th>
 					  <td>Total : count</td>
 					  <td><a href="#"><i class="material-icons">arrow_forward</i></a></td>
+					 
+					</tr>
+					<tr>
+					<th><i class="material-icons">shopping_cart</i></th>
+					  <th scope="row">Il tuo portafoglio</th>
+					  <td><?php echo $wallet;?></td>
+					  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></td>
+					  
 					 
 					</tr>
 					<form method='get' action="delete_account.php">
@@ -239,69 +271,88 @@ if(isset($_POST['modificacognome'])){
 				  </div>
 				  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
 				    <div class="container">
-					  <form>
-						<div class="form-group row">
-						<label for="inputSpecifica" class="col-sm-2 col-form-label"></label>
-						 <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect">
-							<option selected>Specifica il tipo di problema...</option>
-							<option value="1">One</option>
-							<option value="2">Two</option>
-							<option value="3">Three</option>
-						  </select>
-						  </label>
-						 </div>
-						 <div class="form-group row">
-						  <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-						  <div class="col-sm-10">
-							<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-						  </div>
-						  </div>
 						
-						<div class="form-group row">
-						  <label for="inputText" class="col-sm-2 col-form-label">Text</label>
-						  <div class="col-sm-10">
-							<textarea rows="4" cols="125"></textarea>
-						  </div>
-						</div>
-						<fieldset class="form-group row">
-						  <legend class="col-form-legend col-sm-2">More information</legend>
-						  <div class="col-sm-10">
-							<div class="form-check">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-								Option one is this and that&mdash;be sure to include why it's great
-							  </label>
-							</div>
-							<div class="form-check">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-								Option two can be something else and selecting it will deselect option one
-							  </label>
-							</div>
-							<div class="form-check disabled">
-							  <label class="form-check-label">
-								<input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
-								Option three is disabled
-							  </label>
-							</div>
-						  </div>
-						</fieldset>
+							<?php
+							
+							   $query ="SELECT * FROM REVIEW WHERE ID_USER='$id_utente' ORDER BY ID_REVIEW DESC";
+							   $ris = ($conn->query($query));
+							   $ris->execute();
+							   if($ris->rowCount() > 0){
+								  
+								foreach($ris as $riga){
+								  
+								   $idreview=$riga['ID_REVIEW'];
+								   $cod_game=$riga['COD_GAME'];
+								   $stars=$riga['STARS'];
+								   $commento=$riga['COMMENT_TEXT'];
+							  
+							
+							?>
 					
-						<div class="form-group row">
-						  <div class="offset-sm-2 col-sm-10">
-							<button type="submit" class="btn btn-primary">Submit</button>
-						  </div>
-						</div>
-					  </form>
+					
+					   <div class="accordion" id="accordion">
+							  <div class="card">
+								<div class="card-header" id="headingOne">
+								  <h5 class="mb-0">
+									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
+									   Commento ( <?php echo $idreview; ?> )
+									</button>
+								  </h5>
+								</div>
+							
+								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+								  <div class="card-body">
+								  <p><?php
+								    for($i=0;$i<$stars;$i++){
+										echo '★';
+									}
+								  ?></p>
+								  <p><b>Commento:</b>
+								  <?php echo $commento; ?></p>
+								   <b>Gioco:</b>
+								    <?php
+									$query ="SELECT * FROM GAMES WHERE COD_GAME='$cod_game'";
+									   $ris = ($conn->query($query));
+									   $ris->execute();
+									   foreach($ris as $riga){
+										  $gioco=$riga['TITLE'];
+										}
+									?>
+								<form method='get' action=game.php>
+									  <button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
+								</form>	
+								<form method='get'>
+									  <button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
+									  <button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
+							    </form>	
+									
+									
+								  </div>
+								</div>
+							  </div>
+							 <?php 	}
+							
+							  }else echo "<center><h4>Ancora nessun commento</h4> <img src='img/noorder.png' style='heigth:30%; width:30%;'></center>";?>
+							  
+							 <!-- <div class="card">
+								<div class="card-header" id="headingTwo">
+								  <h5 class="mb-0">
+									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+									  Commento n^
+									</button>
+								  </h5>
+								</div>
+								<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+								  <div class="card-body">
+								  </div>
+									Testo
+								</div>
+							  </div> -->
+							  
+							  </div>
+							</div>
 					</div>
-				  
-				  
-				  
-				  
-				  </div>
 				</div>
-			</div> 
-		
 		  </div>
       </div>
     
@@ -523,7 +574,31 @@ if(isset($_POST['modificacognome'])){
 				</div>
 
 	
-	
+					<!-- Modal RICARICA CONTO-->
+				<div class="modal fade" id="ricarica" tabindex="-1" role="dialog" aria-labelledby="ricarica" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Ricarica conto</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">
+						 
+						  <form method='post'>
+							Cifra:<input class="form-control" type='number' value=<?php echo $wallet; ?> name='numero_ricarica'>
+							<button type="submit" class="btn btn-primary" name='salva_ricarica'>Salva</button>
+						  </form>
+						
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						
+					  </div>
+					</div>
+				  </div>
+				</div>
 
     <!-- Bootstrap core JavaScript -->
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

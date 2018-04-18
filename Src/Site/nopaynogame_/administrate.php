@@ -33,6 +33,7 @@
   $updategame = $_POST['updategame'];
   $deletegame = $_POST['deletegame'];
   $deleteordine = $_POST['deleteordine'];
+  $saveordine = $_POST['saveordine'];
 
   if(isset($adduser)){
   /*QUERY PER NUOVO UTENTE*/
@@ -228,6 +229,24 @@
     $query -> execute();
     
     $query = $conn -> prepare("DELETE FROM ORDERS WHERE id_order = '$del_ordine'");
+    $query -> execute();
+  }elseif(isset($saveordine)){
+    /*QUERY PER MODIFICA ORDINE*/ 
+    $del_ordine = $_POST['del_ordine'];
+    $id_user = $_POST['id_user_order'];
+    $flag_pagato = $_POST['pagato'];
+    $flag_evaso = $_POST['evaso'];
+    $hid_pagato = $_POST['hidpagato'];
+    $hid_evaso = $_POST['hidevaso'];
+
+    if ($flag_pagato == Null){
+      $flag_pagato = $hid_pagato;
+    }
+    if ($flag_evaso == Null){
+      $flag_evaso = $hid_evaso;
+    }
+
+    $query = $conn -> prepare("UPDATE ORDERS SET flag_payd = '$flag_pagato', flag_evade = '$flag_evaso' WHERE id_order = '$del_ordine'");
     $query -> execute();
   }
 ?>
@@ -449,19 +468,19 @@
 						  <div class="form-row">
                 <div class="form-group col-md-2">
                   <label for="inputTitle">Titolo</label>
-                  <input type="text" class="form-control" name="inputTitle" placeholder="Titolo">
+                  <input type="text" class="form-control" name="inputTitle" placeholder="Titolo" required>
                 </div>
                 <div class="form-group col-md-2">
                   <label for="inputPrice">Prezzo</label>
-                  <input type="text" class="form-control" name="inputPrice" placeholder="xx.xx">
+                  <input type="text" class="form-control" name="inputPrice" placeholder="xx.xx" required>
                 </div>
                 <div class="form-group col-md-2">
                   <label for="inputPriceSale">Prezzo in Saldo</label>
-                  <input type="text" class="form-control" name="inputPriceSale" placeholder="xx.xx">
+                  <input type="text" class="form-control" name="inputPriceSale" placeholder="xx.xx" required>
                 </div>
                 <div class="form-group col-md-2">
                   <label for="inputNovita">Novità</label>
-                  <select id="inputNovita" name='inputNovita' class="form-control">
+                  <select id="inputNovita" name='inputNovita' class="form-control" required>
                     <option value="Y" selected></option>
                     <option  value="Y">SI</option>
                     <option  value="N">NO</option>
@@ -469,7 +488,7 @@
                 </div>
                 <div class="form-group col-md-2">
                   <label for="inputConsole">Console</label>
-                  <select id="inputConsole" name='inputConsole' class="form-control">
+                  <select id="inputConsole" name='inputConsole' class="form-control" required>
                     <option selected></option>
                     <?php
                       $lista= mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
@@ -530,7 +549,7 @@
                     <div class="form-group col-md-3">
                       <label for="magazzini[]">'.$cod_magazzino.' '.$indi_maga.'</label>
                       <input class="form-control" type="number" name="inputQuantita[]" value="0">
-                      <input class="form-control" type="hidden" name="inputMagazzini[]" value="'.$cod_magazzino.'">
+                      <input class="form-control" type="hidden" name="inputMagazzini[]" value="'.$cod_magazzino.'" required>
                     </div>
                     ';
                     }
@@ -553,7 +572,10 @@
                   <th scope="col">Data</th>
                   <th scope="col">Nr. Artitoli</th>
                   <th scope="col">Totale</th>
+                  <th scope="col">Pagato?</th>
+                  <th scope="col">Evaso?</th>
                   <th scope="col">Dettagli</th>
+                  <th scope="col">Salva</th>
                   <th scope="col">Elimina</th>
                 </tr>
               </thead>
@@ -567,8 +589,10 @@
                     $id_pagamento = $elem[2];
                     $pagamento = mysql_fetch_row(mysql_query("select desc_payment from my_nopaynogame.DOM_PAYMENT where cod_payment = '$id_pagamento'"));
                     $data = $elem[3];
-                    $totale = $elem[9];
-                    $quantita = $elem[10];
+                    $pagato = $elem[4];
+                    $evaso = $elem[5];
+                    $totale = $elem[11];
+                    $quantita = $elem[12];
                     echo'
                     <tr><form method="post">
                     <th scope="row">'.$id_order.'</th>
@@ -577,6 +601,32 @@
                     <td>'.$data.'</td>
                     <td>'.$quantita.'</td>
                     <td>'.$totale.'</td>
+                    <td>
+                      <select name="pagato" class="form-control"'; if($evaso == 'Y' || $pagato == 'Y'){echo' disabled';} echo'>
+                      <option value="'.$pagato.'" selected>'.$pagato.'</option>';
+                      if($pagato == 'Y'){
+                        $choice = 'N';
+                      }else{
+                        $choice = 'Y';
+                      }
+                      echo"<option  value='".$choice."'>".$choice."</option>";
+                      echo'
+                      </select>
+                      <input class="form-control" type="hidden" name="hidpagato" value="'.$pagato.'">
+                    </td>
+                    <td>
+                      <select name="evaso" class="form-control"'; if($pagato == 'N' || $evaso == 'Y'){echo' disabled';} echo'>
+                      <option value="'.$evaso.'" selected>'.$evaso.'</option>';
+                      if($evaso == 'Y'){
+                        $choice = 'N';
+                      }else{
+                        $choice = 'Y';
+                      }
+                      echo"<option  value='".$choice."'>".$choice."</option>";
+                      echo'
+                      </select>
+                      <input class="form-control" type="hidden" name="hidevaso" value="'.$evaso.'">
+                    </td>
                     <td>
                     <!-- Button to Open the Modal -->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal'.$id_order.'">
@@ -646,9 +696,12 @@
                     </div>
                     </td>
                     <td>
+                      <button type="submit" name="saveordine" class="btn btn-warning">Salva</button>
+                    </td>
+                    <td>
                       <input class="form-control" type="hidden" name="del_ordine" value="'.$id_order.'">
                       <input class="form-control" type="hidden" name="id_user_order" value="'.$id_user.'">
-                      <button type="submit" name="deleteordine" class="btn btn-danger">Elimina</button>
+                      <button type="submit" name="deleteordine" class="btn btn-danger"'; if($evaso == 'Y'){echo'disabled';} echo'>Elimina</button>
                     </td>
                     </form>
                     </tr>

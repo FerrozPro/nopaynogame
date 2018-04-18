@@ -6,7 +6,7 @@ if(!isset($_SESSION['user'])){ //se non è stato ancora fatto un login
 	header("Location: index.php"); //torna all'index
 }
 $utente=$_SESSION['user'];
-$query ="SELECT * FROM USERS WHERE EMAIL='$utente'";
+$query ="SELECT * FROM USERS WHERE EMAIL='$utente' || USERNAME='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
   $id_utente= $riga ['ID_USER'];
@@ -16,6 +16,7 @@ foreach($ris as $riga){
   $username= $riga ['USERNAME'];
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
+  $wallet= $riga ['WALLET'];
   }
   
   
@@ -64,6 +65,27 @@ if(isset($_POST['modificacognome'])){
 	
 }
 
+//MODIFICA E ELIMINA COMMENTO//
+if(isset($_GET['eliminacommento'])){
+	$rev=$_GET['eliminacommento'];
+	$query ="DELETE FROM REVIEW WHERE ID_REVIEW='$rev'";
+	$ris = ($conn->query($query));
+}
+if(isset($_GET['modificacommento'])){
+	$modcommento=$_GET['modificacommento'];
+	$testocommento=
+	$query ="UPDATE REVIEW SET COMMENT_TEXT='$newcommento' WHERE ID_REVIEW='$modcommento'";
+	$ris = ($conn->query($query));
+}
+
+
+//RICARICA CONTO//
+if(isset($_POST['salva_ricarica'])){
+	$ricarica=$_POST['numero_ricarica'];
+	$query ="UPDATE USERS SET WALLET='$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
+}
 ?>
 <html lang="en">
 
@@ -95,6 +117,8 @@ if(isset($_POST['modificacognome'])){
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Il mio profilo</h1>
           <p class="lead">Ciao <?php echo $name; ?> questo è il tuo profilo personale!</p>
+         <p>Portafoglio:<?php echo $wallet; ?></p>
+		  <p class="lead"><img src='img/money.png' style="width:5%; heigth:5%; padding-rigth:20px;"></p>
 		 
 		 </div>
 		 
@@ -131,7 +155,7 @@ if(isset($_POST['modificacognome'])){
 					</tr>
 					<tr>
 					<th><i class="material-icons">face</i></th>
-					  <th scope="row">Cosgnome:</th>
+					  <th scope="row">Cognome:</th>
 					  <td><?php echo $surname;?></td>
 					  <td>
 						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$surname"><i class="material-icons">&#xe418;</i></button>
@@ -179,6 +203,14 @@ if(isset($_POST['modificacognome'])){
 					  <th scope="row">Ordini</th>
 					  <td>Total : count</td>
 					  <td><a href="#"><i class="material-icons">arrow_forward</i></a></td>
+					 
+					</tr>
+					<tr>
+					<th><i class="material-icons">shopping_cart</i></th>
+					  <th scope="row">Il tuo portafoglio</th>
+					  <td><?php echo $wallet;?></td>
+					  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></td>
+					  
 					 
 					</tr>
 					<form method='get' action="delete_account.php">
@@ -245,14 +277,15 @@ if(isset($_POST['modificacognome'])){
 							   $query ="SELECT * FROM REVIEW WHERE ID_USER='$id_utente' ORDER BY ID_REVIEW DESC";
 							   $ris = ($conn->query($query));
 							   $ris->execute();
-							  if($ris->rowCount() > 0){
+							   if($ris->rowCount() > 0){
+								  
 								foreach($ris as $riga){
 								  
 								   $idreview=$riga['ID_REVIEW'];
 								   $cod_game=$riga['COD_GAME'];
 								   $stars=$riga['STARS'];
 								   $commento=$riga['COMMENT_TEXT'];
-							
+							  
 							
 							?>
 					
@@ -266,6 +299,7 @@ if(isset($_POST['modificacognome'])){
 									</button>
 								  </h5>
 								</div>
+							
 								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
 								  <div class="card-body">
 								  <p><?php
@@ -275,11 +309,30 @@ if(isset($_POST['modificacognome'])){
 								  ?></p>
 								  <p><b>Commento:</b>
 								  <?php echo $commento; ?></p>
+								   <b>Gioco:</b>
+								    <?php
+									$query ="SELECT * FROM GAMES WHERE COD_GAME='$cod_game'";
+									   $ris = ($conn->query($query));
+									   $ris->execute();
+									   foreach($ris as $riga){
+										  $gioco=$riga['TITLE'];
+										}
+									?>
+								<form method='get' action=game.php>
+									  <button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
+								</form>	
+								<form method='get'>
+									  <button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
+									  <button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
+							    </form>	
+									
+									
 								  </div>
 								</div>
 							  </div>
 							 <?php 	}
-							  }else echo 'Non hai ancora lasciato un commento';?>
+							
+							  }else echo "<center><h4>Ancora nessun commento</h4> <img src='img/noorder.png' style='heigth:30%; width:30%;'></center>";?>
 							  
 							 <!-- <div class="card">
 								<div class="card-header" id="headingTwo">
@@ -521,7 +574,31 @@ if(isset($_POST['modificacognome'])){
 				</div>
 
 	
-	
+					<!-- Modal RICARICA CONTO-->
+				<div class="modal fade" id="ricarica" tabindex="-1" role="dialog" aria-labelledby="ricarica" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Ricarica conto</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">
+						 
+						  <form method='post'>
+							Cifra:<input class="form-control" type='number' value=<?php echo $wallet; ?> name='numero_ricarica'>
+							<button type="submit" class="btn btn-primary" name='salva_ricarica'>Salva</button>
+						  </form>
+						
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						
+					  </div>
+					</div>
+				  </div>
+				</div>
 
     <!-- Bootstrap core JavaScript -->
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
