@@ -167,17 +167,16 @@
     /*QUERY PER ELIMINA GIOCO*/ 
     $modCodGame = $_POST['modCodGame'];
     try {
-      $query = $conn -> prepare("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
-      $query -> execute();
-      
-      $query = $conn -> prepare("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
-      $query -> execute();
-      
-      $query = $conn -> prepare("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
-      $query -> execute();
+      $conn -> beginTransaction();
+	  
+      $conn -> exec("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
+      $conn -> exec("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
+      $conn -> exec("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
+      $conn -> commit();
 
     }catch (Exception $e){
-      echo'
+      $conn -> rollBack();
+	  echo'
       <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <strong>ATTENZIONE!</strong> Non è possibile cancellare il gioco poichè è presente in uno o più ordini.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
