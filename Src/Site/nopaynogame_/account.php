@@ -304,41 +304,10 @@ if(isset($_POST['salva_ricarica'])){
 															}else{
 																echo " <span class='fa fa-star'></span>";
 															}
-<<<<<<< HEAD
 														}
 													?>
 												</p>
 												<p><b>Commento:</b><?php echo $commento; ?></p>
-=======
-														}?> )
-									</button>
-								  </h5>
-								</div>
-							
-								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-								  <div class="card-body">
-								  <p><?php
-								  $tot=5;
-									for($i = 0; $i < 5; $i++){
-										if($i < $stars){
-											echo " <span class='fa fa-star checked'></span>";
-										}else{
-											echo " <span class='fa fa-star'></span>";
-										}
-									}
-								  ?></p>
-								  <p><b>Commento:</b>
-								  <?php echo $commento; ?></p>
-								
-								<form method='get' action=game.php>
-									  <button type="submit" class="btn btn-primary btn-sm" name="game" value="<?php echo $cod_game ?>" >Vai al gioco</button><br><br><br>
-								</form>	
-								<form method='get'>
-									  <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
-									  <button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
-							    </form>	
-									 
->>>>>>> b21289894a6a3e9c58a08778bcbcf2071412d3f4
 									
 												<form method='get' action=game.php>
 													<button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
@@ -352,7 +321,6 @@ if(isset($_POST['salva_ricarica'])){
 
 									</div>
 								</div>
-<<<<<<< HEAD
 
 								<?php 	
 									}
@@ -368,16 +336,6 @@ if(isset($_POST['salva_ricarica'])){
 						<div class="tab-pane fade" id="pills-conto" role="tabpanel" aria-labelledby="pills-conto-tab">
 							<div class="container">
 
-=======
-							  </div> -->
-							  
-							  </div>
-							</div>
-						</div>
-						
-							<div class="tab-pane fade" id="pills-conto" role="tabpanel" aria-labelledby="pills-conto-tab">
-								<div class="container">
->>>>>>> b21289894a6a3e9c58a08778bcbcf2071412d3f4
 								<table class="table">
 									<thead>
 										<tr>
@@ -651,28 +609,18 @@ if(isset($_POST['salva_ricarica'])){
 			</div>
 		</div>
 
-<<<<<<< HEAD
 		<!--MODAL MODIFICA COMMENTO -->
 		<div class="modal fade" id="modifica<?php echo $idreview;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-=======
-				<!--MODAL MODIFICA COMMENTO -->
-				<div class="modal fade" id="modifica<?php echo $idreview;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				  <div class="modal-dialog" role="document">
-					<div class="modal-content">
-					  <div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Modifica commento</h5>
->>>>>>> b21289894a6a3e9c58a08778bcbcf2071412d3f4
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 					<div class="modal-body" >
 					  <form method='post' class="form-group">
-<<<<<<< HEAD
 							<p>Commento:</p>
 							<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
 							<div class="form-group row">
@@ -683,18 +631,6 @@ if(isset($_POST['salva_ricarica'])){
 							</div>
 						
 							<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
-=======
-						<p>Commento:</p>
-						<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
-						<div class="form-group row">
-							<label for="example-number-input" class="col-2 col-form-label">Stelle:</label>
-							<div class="col-2">
-							<input class="form-control" type="number" value="<?php echo $stars; ?>" name='stella' id="example-number-input" max='5' min='1'>
-							</div>
-						</div>
-						
-						<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
->>>>>>> b21289894a6a3e9c58a08778bcbcf2071412d3f4
 					  </form>
 					</div>
 					<div class="modal-footer">
