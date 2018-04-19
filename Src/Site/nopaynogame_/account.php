@@ -71,11 +71,12 @@ if(isset($_GET['eliminacommento'])){
 	$query ="DELETE FROM REVIEW WHERE ID_REVIEW='$rev'";
 	$ris = ($conn->query($query));
 }
-if(isset($_GET['modificacommento'])){
-	$modcommento=$_GET['modificacommento'];
-	$testocommento=
-	$query ="UPDATE REVIEW SET COMMENT_TEXT='$newcommento' WHERE ID_REVIEW='$modcommento'";
+if(isset($_POST['modificacommento'])){
+	$modcommento=$_POST['modificacommento'];
+	$testocommento=$_POST['nuovocommento'];
+	$query ="UPDATE REVIEW SET COMMENT_TEXT='$testocommento' WHERE ID_REVIEW='$modcommento'";
 	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
 }
 
 
@@ -101,6 +102,8 @@ if(isset($_POST['salva_ricarica'])){
     <!-- Bootstrap core CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		
 	
     <!-- Custom styles for this template -->
   
@@ -123,7 +126,7 @@ if(isset($_POST['salva_ricarica'])){
 		 </div>
 		 
 		 <div class="col-12 .col-md-4">
-				<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+				<ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Informazioni</a>
 					  </li>
@@ -133,8 +136,11 @@ if(isset($_POST['salva_ricarica'])){
 					  <li class="nav-item">
 						<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Review e Voti</a>
 					  </li>
+					  <li class="nav-item">
+						<a class="nav-link" id="pills-conto-tab" data-toggle="pill" href="#pills-conto" role="tab" aria-controls="pills-conto" aria-selected="false">Il mio conto</a>
+					  </li>
 					</ul>
-					<div class="tab-content" id="pills-tabContent">
+				<div class="tab-content" id="pills-tabContent">
 					  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 					   
 				  <table class="table table-striped">
@@ -199,23 +205,10 @@ if(isset($_POST['salva_ricarica'])){
 					 
 					</tr>
 					<tr>
-					<th><i class="material-icons">shopping_cart</i></th>
-					  <th scope="row">Ordini</th>
-					  <td>Total : count</td>
-					  <td><a href="#"><i class="material-icons">arrow_forward</i></a></td>
-					 
-					</tr>
-					<tr>
-					<th><i class="material-icons">shopping_cart</i></th>
-					  <th scope="row">Il tuo portafoglio</th>
-					  <td><?php echo $wallet;?></td>
-					  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></td>
-					  
-					 
-					</tr>
+					
 					<form method='get' action="delete_account.php">
 					<tr>
- 					<th><i class="material-icons"></i></th>
+ 					<th><i class="material-icons">highlight_off</i></th>
 					  <th scope="row">Cancella Account</th>
 					  <td></td>
 					  <td><button type='submit' class="btn btn-danger" name='eliminaccount' value=<?php echo "$id_utente"; ?>>Elimina</button></td>
@@ -288,29 +281,7 @@ if(isset($_POST['salva_ricarica'])){
 							  
 							
 							?>
-					
-					
-					   <div class="accordion" id="accordion">
-							  <div class="card">
-								<div class="card-header" id="headingOne">
-								  <h5 class="mb-0">
-									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
-									   Commento ( <?php echo $idreview; ?> )
-									</button>
-								  </h5>
-								</div>
-							
-								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-								  <div class="card-body">
-								  <p><?php
-								    for($i=0;$i<$stars;$i++){
-										echo '★';
-									}
-								  ?></p>
-								  <p><b>Commento:</b>
-								  <?php echo $commento; ?></p>
-								   <b>Gioco:</b>
-								    <?php
+								<?php
 									$query ="SELECT * FROM GAMES WHERE COD_GAME='$cod_game'";
 									   $ris = ($conn->query($query));
 									   $ris->execute();
@@ -318,14 +289,39 @@ if(isset($_POST['salva_ricarica'])){
 										  $gioco=$riga['TITLE'];
 										}
 									?>
+					
+					   <div class="accordion" id="accordion">
+							  <div class="card">
+								<div class="card-header" id="headingOne">
+								  <h5 class="mb-0">
+									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
+									   Commento ( <?php echo $gioco; echo ' - ';
+														for($i=0;$i<$stars;$i++){
+															echo " <span class='fa fa-star checked'>";
+														}?> )
+									</button>
+								  </h5>
+								</div>
+							
+								<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+								  <div class="card-body">
+								  <p><?php
+								  $tot=5;
+								    for($i=0;$i<$stars;$i++){
+										echo "<span class='fa fa-star checked'>";
+									}
+								  ?></p>
+								  <p><b>Commento:</b>
+								  <?php echo $commento; ?></p>
+								
 								<form method='get' action=game.php>
 									  <button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
 								</form>	
 								<form method='get'>
-									  <button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
+									  <button type="button" class="btn btn-warming" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
 									  <button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
 							    </form>	
-									
+									 
 									
 								  </div>
 								</div>
@@ -351,7 +347,61 @@ if(isset($_POST['salva_ricarica'])){
 							  
 							  </div>
 							</div>
+							</div>
+							<div class="tab-pane fade" id="pills-conto" role="tabpanel" aria-labelledby="pills-conto-tab">
+								<div class="container">
+								<table class="table">
+								  <thead>
+									<tr>
+									  <th scope="col">Il tuo portafoglio</th>
+									  <th scope="col"><?php echo $wallet;?></th>
+									  <th scope="col"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></th>
+									
+									</tr>
+								  </thead>
+								</table>
+								
+								<div class="row">
+									  <div class="col-sm-6 col-md-4">
+										<div class="thumbnail">
+										  <img src="img/sconti.png">
+										  <div class="caption">
+											<h3>Sconto di tot euro</h3>
+											<p>Con 100 punti</p>
+											<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
+										  </div>
+										</div>
+									  </div>
+									  <div class="col-sm-6 col-md-4">
+										<div class="thumbnail">
+										  <img src="img/sconti.png">
+										  <div class="caption">
+											<h3>Sconto e gioco gratis</h3>
+											<p>Con 500 punti</p>
+											<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
+										  </div>
+										</div>
+									  </div>
+									  <div class="col-sm-6 col-md-4">
+										<div class="thumbnail">
+										  <img src="img/sconti.png">
+										  <div class="caption">
+											<h3>Sconto, gioco gratis e spese di spedizione gratis</h3>
+											<p>Con 1000 punti</p>
+										<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
+										  </div>
+										</div>
+									  </div>
+									</div>
+								
+								     
+									 
+								</div>
+							</div>
+					
 					</div>
+					
+					 
 				</div>
 		  </div>
       </div>
@@ -585,16 +635,45 @@ if(isset($_POST['salva_ricarica'])){
 						</button>
 					  </div>
 					  <div class="modal-body">
+						 <form method='post'>
+							  <div class="form-group" >
+								Cifra:<input class="form-control" type='number' value=<?php echo $wallet; ?> name='numero_ricarica'>
+							  </div>
+							 
+							  <div class="form-check">
+								<input type="checkbox" class="form-check-input" id="exampleCheck1">
+								<label class="form-check-label" for="exampleCheck1">Paypal</label>
+							  </div>
+							  <button type="submit" class="btn btn-primary" name='salva_ricarica'>Salva</button>
+							
+							</form>
 						 
-						  <form method='post'>
-							Cifra:<input class="form-control" type='number' value=<?php echo $wallet; ?> name='numero_ricarica'>
-							<button type="submit" class="btn btn-primary" name='salva_ricarica'>Salva</button>
-						  </form>
-						
 					  </div>
 					  <div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						
+					  </div>
+					</div>
+				  </div>
+				</div>
+				<!--MODAL MODIFICA COMMENTO -->
+				<div class="modal fade" id="modifica<?php echo $idreview;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body" >
+					  <form method='post' class="form-group">
+						<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
+						<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
+					  </form>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					  </div>
 					</div>
 				  </div>
