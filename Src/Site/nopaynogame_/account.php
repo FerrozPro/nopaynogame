@@ -74,7 +74,8 @@ if(isset($_GET['eliminacommento'])){
 if(isset($_POST['modificacommento'])){
 	$modcommento=$_POST['modificacommento'];
 	$testocommento=$_POST['nuovocommento'];
-	$query ="UPDATE REVIEW SET COMMENT_TEXT='$testocommento' WHERE ID_REVIEW='$modcommento'";
+	$stelle=$_POST['stella'];
+	$query ="UPDATE REVIEW SET COMMENT_TEXT='$testocommento' , STARS='$stelle' WHERE ID_REVIEW='$modcommento'";
 	$ris = ($conn->query($query));
 	echo "<meta http-equiv='refresh' content='0'>";
 }
@@ -328,10 +329,10 @@ if(isset($_POST['salva_ricarica'])){
 								  <?php echo $commento; ?></p>
 								
 								<form method='get' action=game.php>
-									  <button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
+									  <button type="submit" class="btn btn-primary btn-sm" name="game" value="<?php echo $cod_game ?>" >Vai al gioco</button><br><br><br>
 								</form>	
 								<form method='get'>
-									  <button type="button" class="btn btn-warming" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
+									  <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
 									  <button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
 							    </form>	
 									 
@@ -360,7 +361,8 @@ if(isset($_POST['salva_ricarica'])){
 							  
 							  </div>
 							</div>
-							</div>
+						</div>
+						
 							<div class="tab-pane fade" id="pills-conto" role="tabpanel" aria-labelledby="pills-conto-tab">
 								<div class="container">
 								<table class="table">
@@ -675,14 +677,22 @@ if(isset($_POST['salva_ricarica'])){
 				  <div class="modal-dialog" role="document">
 					<div class="modal-content">
 					  <div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+						<h5 class="modal-title" id="exampleModalLabel">Modifica commento</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						  <span aria-hidden="true">&times;</span>
 						</button>
 					  </div>
 					  <div class="modal-body" >
 					  <form method='post' class="form-group">
+						<p>Commento:</p>
 						<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
+						<div class="form-group row">
+							<label for="example-number-input" class="col-2 col-form-label">Stelle:</label>
+							<div class="col-2">
+							<input class="form-control" type="number" value="<?php echo $stars; ?>" name='stella' id="example-number-input" max='5' min='1'>
+							</div>
+						</div>
+						
 						<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
 					  </form>
 					  </div>
