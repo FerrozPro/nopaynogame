@@ -36,7 +36,7 @@
 		$Titolo = $riga['TITLE'];
 		$Prezzo = $riga['PRICE'];
 		$Cod_console = $riga['COD_CONSOLE'];
-		$Prezzo_vendita = $riga['PRICE_ON_SALE'];
+		$Prezzo_saldo = $riga['PRICE_ON_SALE'];
 		$Flag_vendita = $riga['FLAG_SALE'];
 		$Flag_novita = $riga['FLAG_NEWS'];
 		$Immagine = $riga['IMAGE'];
@@ -54,10 +54,39 @@
       <h1><?php echo $Titolo?></h1>
       <div class="row">
         <div class="col-md-3">
-          <?php echo $Immagine?>foto <?php echo $FLAG_SALE?>saldo <?php echo $Flag_novita?>novità <?php echo $Prezzo?>prezzo carrello | generi?
+		  <img class='img-fluid' src="<?php echo $Immagine?>" alt="Non va">
+			
+		  <?php if($Prezzo_saldo < $Prezzo){
+                  echo"<h5>€<del>".$Prezzo."</del> <i class='fa fa-chevron-right'></i> €".$Prezzo_saldo."</h5>";
+                  echo'<span class="badge badge-pill badge-danger">SALDO</span>';
+								}else{
+									echo"<h5>€".$Prezzo."</h5>";
+                }
+			?>
+		  <?php echo $FLAG_SALE;
+			if($Flag_novita == 'Y'){
+				echo'<span class="badge badge-pill badge-success">NUOVO!</span>';
+			}
+			?>
+		    carrello 
+			
+			<?php
+				
+			
+			?>
+			
+			
+			| generi?
         </div>
         <div class="col-md-9">
-          <?php echo $Trailer?>trailer <?php echo $Descrizione?>descrizione <?php echo $Requisiti?>requisiti | generi?
+
+            
+      <iframe width="854" height="480" src="<?php echo str_replace("watch?v=","embed/",$Trailer);?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        
+			
+		  <?php echo $Descrizione?>descrizione 
+		  <?php echo $Requisiti?>
+		  requisiti | generi?
         </div>
       </div>
       <div class="row">
