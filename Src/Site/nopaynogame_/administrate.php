@@ -809,40 +809,40 @@
 						  <div class="form-row">
                 <div class="form-group col-md-3">
                   <label for="inputName">Nome</label>
-                  <input type="text" class="form-control" name="inputName" placeholder="Nome">
+                  <input type="text" class="form-control" name="inputName" placeholder="Nome" required>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="inputSurname">Cognome</label>
-                  <input type="text" class="form-control" name="inputSurname" placeholder="Cognome">
+                  <input type="text" class="form-control" name="inputSurname" placeholder="Cognome" required>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="inputEmail">Email</label>
-                  <input type="email" class="form-control" name="inputEmail" placeholder="Email">
+                  <input type="email" class="form-control" name="inputEmail" placeholder="Email" required>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="inputPassword4">Password</label>
-                  <input type="password" class="form-control" name="inputPassword" placeholder="Password">
+                  <input type="password" class="form-control" name="inputPassword" placeholder="Password" required>
                 </div>
 						  </div>
 
 						  <div class="form-row">
                 <div class="form-group col-md-3">
                   <label for="inputUsername">Username</label>
-                  <input type="text" class="form-control" name="inputUsername" placeholder="Username">
+                  <input type="text" class="form-control" name="inputUsername" placeholder="Username" required>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="inputAddress">Indirizzo</label>
-                  <input type="text" class="form-control" name="inputAddress" placeholder="via XXX">
+                  <input type="text" class="form-control" name="inputAddress" placeholder="via XXX" required>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="inputPhone">Phone</label>
-                  <input type="text" class="form-control" name="inputPhone" placeholder="1234567890">
+                  <input type="text" class="form-control" name="inputPhone" placeholder="1234567890" required>
                 </div>
                 
 
                 <div class="form-group col-md-3">
                   <label for="inputRuolo">Ruolo</label>
-                  <select id="inputRuolo" name='inputRuolo' class="form-control">
+                  <select id="inputRuolo" name='inputRuolo' class="form-control" required>
                     <option value="RL1" selected></option>
                     <?php    
                     $lista= mysql_query("select * from my_nopaynogame.DOM_ROLE");

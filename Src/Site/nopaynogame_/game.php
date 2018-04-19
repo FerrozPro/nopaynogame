@@ -16,11 +16,28 @@
   <?php	include 'header.php'; ?>
   </header>
   <body>
-  
-    <div class="container">
-      <h1>Hello, world!</h1>
-    </div>
 
+    <div class="container">
+      <h1>nome gioco</h1>
+      <div class="row">
+        <div class="col-md-3">
+          foto saldo novità prezzo carrello | generi?
+        </div>
+        <div class="col-md-9">
+          trailer descrizione requisiti | generi?
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+         recensioni
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+        giochi consigliati?
+        </div>
+      </div>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
