@@ -153,7 +153,7 @@ if(isset($_POST['salva_ricarica'])){
 										<th> <i class="material-icons">account_circle</i> </th>
 										<th scope="row">Nome:</th>
 										<td><?php echo $name;  ?></td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$name"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -161,7 +161,7 @@ if(isset($_POST['salva_ricarica'])){
 										<th><i class="material-icons">face</i></th>
 										<th scope="row">Cognome:</th>
 										<td><?php echo $surname;?></td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$surname"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -169,7 +169,7 @@ if(isset($_POST['salva_ricarica'])){
 									<th><i class="material-icons">face</i></th>
 										<th scope="row">Username:</th>
 										<td><?php echo $username; ?></td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$username"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -177,7 +177,7 @@ if(isset($_POST['salva_ricarica'])){
 									<th><i class="material-icons">fingerprint</i></th>
 										<th scope="row">Password:</th>
 										<td>******</td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$password"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -185,7 +185,7 @@ if(isset($_POST['salva_ricarica'])){
 									<th><i class="material-icons">home</i></th>
 										<th scope="row">Indirizzo:</th>
 										<td><?php echo $address;  ?></td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$address"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -193,7 +193,7 @@ if(isset($_POST['salva_ricarica'])){
 										<th><i class="material-icons">phone</i></th>
 										<th scope="row">Telefono:</th>
 										<td><?php echo $phone;?></td>
-										<td>
+										<td class="text-right">
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$phone"><i class="material-icons">&#xe418;</i></button>
 										</td>
 									</tr>
@@ -204,7 +204,7 @@ if(isset($_POST['salva_ricarica'])){
 										<th><i class="material-icons">highlight_off</i></th>
 										<th scope="row">Cancella Account</th>
 										<td></td>
-										<td><button type='submit' class="btn btn-danger" name='eliminaccount' value=<?php echo "$id_utente"; ?>>Elimina</button></td>
+										<td class="text-right"><button type='submit' class="btn btn-danger" name='eliminaccount' value=<?php echo "$id_utente"; ?>>Elimina</button></td>
 										</tr>
 									</form>
 
