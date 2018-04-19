@@ -106,7 +106,11 @@ if(isset($_POST['salva_ricarica'])){
 		
 	
     <!-- Custom styles for this template -->
-  
+		<style>
+		.checked {
+				color: orange;
+		}
+		</style>
 
 	</head>
   <header>
@@ -294,10 +298,15 @@ if(isset($_POST['salva_ricarica'])){
 							  <div class="card">
 								<div class="card-header" id="headingOne">
 								  <h5 class="mb-0">
-									<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
-									   Commento ( <?php echo $gioco; echo ' - ';
-														for($i=0;$i<$stars;$i++){
-															echo " <span class='fa fa-star checked'>";
+									<button class="btn" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
+									<i class="fa fa-chevron-right"></i>
+									   Recensione ( <?php echo $gioco; echo ' - ';
+														for($i = 0; $i < 5; $i++){
+															if($i < $stars){
+																echo " <span class='fa fa-star checked'></span>";
+															}else{
+																echo " <span class='fa fa-star'></span>";
+															}
 														}?> )
 									</button>
 								  </h5>
@@ -307,8 +316,12 @@ if(isset($_POST['salva_ricarica'])){
 								  <div class="card-body">
 								  <p><?php
 								  $tot=5;
-								    for($i=0;$i<$stars;$i++){
-										echo "<span class='fa fa-star checked'>";
+									for($i = 0; $i < 5; $i++){
+										if($i < $stars){
+											echo " <span class='fa fa-star checked'></span>";
+										}else{
+											echo " <span class='fa fa-star'></span>";
+										}
 									}
 								  ?></p>
 								  <p><b>Commento:</b>
@@ -656,6 +669,7 @@ if(isset($_POST['salva_ricarica'])){
 					</div>
 				  </div>
 				</div>
+
 				<!--MODAL MODIFICA COMMENTO -->
 				<div class="modal fade" id="modifica<?php echo $idreview;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  <div class="modal-dialog" role="document">
