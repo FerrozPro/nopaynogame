@@ -85,7 +85,7 @@
 			if(isset($_SESSION['carrello'])){
 				$num_item = count($_SESSION['carrello']);
 			}
-			echo'<a href="shoppingcart.php" class="btn btn-warning" role="button">
+			echo'<a href="shoppingcart.php?cp=carrello" class="btn btn-warning" role="button">
 			  Carrello <span class="badge badge-light">'.$num_item.'</span>
 			</a>';
           }

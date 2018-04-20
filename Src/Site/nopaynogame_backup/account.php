@@ -17,6 +17,7 @@ foreach($ris as $riga){
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
   $wallet= $riga ['WALLET'];
+  $punti= $riga ['FIDELITY_POINT'];
   }
   
   
@@ -81,11 +82,38 @@ if(isset($_POST['modificacommento'])){
 }
 
 //RICARICA CONTO//
-if(isset($_POST['salva_ricarica'])){
-	$ricarica=$_POST['numero_ricarica'];
-	$query ="UPDATE USERS SET WALLET='$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
-	$ris = ($conn->query($query));
-	echo "<meta http-equiv='refresh' content='0'>";
+if($punti > 0){
+	if(isset($_POST['ricaricaconto10'])){
+		$ricarica=10;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-100 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+		
+	}else if(isset($_POST['ricaricaconto30'])){
+		$ricarica=30;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-250 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+		
+	}else if(isset($_POST['ricaricaconto65'])){
+		$ricarica=65;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-500 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+	}else if(isset($_POST['ricaricaconto140'])){
+		$ricarica=140;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-1000 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+	}
 }
 ?>
 <html lang="en">
@@ -118,8 +146,15 @@ if(isset($_POST['salva_ricarica'])){
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Il mio profilo</h1>
           <p class="lead">Ciao <?php echo $name; ?> questo è il tuo profilo personale!</p>
-         	<p>Portafoglio:<?php echo $wallet; ?></p>
-		  		<p class="lead"><img src='img/money.png' style="width:5%; heigth:5%; padding-rigth:20px;"></p>
+         	
+			
+		  		<button type="button" class="btn btn-primary">
+				  Portafoglio <span class="badge badge-light"><?php echo $wallet; ?></span>
+				</button>
+				<button type="button" class="btn btn-primary">
+				  Punti fedeltà <span class="badge badge-light"><?php echo $punti; ?></span>
+				</button>
+				<br><br>
 		 		</div>
 		 
 				<div class="col-12 .col-md-4">
@@ -272,14 +307,16 @@ if(isset($_POST['salva_ricarica'])){
 											foreach($ris as $riga){
 												$gioco=$riga['TITLE'];
 											}
+											
+											
 								?>
-						
+						   
 								<div class="accordion" id="accordion">
 									<div class="card">
 
 										<div class="card-header" id="headingOne">
 											<h5 class="mb-0">
-												<button class="btn" type="button" data-toggle="collapse" data-target="#<?php echo $idreview; ?>" aria-expanded="false" aria-controls="collapseOne">
+												<button class="btn" type="button" data-toggle="collapse" data-target=<?php echo "#".$idreview; ?> aria-expanded="false" aria-controls="collapseOne">
 													<i class="fa fa-chevron-right"></i>
 													Recensione (<?php echo $gioco; echo ' - ';
 																				for($i = 0; $i < 5; $i++){
@@ -293,7 +330,7 @@ if(isset($_POST['salva_ricarica'])){
 											</h5>
 										</div>
 								
-										<div id="<?php echo $idreview; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+										<div id=<?php echo $idreview; ?> class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
 											<div class="card-body">
 												<p>
 													<?php
@@ -310,10 +347,10 @@ if(isset($_POST['salva_ricarica'])){
 												<p><b>Commento:</b><?php echo $commento; ?></p>
 									
 												<form method='get' action=game.php>
-													<button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
+													<button type="submit" class="btn btn-primary btn-sm" name="game" value="<?php echo $cod_game ?>" >Vai al gioco</button><br><br><br>
 												</form>	
 												<form method='get'>
-													<button type="button" class="btn btn-warming" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
+													<button type="button" class="btn btn-warming" data-toggle="modal" data-target=<?php echo "#modifica".$idreview;?> >Modifica</button>
 													<button type='submit' name='eliminacommento' value="<?php echo $idreview ?>" class="btn btn-danger"> Elimina </button>
 												</form>	
 											</div>
@@ -321,7 +358,40 @@ if(isset($_POST['salva_ricarica'])){
 
 									</div>
 								</div>
-
+										
+								<!--MODAL MODIFICA COMMENTO -->
+	
+								<div class="modal fade" id=<?php echo "modifica".$idreview;?> tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body" >
+											  <form method='post' class="form-group">
+													<p>Commento:</p>
+													<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
+													<div class="form-group row">
+														<label for="example-number-input" class="col-2 col-form-label">Stelle:</label>
+														<div class="col-2">
+															<input class="form-control" type="number" value="<?php echo $stars; ?>" name='stella' id="example-number-input" max='5' min='1'>
+														</div>
+													</div>
+												
+													<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
+											  </form>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											</div>
+										</div>
+									</div>
+								</div>	
+																
+										
 								<?php 	
 									}
 								}else{
@@ -336,45 +406,76 @@ if(isset($_POST['salva_ricarica'])){
 						<div class="tab-pane fade" id="pills-conto" role="tabpanel" aria-labelledby="pills-conto-tab">
 							<div class="container">
 
-								<table class="table">
+								<!--<table class="table">
 									<thead>
 										<tr>
 											<th scope="col">Il tuo portafoglio</th>
-											<th scope="col"><?php echo $wallet;?></th>
-											<th scope="col"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></th>
+											<th scope="col"><?php //echo $wallet;?></th>
+											<!--<th scope="col">
+										    <form method='post'>
+													<button type="submit" name="ricaricaconto10" <?php //if($punti<100){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 10 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto30" <?php //if($punti<250){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 30 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto65" <?php //if($punti<500){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 65 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto140"  <?php// if($punti<1000){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 140 euro</button>
+											</form>
+											<th>
 										</tr>
 									</thead>
-								</table>
+								</table>-->
 									
 								<div class="row">
-									<div class="col-sm-6 col-md-4">
-										<div class="thumbnail">
-											<img src="img/sconti.png">
-											<div class="caption">
-												<h3>Sconto di tot euro</h3>
-												<p>Con 100 punti</p>
-												<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
-											</div>
+									<div class="col-sm-6 col-md-3 ">
+										<div class="card" style="width: 18rem;">
+										  <img class="card-img-top" src="img/" alt="Card image cap">
+										  <div class="card-body">
+											<h5 class="card-title">100 punti</h5>
+											<p class="card-text">Con 100 punti potrai caricare il tuo portafoglio di 10 euro</p>
+											<form method='post'>
+											 <button type="submit" name="ricaricaconto10" <?php if($punti<100){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 10 euro</button>
+											</form>
+										  </div>
 										</div>
 									</div>
-									<div class="col-sm-6 col-md-4">
-										<div class="thumbnail">
-											<img src="img/sconti.png">
-											<div class="caption">
-												<h3>Sconto e gioco gratis</h3>
-												<p>Con 500 punti</p>
-												<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
-											</div>
+									<div class="col-sm-6 col-md-3">
+										<div class="card" style="width: 18rem;">
+										  <img class="card-img-top" src="img/" alt="Card image cap">
+										  <div class="card-body">
+											<h5 class="card-title">250 punti</h5>
+											<p class="card-text">Con 250 punti potrai caricare il tuo portafoglio di 30 euro</p>
+											<form method='post'>
+											 <button type="submit" name="ricaricaconto30" <?php if($punti<250){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 30 euro</button>
+											</form>
+										  </div>
 										</div>
 									</div>
-									<div class="col-sm-6 col-md-4">
-										<div class="thumbnail">
-											<img src="img/sconti.png">
-											<div class="caption">
-												<h3>Sconto, gioco gratis e spese di spedizione gratis</h3>
-												<p>Con 1000 punti</p>
-												<!--<p><a href="#" class="btn btn-warning" role="button">Riscatta</a></p>-->
-											</div>
+									<div class="col-sm-6 col-md-3">
+										<div class="card" style="width: 18rem;">
+										  <img class="card-img-top" src=".../100px180/" alt="Card image cap">
+										  <div class="card-body">
+											<h5 class="card-title">500 punti</h5>
+											<p class="card-text">Con 500 punti potrai caricare il tuo portafoglio di 65 euro</p>
+											<form method='post'>
+												<button type="submit" name="ricaricaconto65" <?php if($punti<500){ echo "class='btn btn-success disabled btn-lg btn-block ' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 65 euro</button>
+											</form>
+										  </div>
+										</div>
+									</div>
+									<div class="col-sm-6 col-md-3">
+										<div class="card" style="width: 18rem;">
+										  <img class="card-img-top" src=".../100px180/" alt="Card image cap">
+										  <div class="card-body">
+											<h5 class="card-title">1000 punti</h5>
+											<p class="card-text">Con 1000 punti potrai caricare il tuo portafoglio di 140 euro</p>
+											<form method='post'>
+												<button type="submit" name="ricaricaconto140"  <?php if($punti<1000){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 140 euro</button>
+											</form>
+										  </div>
 										</div>
 									</div>
 								</div>
@@ -609,37 +710,7 @@ if(isset($_POST['salva_ricarica'])){
 			</div>
 		</div>
 
-		<!--MODAL MODIFICA COMMENTO -->
-		<div class="modal fade" id="modifica<?php echo $idreview;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body" >
-					  <form method='post' class="form-group">
-							<p>Commento:</p>
-							<textarea class="form-control" rows="5" name='nuovocommento'><?php echo $commento ?></textarea>
-							<div class="form-group row">
-								<label for="example-number-input" class="col-2 col-form-label">Stelle:</label>
-								<div class="col-2">
-									<input class="form-control" type="number" value="<?php echo $stars; ?>" name='stella' id="example-number-input" max='5' min='1'>
-								</div>
-							</div>
-						
-							<button type='submit' name='modificacommento' value="<?php echo $idreview ?>" class="btn btn-warning"> Modifica </button>
-					  </form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
+		
     <!-- Bootstrap core JavaScript -->
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
