@@ -65,6 +65,7 @@ if($preparata->rowCount() > 0){
 									VALUES('$name','$surname','$address','$phone','$username','$password','$role','$email')");
 		$query -> execute();
 		if($query -> rowCount() > 0){ //se la registrazione è andata a buon fine
+			//require ("email.php");
 			$registrato=1;
 			$first=0;	
 		}
