@@ -107,10 +107,10 @@
 						
 						echo"<div class='col-lg-3 col-md-4 col-sm-6'>";
 							echo"<div class='card h-100'>";
-								echo"<a href='game.php?game=".$cod_gioco."'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
+								echo"<a href='game.php?cp=game&game=".$cod_gioco."'><img class='card-img-top img-fluid' src='".$img."' alt=''></a>";
 								echo"<div class='card-body'>";
 									echo"<h4 class='card-title'>";
-									echo"<a href='game.php?game=".$cod_gioco."'>".$nome_gioco."</a>";
+									echo"<a href='game.php?cp=game&game=".$cod_gioco."'>".$nome_gioco."</a>";
 									echo"</h4>";
 	
 									$stars = mysql_fetch_row(mysql_query("select AVG(stars) from my_nopaynogame.REVIEW where cod_game = '$cod_gioco'"));
