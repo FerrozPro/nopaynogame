@@ -148,17 +148,21 @@
         <div class="col-md-12">
 
          <?php
-		 $query_review = "SELECT *
-						  FROM REVIEW
-						  WHERE COD_GAME = '$codice_gioco ";
+		 $query_review = "SELECT * FROM REVIEW WHERE COD_GAME = '$codice_gioco'";
 						  
 		 $ris_review = ($conn->query($query_review));
 		 
 		 foreach ($ris_review as $riga) {
-			 $Id_review = riga['ID_REVIEW'];
-			 $Id_user = riga['ID_USER'];
-			 $Stelle = riga['STARS'];
-			 $Commenti = riga['COMMENT_TEXT'];
+			 $Id_review = $riga['ID_REVIEW'];
+			 $Id_user = $riga['ID_USER'];
+			 $Stelle = $riga['STARS'];
+			 $Commenti = $riga['COMMENT_TEXT'];
+
+			 echo $Id_review;
+			 echo $Id_user;
+			 echo $Stelle;
+			 echo $Commenti;
+
 		 }
 		 
 		 
