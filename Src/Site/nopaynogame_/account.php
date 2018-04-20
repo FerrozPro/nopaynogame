@@ -17,6 +17,7 @@ foreach($ris as $riga){
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
   $wallet= $riga ['WALLET'];
+  $punti= $riga ['FIDELITY_POINT'];
   }
   
   
@@ -81,11 +82,38 @@ if(isset($_POST['modificacommento'])){
 }
 
 //RICARICA CONTO//
-if(isset($_POST['salva_ricarica'])){
-	$ricarica=$_POST['numero_ricarica'];
-	$query ="UPDATE USERS SET WALLET='$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
-	$ris = ($conn->query($query));
-	echo "<meta http-equiv='refresh' content='0'>";
+if($punti > 0){
+	if(isset($_POST['ricaricaconto10'])){
+		$ricarica=10;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-100 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+		
+	}else if(isset($_POST['ricaricaconto30'])){
+		$ricarica=30;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-250 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+		
+	}else if(isset($_POST['ricaricaconto65'])){
+		$ricarica=65;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-500 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+	}else if(isset($_POST['ricaricaconto140'])){
+		$ricarica=140;
+		$query ="UPDATE USERS SET WALLET=WALLET+'$ricarica' WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		$query ="UPDATE USERS SET FIDELITY_POINT=FIDELITY_POINT-1000 WHERE EMAIL='$utente' || USERNAME='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+	}
 }
 ?>
 <html lang="en">
@@ -118,8 +146,15 @@ if(isset($_POST['salva_ricarica'])){
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Il mio profilo</h1>
           <p class="lead">Ciao <?php echo $name; ?> questo è il tuo profilo personale!</p>
-         	<p>Portafoglio:<?php echo $wallet; ?></p>
-		  		<p class="lead"><img src='img/money.png' style="width:5%; heigth:5%; padding-rigth:20px;"></p>
+         	
+			
+		  		<button type="button" class="btn btn-primary">
+				  Portafoglio <span class="badge badge-light"><?php echo $wallet; ?></span>
+				</button>
+				<button type="button" class="btn btn-primary">
+				  Punti fedeltà <span class="badge badge-light"><?php echo $punti; ?></span>
+				</button>
+				<br><br>
 		 		</div>
 		 
 				<div class="col-12 .col-md-4">
@@ -310,7 +345,7 @@ if(isset($_POST['salva_ricarica'])){
 												<p><b>Commento:</b><?php echo $commento; ?></p>
 									
 												<form method='get' action=game.php>
-													<button type="submit" class="btn btn-link" name="game" value="<?php echo $cod_game ?>"><?php echo $gioco;?></button><br>
+													<button type="submit" class="btn btn-primary btn-sm" name="game" value="<?php echo $cod_game ?>" >Vai al gioco</button><br><br><br>
 												</form>	
 												<form method='get'>
 													<button type="button" class="btn btn-warming" data-toggle="modal" data-target="#modifica<?php echo $idreview;?>">Modifica</button>
@@ -341,7 +376,20 @@ if(isset($_POST['salva_ricarica'])){
 										<tr>
 											<th scope="col">Il tuo portafoglio</th>
 											<th scope="col"><?php echo $wallet;?></th>
-											<th scope="col"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ricarica">Ricarica conto</button></th>
+											<th scope="col">
+										    <form method='post'>
+													<button type="submit" name="ricaricaconto10" <?php if($punti<100){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 10 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto30" <?php if($punti<250){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 30 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto65" <?php if($punti<500){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 65 euro</button>
+												<th>
+												<th scope="col">
+													<button type="submit" name="ricaricaconto140"  <?php if($punti<1000){ echo "class='btn btn-success disabled' "; }else{ echo "class='btn btn-success' ";} ?> > 140 euro</button>
+											</form>
+											<th>
 										</tr>
 									</thead>
 								</table>

@@ -80,9 +80,9 @@
         </div>
         <div class="col-md-9">
 
-            
-      <iframe width="854" height="480" src="<?php echo str_replace("watch?v=","embed/",$Trailer);?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        
+           <div class="embed-responsive embed-responsive-16by9"> 
+      <iframe  width="854" height="480" src="<?php echo str_replace("watch?v=","embed/",$Trailer);?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
 			
 		  <?php echo $Descrizione?>descrizione 
 		  <?php echo $Requisiti?>
@@ -91,6 +91,12 @@
       </div>
       <div class="row">
         <div class="col-md-12">
+		$stars = mysql_fetch_row(mysql_query("select AVG(stars) from my_nopaynogame.REVIEW where cod_game = '$cod_gioco'"));
+									echo'<span class="fa fa-star'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
+									echo'<span class="fa fa-star'; if($stars[0] >= 2 ) { echo' checked'; } echo'"></span>';
+									echo'<span class="fa fa-star'; if($stars[0] >= 3 ) { echo' checked'; } echo'"></span>';
+									echo'<span class="fa fa-star'; if($stars[0] >= 4 ) { echo' checked'; } echo'"></span>';
+									echo'<span class="fa fa-star'; if($stars[0] == 5 ) { echo' checked'; } echo'"></span>';
          recensioni
         </div>
       </div>
