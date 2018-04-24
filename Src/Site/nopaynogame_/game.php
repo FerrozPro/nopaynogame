@@ -189,16 +189,13 @@
 					</div>
 					<h5> Descrizione </h5>
 					<p><?php echo $Descrizione?></p>
-					<br>
 					<h5> Requisiti di sistema </h5>
 					<p><?php echo $Requisiti?></p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<br>
 					<h5> Recensioni </h5>
-					<br>
 					<div class="list-group">
 						<?php
 							$query_review = "SELECT * FROM REVIEW WHERE COD_GAME = '$codice_gioco'";
