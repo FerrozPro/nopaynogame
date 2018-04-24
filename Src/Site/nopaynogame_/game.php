@@ -265,8 +265,8 @@
 										$Titolo_gioco_random = $riga['TITLE'];
 										$Prezzo_gioco_random = $riga['PRICE'];
 										echo'
-										<div class="carousel-item col-md-3 ">
-											<img class="img-fluid mx-auto d-block '; if($i == 0){ echo 'active'; } echo'" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'">
+										<div class="carousel-item col-md-3 '; if($i == 0){ echo 'active'; } echo'">
+											<img class="img-fluid mx-auto d-block" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'">
 										</div>
 										';
 										$i++;
