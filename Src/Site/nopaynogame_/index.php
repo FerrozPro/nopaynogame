@@ -169,7 +169,8 @@
 								echo"</h4>";
 
 								$stars = mysql_fetch_row(mysql_query("select AVG(stars) from my_nopaynogame.REVIEW where cod_game = '$cod_gioco'"));
-								echo'<span class="fa fa-star-half-full'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
+								//echo'<span class="fa fa-star-half-full'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
+								echo'<span class="fa fa-star'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
 								echo'<span class="fa fa-star'; if($stars[0] >= 2 ) { echo' checked'; } echo'"></span>';
 								echo'<span class="fa fa-star'; if($stars[0] >= 3 ) { echo' checked'; } echo'"></span>';
 								echo'<span class="fa fa-star'; if($stars[0] >= 4 ) { echo' checked'; } echo'"></span>';
