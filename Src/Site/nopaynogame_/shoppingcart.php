@@ -1,9 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 
 <?php
 session_start();
 require 'connection.php';
+$utente=$_SESSION['user'];
+$query="SELECT ID_USER FROM USERS WHERE USERNAME='$utente' || EMAIL='$utente'";
+$ris = ($conn->query($query));
+foreach($ris as $riga){
+	$ute=$riga['ID_USER'];
+}
 $first=1;
 		
 		if(isset($_POST['buttoncheck'])){
@@ -21,7 +27,7 @@ $first=1;
 			$step3=0;
 			$step5=0;
 			$back=0;
-		}else if(isset($_POST['confirm'])){
+		}else if(isset($_POST['confirm'])){ 
 			$step5=1;
 			$step4=0;
 			$step2=0;
@@ -33,7 +39,7 @@ $first=1;
 		}
 		
 		
-$utente=$_SESSION['user'];
+
 $query ="SELECT * FROM USERS WHERE USERNAME='$utente' || EMAIL='$utente'";
 $ris = ($conn->query($query));
 foreach($ris as $riga){
@@ -43,6 +49,7 @@ foreach($ris as $riga){
   $username= $riga ['USERNAME'];
   $address= $riga ['ADDRESS'];
   $phone= $riga ['PHONE'];
+  $portafoglio= $riga ['WALLET'];
   }
  
 $max=count($_SESSION['carrello']); 
@@ -58,6 +65,32 @@ $i=0;
 		$i++;
 		//$max--;
 //}
+
+if(isset($_GET['delete_item'])){
+	$codice=$_GET['delete_item'];
+	foreach (array_keys($_SESSION['carrello'], $codice) as $key) {
+		unset($_SESSION['carrello'][$key]);
+	}
+}
+
+if(isset($_POST['modifica_cognome'])){
+	$newsurname=$_POST['newcognome'];
+	$query ="UPDATE USERS SET SURNAME='$newsurname' WHERE USERNAME='$utente' || email='$utente'";
+	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
+}else if(isset($_POST['modifica_nome'])){
+	$newname=$_POST['newnome'];
+	$query ="UPDATE USERS SET NAME='$newname' WHERE USERNAME='$utente' || email='$utente'";
+	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
+}else if(isset($_POST['modifica_indirizzo'])){
+	$newind=$_POST['newindirizzo'];
+	$query ="UPDATE USERS SET ADDRESS='$newind' WHERE USERNAME='$utente' || email='$utente'";
+	$ris = ($conn->query($query));
+	echo "<meta http-equiv='refresh' content='0'>";
+	
+}
+
 ?>
   
   <head>
@@ -86,10 +119,13 @@ $i=0;
         <div class="col-lg-12 text-center">
           <h1 class="mt-5">Carrello</h1>
           <p class="lead">Ciao <?php if(!isset($_SESSION['user'])){ echo "Utente Sconosciuto"; } else {echo $name;}?> questo è il tuo carrello</p>
+          <p class="lead"><button type="button" class="btn btn-primary">
+						  Portafoglio iniziale <span class="badge badge-light"><?php echo $portafoglio."€"; ?></span>
+						  </button></p>
        <!--Tabella prodotti-->
 	   
 	   <?php if(($step2==0 && $step3==0 && $step4==0 & $step5==0) || $back==1){ ?>
-	   <?php if(!isset($_SESSION['carrello'])){?>
+	   <?php if(!isset($_SESSION['carrello']) || empty($_SESSION['carrello'])){?>
 	    
     				
 					<h3> Il tuo carrello è vuoto! </h3>
@@ -112,35 +148,47 @@ $i=0;
 					</thead>
 					
 					<?php
-					$max=count($_SESSION['carrello']);
 					
-					for($i=0;$i<$max;$i++){
-						$array[$i]=1;
-					}
-					print_r($_SESSION['carrello']);
-					for($i=0;$i<$max;$i++){
-						for($j=i+2;$j<$max;$j++){
+					$total=0;
+					reset($_SESSION['carrello']);
+					$first_key = key($_SESSION['carrello']);
+					//print_r($_SESSION['carrello']);
+					$max=count($_SESSION['carrello']);
+					$unique = array_unique($_SESSION['carrello']);
+					$unique_c=count($unique);
+					
+					for($i=$first_key ;$i<$unique_c+$first_key;$i++)
+						$array[$i]++;
+					
+					$copia=$_SESSION['carrello'];
+			
+					$y=$first_key;
+					
+					for($i=$first_key;$i<$max+$first_key;$i++){ 
+						for($j=$i+1;$j<$max+$first_key;$j++){
 							
-							if($_SESSION['carrello'][$i] == $_SESSION['carrello'][$j] ){
-								$array[$i]=$array[$i]+1;
-								//unset($_SESSION['carrello'][$j]);
-							}
-							
-							else{
-								echo 'no';
-								$array[$i]=$array[$i]+0;
+							if($copia[$i] == $copia[$j] ){
+								$array[$y]=$array[$y]+1;
+								
 							}
 						}
+						$y++;
+						
+					
 					}
-		
-					$i=0;
-					$result = array_unique($_SESSION['carrello']);
-					$max=count($result);
-					while($max!=0 && $array[$i]!=0){ 
-							$gioco=$result[$i];
-							$query ="SELECT *,count(*) AS quantita_aggiunta FROM GAMES WHERE COD_GAME='$gioco'";
-							$ris = ($conn->query($query));  
+					
+					$i=$first_key;
+					
+					while($max+$first_key!=0){ 
+							$gioco=$unique[$i];
+							$query ="SELECT DISTINCT * FROM GAMES WHERE COD_GAME='$gioco'";
+							$ris = ($conn->query($query));
+							
 							foreach($ris as $riga){
+								$console=$riga['COD_CONSOLE'];
+								$querys ="SELECT DISTINCT * FROM DOM_CONSOLE WHERE COD_CONSOLE='$console'";
+								$riss = ($conn->query($querys));
+								foreach($riss as $rigas){
 								
 							
 					//}?>
@@ -148,44 +196,60 @@ $i=0;
 						<tr>
 							<td data-th="Product">
 								<div class="row">
-									<div class="col-sm-2 hidden-xs"><img src=<?php echo $riga['IMAGE']; ?> alt=<?php echo $riga['TITLE']; ?> class="img-responsive" style="width:200px; heigth:200px;"/></div>
+									<div class="col-sm-2 hidden-xs"><?php echo $rigas['DESC_CONSOLE']; ?> <class="img-responsive" style="width:200px; heigth:200px;"/></div>
 									<div class="col-sm-10">
 										<h4 class="nomargin"><?php echo $riga['TITLE']; ?></h4>
-										<p><?php echo $riga['DESCRIPTION']; ?></p>
+										
 									</div>
 								</div>
 							</td>
-							<td data-th="Price"><?php echo $riga['PRICE']; ?></td>
+							<td data-th="Price"><?php if($riga['FLAG_SALE']=='N') echo $riga['PRICE']; else echo $riga['PRICE_ON_SALE'];?></td>
 							<td data-th="Quantity">
 								<input type="number" class="form-control text-center" value=<?php echo $array[$i]; ?>>
 							</td>
-							<td data-th="Subtotal" class="text-center"><?php $riga['PRICE']; ?></td>
+							<td data-th="Subtotal" class="text-center"><?php if($riga['FLAG_SALE']=='N') echo $riga['PRICE']*$array[$i]; else echo $riga['PRICE_ON_SALE']*$array[$i];?></td>
 							<td class="actions" data-th="">
-								<form method='get'><button type='submit' class="btn btn-info btn-sm" name=refresh value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">autorenew</i></button>
-								<button type='submit' class="btn btn-danger btn-sm" name=delete value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">delete_forever</i></button></form>								
+								<form method='get'><button type='submit' class="btn btn-info btn-sm" name="refresh_item" value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">autorenew</i></button>
+								<button type='submit' class="btn btn-danger btn-sm" name="delete_item" value=<?php echo $riga['COD_GAME'];?>><i class="material-icons">delete_forever</i></button></form>								
 							</td>
 						</tr>
 					</tbody>
 					
-					<?php }
+					<?php 
+								/*if(isset($_GET['refresh_item'])){
+									/*echo "valori array";
+									print_r($array);
+									echo "valore carrello";
+									print_r($_SESSION['carrello']);
+									$codice=$_GET['refresh_item']; //ricerca all'interno del carrello -> restituire primo indice dove trovo l'elemento. Allo stess indice decremento la postazione di array
+									$y=$first_key;
+									for($i=$first_key;$i<$max+$first_key;$i++){ 
+										for($j=$i+1;$j<$max+$first_key;$j++){
+											
+											if($copia[$i] == $copia[$j] ){
+												$array[$y]=$array[$y]-1;
+												
+											}
+										}
+										$y++;
+									}
+					
+								}*/
+					
+								if($riga['FLAG_SALE']=='N'){
+									$total=$total+($riga['PRICE']*$array[$i]);
+								}
+								else{ $total=$total+($riga['PRICE_ON_SALE']*$array[$i]);
+									//echo $riga['PRICE_ON_SALE'];
+								}
+						
+							}
+					}
 						$i++;
 						$max--; 
-						$total=$total+($riga['PRICE']*$array[$i]);
-						
 					}
-					
-					
-						  /* $max=count($result);
-							if(isset($_GET['delete'])){
-								for($i=0;$i<$max;$i++){
-									print_r($result[$i]);
-									if($result[$i] == $_GET['delete']){
-										$array[$i]=0;
-									}
-								
-								}
-							}*/
 							
+						
 							?>
 					<tfoot>
 						<tr class="visible-xs">
@@ -198,9 +262,9 @@ $i=0;
 							<?php if(!isset($_SESSION['user'])) echo " <td><button type='submit' name='buttoncheck' class='btn btn-sucess btn-md' data-toggle='modal' data-target='#myModalregistrazione'>Checkout con registrazione</button></a></td>" ;
 							else echo" <form method=post><td><button type='submit' class='btn btn-success btn-md' name='buttoncheck' >Checkout</button></td></form>"; ?>
 						</tr>
-					</tfoot><?php } ?>
+	   </tfoot><?php } ?>
 				</table>
-	   <?php }else if($step2==1 && $step3==0 && $step4==0 & $step5==0){ ?>
+	   <?php  }else if($step2==1 && $step3==0 && $step4==0 & $step5==0){ ?>
 	   <div class="progress">
 		<div class="progress-bar progress-bar-striped" style="width:50%"></div>
 		</div>
@@ -208,7 +272,8 @@ $i=0;
 	     <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">Nome: <?php echo $name; ?></th>
+				  <th scope="col">Nome:</th>
+				  <td> <?php echo $name; ?></td>
 				  <th scope="col"></th>
 				  <th scope="col"></th>
 				  <th scope="col"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myname">Modifica</button></th>
@@ -216,13 +281,15 @@ $i=0;
 			  </thead>
 			  <tbody>
 				<tr>
-				  <th scope="row">Cognome: <?php echo $surname; ?></th>
+				  <th scope="row">Cognome: </th>
+				  <td><?php echo $surname; ?></td>
 				  <td></td>
 				  <td></td>
 				  <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mysurname">Modifica</button></td>
 				</tr>
 				<tr>
-				  <th scope="row">Indirizzo: <?php echo $address; ?></th>
+				  <th scope="row">Indirizzo: </th>
+				  <td><?php echo $address; ?></td>
 				  <td></td>
 				  <td></td>
 				  <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myaddress">Modifica</button></td>
@@ -244,36 +311,62 @@ $i=0;
 		<div class="progress-bar progress-bar-striped" style="width:100%"></div>
 	   </div>
 	   <div class="row">
-		  <div class="col-6 col-md-4">
+		  <div class="col-6 col-md-6">
 		  
-			 Riepilogo:
-		  <p>Prodotti</p>
+			<p> Riepilogo prodotti:</p>
 	       <table class="table">
 			  <thead>
 				<tr>
-				  <th scope="col">Codice gioco</th>
+				 <!-- <th scope="col">Codice gioco</th> -->
 				  <th scope="col">Titolo</th>
 				  <th scope="col">Prezzo</th>
+				  <th scope="col">Subtotale</th>
 				  <th scope="col">Quantità</th>
 				</tr>
 			  </thead>
 			  <tbody>
 			  <?PHP 
-			  $i=0;
+				$total=0;
+					reset($_SESSION['carrello']);
+					$first_key = key($_SESSION['carrello']);
+					//print_r($_SESSION['carrello']);
+					$max=count($_SESSION['carrello']);
+					$unique = array_unique($_SESSION['carrello']);
+					$unique_c=count($unique);
+					
+					for($i=$first_key ;$i<$unique_c+$first_key;$i++)
+						$array[$i]++;
+					
+					$copia=$_SESSION['carrello'];
+			
+					$y=$first_key;
+					for($i=$first_key;$i<$max+$first_key;$i++){ 
+						for($j=$i+1;$j<$max+$first_key;$j++){
+							
+							if($copia[$i] == $copia[$j] ){
+								$array[$y]=$array[$y]+1;
+							}
+						}
+						$y++;
+						
+					
+					}
+					$i=$first_key;
 			  $result = array_unique($_SESSION['carrello']);
-			  $max=count($result);
+			  $max+$first_key=count($result);
 			  while($max!=0){ 
      		  $gioco=$result[$i];
-			  $query ="SELECT *,count(*) AS quantita_aggiunta FROM GAMES WHERE COD_GAME='$gioco'"; 
+			  $query ="SELECT *FROM GAMES WHERE COD_GAME='$gioco' "; 
 			 
 				$ris = ($conn->query($query));  
 				foreach($ris as $riga){
 			    ?>
 				<tr>
-				  <th scope="row"><?php echo $riga['COD_GAME']; ?></th>
+				 <!-- <th scope="row"><?php //echo $riga['COD_GAME']; ?></th>-->
 				  <td><?php echo $riga['TITLE']; ?></td>
-				  <td><?php echo $riga['PRICE']; ?></td>
-				  <td><?php $quantità ?></td>
+				  <td><?php if($riga['FLAG_SALE']=='N') echo $riga['PRICE']; else echo $riga['PRICE_ON_SALE'];?></td>
+				  <td><?php if($riga['FLAG_SALE']=='N') echo $riga['PRICE']*$array[$i]; else echo $riga['PRICE_ON_SALE']*$array[$i];?></td>
+				  <td><?php echo $array[$i];?></td>
 				</tr>
 				<?php }
 					$i++;
@@ -282,9 +375,10 @@ $i=0;
 				?>
 			  </tbody>
 			</table>
+			<p>Con questo ordine guadagnerai X punti</p>
 		  </div>
 		  
-		  <div class="col-6 col-md-4">
+		  <div class="col-6 col-md-6">
 			 <p>Indirizzo di spedizione</p>
 			  <table class="table">
 			  <thead>
@@ -307,21 +401,30 @@ $i=0;
 			</table>
 			
 		  </div>
-		  <div class="col-6 col-md-4">
+		  
+		  <div class="col-6 col-md-6">
+		  <p>Pagamento</p>
+		  <select>
+			  <option value="volvo">Paypal</option>
+			  <option value="saab">Postepay</option>
+			  <option value="mercedes">Bonifico</option>
+			 
+		</select>
+		</div>
+		 <!-- <div class="col-6 col-md-6">
 				 <p>Pagamento</p>
 	     <table class="table">
 			  <thead>
 				<tr>
 				  <th scope="col">Metodo</th>
-				 
-				  
-				</tr>
+				 </tr>
 			  </thead>
 			  <tbody>
 				<tr>
 				  <th scope="row">Bonifico bancario</th>
-				  <td><label>
-					  <input type="radio" name="bonifico" value="small" />
+				 <form>
+				  <td><label >
+					  <input type="radio" value="bonifico" name='a' />
 					  <img src="img/bonifico.png" style='width:20%; heigth:20%;'>
 					</label></td>
 				  
@@ -329,7 +432,7 @@ $i=0;
 				<tr>
 				  <th scope="row">PayPal</th>
 				 <td><label>
-					  <input type="radio" name="paypal" value="small" />
+					  <input type="radio" value="paypal" name='a' />
 					  <img src="img/paypal.png" style='width:20%; heigth:20%;'>
 					</label></td>
 				  
@@ -337,33 +440,153 @@ $i=0;
 				<tr>
 				  <th scope="row">Contrassegno</th>
 				  <td><label>
-					  <input type="radio" name="contrassegno" value="small" />
+					  <input type="radio" value="contrassegno" name='a' />
 					  <img src="img/contrassegno.png" style='width:20%; heigth:20%;'>
 					</label></td>
-				  
+				 </form>
 				</tr>
 			  </tbody>
 			</table>
-		  </div>
-		</div> 
+		  </div> -->
+		</div>
 			<form method='post'>
 			<button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
 			<button type='submit' class='btn btn-success btn-md' name='confirm'>Invia ordine</button>
 			
 			</form>
 		    
-		  </div>
+		 </div> 
 		  
 	   
-	   <?php }else if($step2==0 && $step3==0 && $step4==0 & $step5==1){ ?>
+	   <?php }else if($step2==0 && $step3==0 && $step4==0 & $step5==1){
+		   
+					$total=0;
+					reset($_SESSION['carrello']);
+					$first_key = key($_SESSION['carrello']);
+					//print_r($_SESSION['carrello']);
+					$max=count($_SESSION['carrello']);
+					$unique = array_unique($_SESSION['carrello']);
+					$unique_c=count($unique);
+					$unique_ci=$unique_c;
+					for($i=$first_key ;$i<$unique_c+$first_key;$i++)
+						$array[$i]++;
+					
+					$copia=$_SESSION['carrello'];
+			
+					$y=$first_key;
+					for($i=$first_key;$i<$max+$first_key;$i++){ 
+						for($j=$i+1;$j<$max+$first_key;$j++){
+							
+							if($copia[$i] == $copia[$j] ){
+								$array[$y]=$array[$y]+1;
+							}
+						}
+						$y++;
+						
+					
+					}
+					$i=$first_key;
+			  $result = array_unique($_SESSION['carrello']);
+			  $max+$first_key=count($result);
+			  while($max!=0){ 
+     		  $gioco=$result[$i];
+			  $query ="SELECT * FROM GAMES WHERE COD_GAME='$gioco' "; 
+			 
+				$ris = ($conn->query($query));  
+				foreach($ris as $riga){
+			    ?>
+				<!---<tr>
+				
+				  <td><?php //echo $riga['TITLE']; ?></td>
+				  <td><?php// if($riga['FLAG_SALE']=='N') echo $riga['PRICE']; else echo $riga['PRICE_ON_SALE'];?></td>
+				  <td><?php //if($riga['FLAG_SALE']=='N') echo $riga['PRICE']*$array[$i]; else echo $riga['PRICE_ON_SALE']*$array[$i];?></td>
+				  <td><?php//echo $array[$i];?></td>
+				</tr> -->
+				<?php }
+					$i++;
+					$max--;
+			     }				
+				
+			
+			//query che inserisce l'ordine
+			$data=date("Y-m-d H:i:s");
+			$codepayment='PAY1'; //sistema
+			$query="INSERT INTO `ORDERS`(`ID_USER`, `COD_PAYMENT`, `DATE_ORDER`, `FLAG_PAYD`, `FLAG_EVADE`) 
+			VALUES ('$ute','$codepayment','$data','N','N')";
+			$ris = ($conn->query($query));
+			
+			//ricerca ultimo id_order inserito
+			$query="SELECT ID_ORDER FROM ORDERS ORDER BY ID_ORDER DESC LIMIT 1";
+			$ris = ($conn->query($query));
+			foreach($ris as $riga){
+				$id_order=$riga['ID_ORDER'];
+			}
+			
+			//ripetere per ogni elemento dell'array
+			$i=0;
+			while($unique_ci !=0){
+				$cod_game=$result[$i];
+				
+				$quantita=$array[$i];
+				$query="SELECT * FROM GAMES WHERE COD_GAME='$cod_game'";
+				$ris = ($conn->query($query));
+						foreach($ris as $riga){
+						$game_price =$riga['PRICE'];
+					
+						
+				
+						// dal codice del gioco faccio una query per prendere il costo
+						
+						$query="INSERT INTO `GAME_ORDER`(`ID_ORDER`, `COD_GAME`, `QUANTITY`, `GAME_PRICE`) 
+						VALUES ('$id_order','$cod_game','$quantita','$game_price')";
+						$ris = ($conn->query($query));
+						
+						
+						$query="UPDATE GAME_WAREHOUSE SET QUANTITY = QUANTITY - '$quantita' WHERE COD_GAME = '$cod_game' ";
+						$ris = ($conn->query($query));
+						
+						$query="UPDATE USERS SET WALLET = WALLET - '$game_price' WHERE ID_USER = '$ute' "; 
+						$ris = ($conn->query($query));
+						
+						$totale=$game_price+$totale;
+			 }
+			 $unique_ci--;
+			 $i++;
+			}
+			//supponendo che sia 1 punto ogni 10 euro
+			$punti+=$totale % 10;
+			$query="UPDATE USERS SET FIDELITY_POINT = FIDELITY_POINT + '$punti' WHERE ID_USER	= '$ute' ";
+			$ris = ($conn->query($query));
+			
+			$query="SELECT ID_ORDER FROM ORDERS ORDER BY ID_ORDER LIMIT 1";
+				$ris = ($conn->query($query));
+					foreach($ris as $riga){
+						$idordine=$riga['ID_ORDER'];
+						
+					}
+			$query="SELECT * FROM USERS WHERE ID_USER= '$ute' ";
+				$ris = ($conn->query($query));
+					foreach($ris as $riga){
+						$fidelity=$riga['FIDELITY_POINT'];
+						$portafoglio=$riga['WALLET'];
+						
+					}
+				
+	   ?>
 	     <h2>Ordine ricevuto!</h2>
-		 <p>Id ordine: $idordine</p>
-		 <p>Saldo punti: $punti </p>
+		 <p>Id ordine: <?php echo $id_order; ?></p>
+		 <p>Saldo punti: <?php echo $fidelity; ?> </p>
+		 <p>Il tuo portafoglio: <?php echo $portafoglio; ?> </p>
 	      <img src="img/check.png"></img>
 		 <p> Riceverai il tuo ordine tra 48h</p>
 	   
-	   <?php }?>
-				
+	   <?php 
+	    unset($_SESSION['carrello']);
+	     unset($array);
+	     unset($result);?>
+		<meta http-equiv="refresh" content="2;URL=http://www.nopaynogame.altervista.org/nopaynogame_">	
+	   <?php } ?> 
+	    	
 	
 
        
@@ -493,7 +716,7 @@ $i=0;
 				  <div class="modal-body">
 					<form method='post'>
 					<label >Indirizzo:</label>
-					<input type="text" class="form-control" value=''>
+					<input type="text" class="form-control"  name='newindirizzo' value=''>
 					
 					
 					
@@ -502,7 +725,7 @@ $i=0;
 
 				  <!-- Modal footer -->
 				  <div class="modal-footer">
-				    <button type="submit" class="btn btn-success">Ok</button></form>
+				    <button type="submit" class="btn btn-success" name="modifica_indirizzo" >Ok</button></form>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				  </div>
 
@@ -525,7 +748,7 @@ $i=0;
 				  <div class="modal-body">
 				  <form method='post'>
 					<label >Nome:</label>
-					<input type="text" class="form-control" value="">
+					<input type="text" name='newnome' class="form-control" value="">
 					
 					
 					
@@ -535,7 +758,7 @@ $i=0;
 
 				  <!-- Modal footer -->
 				  <div class="modal-footer">
-				    <button type="submit" class="btn btn-success">Ok</button></form>
+				    <button type="submit" class="btn btn-success" name="modifica_nome" >Ok</button></form>
 
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				  </div>
@@ -552,7 +775,7 @@ $i=0;
 
 				  <!-- Modal Header -->
 				  <div class="modal-header">
-					<h4 class="modal-title"Modifica dati</h4>
+					<h4 class="modal-title">Modifica dati</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				  </div>
 
@@ -560,7 +783,7 @@ $i=0;
 				  <div class="modal-body">
 					 <form method='post'>
 					<label>Cognome:</label>
-					<input type="text" class="form-control" value=''>
+					<input type="text" name='newcognome' class="form-control" value=''>
 					
 					
 					
@@ -570,7 +793,7 @@ $i=0;
 
 				  <!-- Modal footer -->
 				  <div class="modal-footer">
-				   <button type="submit" name='modifica_cognome' class="btn btn-success">Ok</button></form>
+				   <button type="submit" name="modifica_cognome" class="btn btn-success">Ok</button></form>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				  </div>
 
@@ -578,17 +801,19 @@ $i=0;
 			  </div>
 			</div>
 			
-			
+		
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 		<?php include 'script.php'; ?>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		<script type="text/javascript">
        int reply_click(clicked_id)
 		{
 			return clicked_id;
 		}
+		
 	</script>
   
   </body>

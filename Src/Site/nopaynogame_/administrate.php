@@ -207,19 +207,19 @@
 
       $query = $conn -> prepare("UPDATE GAME_WAREHOUSE 
       SET 
-      quantity = '$safequantity'+'$quantity_result'
+      quantity = '$safequantity'+'$quantity_result' 
       WHERE cod_game = '$cod_game_result' and cod_warehouse = '$warehouse'");
       $query -> execute();
       
       $quantity_warehouse= ("SELECT wallet FROM USERS WHERE id_user = '$id_user'");
       $risultato = ($conn->query($quantity_warehouse));  
       foreach($risultato as $rigas) {
-        $wallet = $rigas['quantity'];
+        $wallet = $rigas['wallet'];
       }
 
       $query = $conn -> prepare("UPDATE USERS 
       SET 
-      wallet = '$wallet'+'$quantity_result'*'$game_price_result'
+      wallet = '$wallet'+('$quantity_result'*'$game_price_result')
       WHERE id_user = '$id_user'");
       $query -> execute();
     }

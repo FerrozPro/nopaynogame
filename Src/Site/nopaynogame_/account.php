@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+   <!DOCTYPE html>
+<html>
+<head>
+	<title>Account</title>
+
+<body>
+</html>
+		
+
 <?php
 session_start();
 require 'connection.php';
@@ -11,6 +20,7 @@ $ris = ($conn->query($query));
 foreach($ris as $riga){
   $id_utente= $riga ['ID_USER'];
   $surname = $riga ['SURNAME'];
+  $password = MD5($riga ['PASSWORD']);
   $name = $riga ['NAME'];
   $email= $riga ['EMAIL'];
   $username= $riga ['USERNAME'];
@@ -28,7 +38,7 @@ foreach($ris as $riga){
  $newemail=$_POST['newemail'];
  $newaddress=$_POST['newaddress'];
  $newphone=$_POST['newphone'];
- $newpassword=$_POST['newpassword'];
+ $newpassword= MD5($_POST['newpassword']);
 if(isset($_POST['modificacognome'])){
 	$query ="UPDATE USERS SET surname='$newcognome' WHERE USERNAME='$utente' || email='$utente'";
 	$ris = ($conn->query($query));
@@ -55,9 +65,11 @@ if(isset($_POST['modificacognome'])){
 	echo "<meta http-equiv='refresh' content='0'>";
 	
 }else if(isset($_POST['modificacell'])){
-	$query ="UPDATE USERS SET phone='$newphone' WHERE USERNAME='$utente' || email='$utente'";
-	$ris = ($conn->query($query));
-	echo "<meta http-equiv='refresh' content='0'>";
+	if (ctype_digit($newphone)){
+		$query ="UPDATE USERS SET phone='$newphone' WHERE USERNAME='$utente' || email='$utente'";
+		$ris = ($conn->query($query));
+		echo "<meta http-equiv='refresh' content='0'>";
+	}else echo "<script type='text/javascript'>alert('Devi inserire solo numeri!');</script>";
 	
 }else if(isset($_POST['modificapassword'])){
 	$query ="UPDATE USERS SET password='$newpassword' WHERE USERNAME='$utente' || email='$utente'";
@@ -114,6 +126,19 @@ if($punti > 0){
 		$ris = ($conn->query($query));
 		echo "<meta http-equiv='refresh' content='0'>";
 	}
+}
+
+//elimina e modifica ordine
+if(isset($_POST['eliminaordine'])){
+	$ordine=$_POST['eliminaordine'];
+	$query ="DELETE FROM ORDERS WHERE ID_ORDER='$ordine'";
+	$ris = ($conn->query($query));
+}
+
+if(isset($_POST['paga'])){
+	$pagamento=$_POST['paga'];
+	$query ="UPDATE ORDERS SET FLAG_PAYD='Y' WHERE ID_ORDER='$pagamento'";
+	$ris = ($conn->query($query));
 }
 ?>
 <html lang="en">
@@ -205,15 +230,17 @@ if($punti > 0){
 										<th scope="row">Username:</th>
 										<td><?php echo $username; ?></td>
 										<td class="text-right">
-											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$username"><i class="material-icons">&#xe418;</i></button>
+											<!--<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$username"><i class="material-icons">&#xe418;</i></button> -->
 										</td>
 									</tr>
 									<tr>
 									<th><i class="material-icons">fingerprint</i></th>
 										<th scope="row">Password:</th>
-										<td>******</td>
+										<td><?php for($i=0;$i<strlen($password);$i++) echo '*'; ?></td>
 										<td class="text-right">
+										
 											<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#$password"><i class="material-icons">&#xe418;</i></button>
+											 
 										</td>
 									</tr>
 									<tr>
@@ -251,39 +278,120 @@ if($punti > 0){
 						<!--profilo-->
 						<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
 							<?php //query per gli ordini//
-								$query ="SELECT * FROM ORDERS WHERE ID_USER='$id_utente'";
+								$query ="SELECT * FROM ORDERS WHERE ID_USER='$id_utente' ORDER BY ID_ORDER DESC";
 								$ris = ($conn->query($query));
 								$ris->execute();
 								if($ris->rowCount() <= 0){
 									echo "<center><H2>Non hai ancora effettuato un ordine :( </H2> <img src=img/sad.png style=' width:30%; heigth:30%'></center>";
 								}else{
 									foreach($ris as $riga){
+										$pagato=$riga['FLAG_PAYD'];
+										$ordine=$riga['ID_ORDER'];
 							?>
-									<table class="table table-striped">
-										<thead>
-											<tr>
-												<td>Numero ordine</td>
-												<td>Data</td>
-												<td>N. Prodotti</td>
-												<td>Totale</td>
-												<td>Visualizza</td>
-											</tr>
-										</thead>
+										<table class="table">
+											<thead>
+												<tr>
+													<td>Numero ordine</td>
+													<td>Data</td>
+													
+													<td>Visualizza</td>
+													<td>Paga</td>
+												</tr>
+											</thead>
 
-										<tbody>
-											<tr>
-												<th><?php echo $riga['ID_ORDER'];?></th>
-												<td><?php echo $riga['DATE_ORDER'];?></th>
-												<td><?php echo $conta_prodotti;?></td>
-												<td><?php echo $totale;?></td>
-												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#<?php echo $riga['ID_ORDER']; ?> ">
-													Launch demo modal
-												</button>
-												<td><i class="material-icons">favorite_border</i></td>
-											</tr>
-										</tbody>
-									</table>
-							<?php } }?>
+											<tbody>
+												<tr <?php if ($riga['FLAG_EVADE'] == 'Y') echo "class='table-success'"; else echo "class='table-warning'" ;?>>
+													<th><?php echo $riga['ID_ORDER'];?></th>
+													<td><?php echo $riga['DATE_ORDER'];?></th>
+													
+													
+													<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ordine<?php echo $riga['ID_ORDER'];?>">
+														♥
+													</button></td>
+													<td>
+													<?php if($pagato=='N'){ 
+														echo" <form method='post'><button type='submit' name='paga' class='btn btn-success' value=".$riga['ID_ORDER'].">
+															Paga
+														</button></form>";
+													} else {
+														echo "Pagato!";
+													}
+													
+													?>
+													</td>
+													<!--<td><i class="material-icons">favorite_border</i></td> -->
+												</tr>
+											</tbody>
+										</table>
+										
+							
+									<div class="modal fade" id="ordine<?php echo $riga['ID_ORDER'];?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+								  <div class="modal-dialog" role="document">
+									<div class="modal-content">
+									  <div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLongTitle">Ordine</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										  <span aria-hidden="true">&times;</span>
+										</button>
+									  </div>
+									  <div class="modal-body">
+										<div class="container">
+											   <table class="table table-striped">
+												<thead>
+												  <tr>
+													<th>Titolo</th>
+													<th>Prezzo</th>
+													<th>Quantità</th>
+												  </tr>
+												</thead>
+												<?php  $query ="SELECT * FROM GAME_ORDER WHERE ID_ORDER='$ordine' ";
+													   $ris = ($conn->query($query));
+													   $ris->execute();
+													   $somma=0;
+													   foreach($ris as $riga){
+														   $cod=$riga['COD_GAME'];
+															   ?>
+																<tbody>
+																  <tr>
+																	<td>
+																	<?php $squery ="SELECT * FROM GAMES WHERE COD_GAME='$cod'"; 
+																	$ris = ($conn->query($squery));
+																	$ris->execute();
+																	foreach($ris as $rigas){ echo $rigas['TITLE'];}?></td>
+																	<td><?php echo $riga['GAME_PRICE'];?></td>
+																	<td><?php echo $riga['QUANTITY'];?></td>
+																  </tr>
+																 </tbody>
+																 
+														 <?php $somma+= $riga['GAME_PRICE'] * $quantita; //fare la quantitaaa
+																$differenza = date_diff(date("Y-m-d H:i:s"), $riga['DATE_ORDER'] );
+																$evaso=$riga['FLAG_EVADED']; 
+														} ?>
+											  </table>
+											  <p>Totale: <?php echo $somma; ?></p>
+											  <?php if( $differenza<=2 && $evaso!='Y'){
+														echo "<form method='post'>";
+														echo "<button type='submit' class='btn btn-danger' name='eliminaordine' value='$ordine'>Elimina ordine</button>";
+														echo "<button type='submit' class='btn btn-warning' name='modificaordine' value='$ordine'>Modifica ordine</button>";
+														echo "</form>";
+													} ?>
+											</div>
+									  </div>
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										
+									  </div>
+									</div>
+								  </div>
+								</div>
+								
+								
+								
+								
+							<?php 
+									}?><p>Legenda: Giallo -> da spedire Verde -> spedito</p> <?php
+							
+							}?>
 						</div>
 						<!--profilo fine-->
 
@@ -432,19 +540,19 @@ if($punti > 0){
 								<div class="row">
 									<div class="col-sm-6 col-md-3 ">
 										<div class="card" style="width: 18rem;">
-										  <img class="card-img-top" src="img/" alt="Card image cap">
+										 
 										  <div class="card-body">
 											<h5 class="card-title">100 punti</h5>
 											<p class="card-text">Con 100 punti potrai caricare il tuo portafoglio di 10 euro</p>
 											<form method='post'>
-											 <button type="submit" name="ricaricaconto10" <?php if($punti<100){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 10 euro</button>
+											<?php if($punti<100){ echo "<button type='button' class='btn btn-success disabled btn-lg btn-block'>10 euro </button>"; }else{ echo "<button type='submit' name='ricaricaconto10' class='btn btn-success btn-lg btn-block'> 10 euro</button> ";} ?> 
 											</form>
 										  </div>
 										</div>
 									</div>
 									<div class="col-sm-6 col-md-3">
 										<div class="card" style="width: 18rem;">
-										  <img class="card-img-top" src="img/" alt="Card image cap">
+										 
 										  <div class="card-body">
 											<h5 class="card-title">250 punti</h5>
 											<p class="card-text">Con 250 punti potrai caricare il tuo portafoglio di 30 euro</p>
@@ -456,7 +564,7 @@ if($punti > 0){
 									</div>
 									<div class="col-sm-6 col-md-3">
 										<div class="card" style="width: 18rem;">
-										  <img class="card-img-top" src=".../100px180/" alt="Card image cap">
+										
 										  <div class="card-body">
 											<h5 class="card-title">500 punti</h5>
 											<p class="card-text">Con 500 punti potrai caricare il tuo portafoglio di 65 euro</p>
@@ -468,7 +576,7 @@ if($punti > 0){
 									</div>
 									<div class="col-sm-6 col-md-3">
 										<div class="card" style="width: 18rem;">
-										  <img class="card-img-top" src=".../100px180/" alt="Card image cap">
+										 
 										  <div class="card-body">
 											<h5 class="card-title">1000 punti</h5>
 											<p class="card-text">Con 1000 punti potrai caricare il tuo portafoglio di 140 euro</p>
@@ -525,10 +633,13 @@ if($punti > 0){
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 					<!-- Modal body -->
+					
 					<div class="modal-body">
 						<form method=post>
-							<input class="form-control" type=text name="newpassword" >
-							<button type="submit" class="btn btn-warning" name="modificanome">Modifica</button>
+						
+							<input class="form-control" type="password" name="newpassword" >
+					       
+							<button type="submit" class="btn btn-warning" name="modificapassword">Modifica</button>
 						</form>
 					</div>
 					<!-- Modal footer -->
@@ -597,7 +708,7 @@ if($punti > 0){
 					<!-- Modal body -->
 					<div class="modal-body">
 						<form method=post>
-							<input class="form-control" type=text name="newphone" >
+							<input class="form-control" type="text" name="newphone" maxlength="10">
 							<button type="submit" class="btn btn-warning" name="modificacell">Modifica</button>
 						</form>
 					</div>
@@ -621,7 +732,7 @@ if($punti > 0){
 					<div class="modal-body">
 						<form method=post>
 							<input class="form-control" type=text name="newaddress">
-							<button type="button" class="btn btn-warning" name="modificaindirizzo">Modifica</button>
+							<button type="submit" class="btn btn-warning" name="modificaindirizzo">Modifica</button>
 						</form>
 					</div>
 					<!-- Modal footer -->
@@ -632,29 +743,29 @@ if($punti > 0){
 			</div>
 		</div>
 		  
-		<div class="modal fade" id="$username">
+		<!--<div class="modal fade" id="$username">
 			<div class="modal-dialog">
 			  <div class="modal-content">
-					<!-- Modal Header -->
+					
 					<div class="modal-header">
 						<h4 class="modal-title">Modifica dati</h4>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
-					<!-- Modal body -->
+					
 					<div class="modal-body">
 						<form method=post>
 							<input class="form-control" type=text name="newusername">
 							<button type="submit" class="btn btn-warning" name="modificausername">Modifica</button>
 						</form>
 					</div>
-					<!-- Modal footer -->
+				
 					<div class="modal-footer">
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					</div>
 			  </div>
 			</div>
 		</div>
-		  
+		  -->
 
 
 		<!-- MODAL ordini -->

@@ -86,7 +86,10 @@
 	</head>
   
 	<header>
-		<?php include 'header.php'; ?>
+		<?php include 'header.php'; 
+		if(isset($_SESSION['user']))
+			$utente=$_SESSION['user'];
+		?>
 	</header>
   
 	<?php 
@@ -229,44 +232,109 @@
 						<?php 
 							}
 						?>
-						<div class="form-group">
-							<label for="exampleTextarea">La tua recensione</label>
-							<textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
-						</div>
+						
+						<?php 
+							$query_review_verificato = "SELECT * FROM USERS us, GAME_ORDER go, ORDERS ord WHERE us.ID_USER = ord.ID_USER AND ord.ID_ORDER = go.ID_ORDER AND ord.ID_USER ='$utente'";
+							$ris_query_verificato = ($conn->query($query_review_verificato));
+							//if($ris_query_verificato->rowCount() > 0){ 
+						?>
+						<?php 
+							if (isset($_POST ['invia_recensione'])){
+								if (isset($_POST ['star'])) {
+									if($_POST ['star'] == 'star_1')
+									    $Stella = 1;
+								
+									else if ($_POST ['star'] == 'star_2')
+										$Stella = 2;
+								
+									else if ($_POST ['star'] == 'star_3')
+										$Stella = 3;
+								
+									else if ($_POST ['star'] == 'star_4')
+										$Stella = 4;
+								
+									else if ($_POST ['star'] == 'star_5') 
+										$Stella = 5;
+								}
+								$commento = $_POST ['testo_recensione'];
+								$query_codice_utente = "SELECT ID_USER FROM USERS WHERE USERNAME = '$utente' OR EMAIL = '$utente'";
+								$ris_codice_utente = ($conn->query($query_codice_utente));
+								foreach ($ris_codice_utente as $riga) {
+									$Id_utente_cod = $riga['ID_USER'];
+								}
+								$query_controllo_commento =	"SELECT * FROM REVIEW re, USERS usr WHERE re.ID_USER = usr.ID_USER AND re.ID_USER = '$Id_utente_cod' AND re.COD_GAME = '$Cod_gioco'";
+								$ris_query_controllo_commento = ($conn->query($query_controllo_commento));
+								if ($ris_query_controllo_commento -> rowCount()> 0){
+									echo "<script>alert('Hai già commentato questo gioco');</script>";
+								}else{
+								$query_insert="INSERT INTO `REVIEW`(`COD_GAME`, `ID_USER`, `STARS`, `COMMENT_TEXT`) 
+									    VALUES ('$Cod_gioco','$Id_utente_cod','$Stella','$commento')";
+									$ris_insert =($conn->query($query_insert));
+									echo "<meta http-equiv='refresh' content='0'>";
+								}
+							}
+						if(isset($_SESSION['user'])){
+						?><form method='post'>
+								<h4> Recensione </h4>
+									<div class="form-group form-check-inline">
+										<div class="radio"  style='margin-right:20px;'>
+										  <label><input type="radio" value="star_1" name="star"><span class="fa fa-star checked" ></span></label>
+										</div>
+										<div class="radio" style='margin-right:20px;'>
+										  <label><input type="radio" value="star_2" name="star"><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span></label>
+										</div>
+										<div class="radio" style='margin-right:20px;'>
+										  <label><input type="radio" value="star_3" name="star"><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span></label>
+										</div>
+										<div class="radio" style='margin-right:20px;'>
+										  <label><input type="radio" value="star_4" name="star"><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span></label>
+										</div>
+										<div class="radio" style='margin-right:20px;'>
+										  <label><input type="radio" name='star' value="star_5"><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span><span class="fa fa-star checked" ></span></label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="exampleTextarea">Scrivi qui il tuo commento</label>
+										<textarea class="form-control" id="exampleTextarea" rows="3" name='testo_recensione'></textarea>
+									</div>
+									
+									<button type='submit' class='btn btn-primary' name='invia_recensione'>Invia</button>
+							</form>
+					  <?php }else { echo "<p>Devi essere loggato per poter lasciare una recensione</p> <a href='sign.php'><button type='button' class='btn btn-primary'>Loggati</button></a>"; }  ?> 
 					</div>
 				</div>
 			</div>
+			<br>
 			<div class="row">
-				<div class="col-md-12">
-					<!--
-					<div class="card-group">
-						<div class="card">
-							<img class="card-img-top" src="<?php echo $Immagine_gioco_random?>" style='heigth:180px; width:100px; '>
-							<div class="card-body">
-								<h5 class="card-title"><?php echo $Titolo_gioco_random ?></h5>
-								<p class="card-text"><?php echo $Prezzo_gioco_random ?></p>
-							</div>
-						</div>
-					</div>
-					-->
-					
+				<div class="col-md-12">					
 					<div class="container-fluid">
+					<h2>Giochi consigliati</h2>
 						<div id="carouselExample" class="carousel slide" data-ride="carousel" data-interval="9000">
 							<div class="carousel-inner row w-100 mx-auto" role="listbox">
 								<?php 
-									$query_random_game = "SELECT * FROM GAMES ga, GAME_GENRE gg, DOM_GENRE dg WHERE dg.COD_GENRE = gg.COD_GENRE AND gg.COD_GAME = ga.COD_GAME ORDER BY RAND() LIMIT 8";
+									$query_random_game = "SELECT * FROM GAMES ga, GAME_GENRE gg,DOM_CONSOLE dm, DOM_GENRE dg WHERE ga.COD_CONSOLE=dm.COD_CONSOLE AND dg.COD_GENRE = gg.COD_GENRE AND gg.COD_GAME = ga.COD_GAME AND gg.COD_GENRE in (SELECT gg2.COD_GENRE FROM GAMES ga2 , GAME_GENRE gg2, DOM_CONSOLE dm2 WHERE dm2.COD_CONSOLE=ga2.COD_CONSOLE AND ga2.COD_GAME=$Cod_gioco AND gg2.COD_GAME = ga2.COD_GAME ) ORDER BY RAND() LIMIT 8";
 									$ris_random_game = ($conn->query($query_random_game));
 									$i = 0;
 									foreach ($ris_random_game as $riga) {
 										$Immagine_gioco_random = $riga['IMAGE'];
 										$Titolo_gioco_random = $riga['TITLE'];
 										$Prezzo_gioco_random = $riga['PRICE'];
-										echo'
+										/*echo'
 										<div class="carousel-item col-md-3 '; if($i == 0){ echo 'active'; } echo'">
 											<img class="img-fluid mx-auto d-block" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'">
 										</div>
-										';
-										$i++;
+										';*/
+                                        echo'
+                                        <div class="carousel-item col-md-3 '; if($i == 0){ echo 'active'; } echo'">
+                                          <div class="card">
+                                            <img class="card-img-top" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'">
+                                            <div class="card-body">
+                                              <h5 class="card-title">'.$Titolo_gioco_random.'</h5>
+                                              <h6 class="card-subtitle mb-2 text-muted">'.$Prezzo_gioco_random.' €</h6>
+                                            </div>
+                                          </div>
+                                        </div>';
+										$i++;					
 									}
 								?>
 							</div>
@@ -280,46 +348,7 @@
 							</a>
 						</div>
 					</div>
-					<!--
-					<div class="container-fluid">
-						<div id="carouselExample" class="carousel slide" data-ride="carousel" data-interval="9000">
-							<div class="carousel-inner row w-100 mx-auto" role="listbox">
-								<div class="carousel-item col-md-3 active">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400/000/fff?text=1" alt="slide 1">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=2" alt="slide 2">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=3" alt="slide 3">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=4" alt="slide 4">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=5" alt="slide 5">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=6" alt="slide 6">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=7" alt="slide 7">
-								</div>
-								<div class="carousel-item col-md-3">
-									<img class="img-fluid mx-auto d-block" src="//placehold.it/600x400?text=8" alt="slide 7">
-								</div>
-							</div>
-							<a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
-								<i class="fa fa-chevron-left fa-lg text-muted"></i>
-								<span class="sr-only">Previous</span>
-							</a>
-							<a class="carousel-control-next text-faded" href="#carouselExample" role="button" data-slide="next">
-								<i class="fa fa-chevron-right fa-lg text-muted"></i>
-								<span class="sr-only">Next</span>
-							</a>
-						</div>
-					</div>
-					-->
+
 				</div>
 			</div>
 		</div>

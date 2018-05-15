@@ -5,7 +5,11 @@ session_start();
 include_once 'connection.php';
 if(isset($_SESSION['user'])){
 		header('Location: index.php');
-	}
+}else{
+	session_unset();
+	session_destroy();
+	session_start();
+}
 
 $registrati=$_POST['registrati'];
 $accedi=$_POST['accedi'];
