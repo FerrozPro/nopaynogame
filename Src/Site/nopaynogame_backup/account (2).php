@@ -154,7 +154,17 @@ if(isset($_POST['eliminaordine'])){
       WHERE cod_game = '$cod_game_result' and cod_warehouse = '$warehouse'");
       $query -> execute();
       
-     
+      $quantity_warehouse= ("SELECT wallet FROM USERS WHERE id_user = '$id_user'");
+      $risultato = ($conn->query($quantity_warehouse));  
+      foreach($risultato as $rigas) {
+        $wallet = $rigas['wallet'];
+      }
+
+      $query = $conn -> prepare("UPDATE USERS 
+      SET 
+      wallet = '$wallet'+('$quantity_result'*'$game_price_result')
+      WHERE id_user = '$id_user'");
+      $query -> execute();
     }
 
 
@@ -453,9 +463,7 @@ if(isset($_POST['paga'])){
 											</tbody>
 										</table>
 										
-										
-										
-										<!-- Modal modifica ordine -->
+										<!-- Modal -->
 										<div class="modal fade bd-example-modal-lg" id="modificaordine<?php echo $ordine;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 										  <div class="modal-dialog" role="document">
 											<div class="modal-content">
@@ -472,21 +480,20 @@ if(isset($_POST['paga'])){
 													<th>Titolo</th>
 													<th>Prezzo</th>
 													<th>Quantità</th>
-													<th>Elimina</th>
+													<th>Aggiorna</th>
+													<th>Elimina prodotto</th>
 												  </tr>
 												</thead>
 												<?php  $query ="SELECT * FROM GAME_ORDER WHERE ID_ORDER='$ordine' ";
 													   $ris = ($conn->query($query));
 													   $ris->execute();
 													   $somma=0;
-													   $check=0;
 													   foreach($ris as $riga){
 														   $cod=$riga['COD_GAME'];
 														   $id_ordine=$riga['ID_ORDER'];
 														   $querys ="SELECT * FROM ORDERS WHERE ID_ORDER='$ordine' ";
 															   $riss = ($conn->query($querys));
 															   $riss->execute();
-															   
 															   foreach($riss as $rigas){
 																  
 																   $evaso=$rigas['FLAG_EVADE'];
@@ -500,78 +507,34 @@ if(isset($_POST['paga'])){
 																	<?php $squery ="SELECT * FROM GAMES WHERE COD_GAME='$cod'"; 
 																	$ris = ($conn->query($squery));
 																	$ris->execute();
-																	foreach($ris as $rigas){ echo $rigas['TITLE'];}
-																	
-																	?></td>
+																	foreach($ris as $rigas){ echo $rigas['TITLE'];}?></td>
 																	<td><?php echo $riga['GAME_PRICE'];?></td>
+																	<td><input type='number' value='<?php echo $riga['QUANTITY'];?>' min='1'max=<?php echo $maxdisponibilità;?>  style='width:40px;' ></td>
+																	<td>
 																		<form method='post'>
-																		     <input type='hidden' name='check' value=<?php echo $check;?>>
-																		     <input type='hidden' name='codice<?php echo $check; ?>' value=<?php echo $cod;?>>
-																			 <td><input type='number' name='quantitaprodotto<?php echo $check; ?>' value='<?php echo $riga['QUANTITY'];?>' min='1' style='width:60px;'  ></td>
-																			<td><input type='checkbox' name='eliminaprodotto<?php echo $check; ?>' value=<?php echo $cod;?>></input></td>
-																			<?php $check++;
-																}  ?>
-																			
-																   </tr>
-																			<th><button type='submit' name='aggiorna' class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
-																		</form>
+																	     <button type='submit' name='aggiorna' class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button>
+																	   </form>
+																	</td>
+																     <td>
+																	   <form method='post'>
+																	     <button type='submit' name='eliminaprodotto' class='btn btn-danger' value=<?php echo $ordine; ?>>Elimina</button>
+																	   </form>
+																    </td>
+																  </tr>
 																 </tbody>
-															
-														<?php
-																	if(isset($_POST['check'])){
-																		for($i=0; $i<= $_POST['check']; ++$i){
-																			if(isset($_POST['eliminaprodotto'.$i])|| $_POST['quantitaprodotto'.$i]==0){
-																				// QUERY ELIMINAZIONE PRODOTTO DALL'ORDINE
-																					//echo "da eliminare".$_POST['eliminaprodotto'.$i];	
-																					/*QUERY PER ELIMINA GIOCO*/ 
-																					$modCodGame = $_POST['eliminaprodotto'.$i];
-																					try {
-																					  $conn -> beginTransaction();
-																					  
-																					  $conn -> exec("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
-																					  $conn -> exec("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
-																					  $conn -> exec("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
-																					  $conn -> commit();
-
-																					}catch (Exception $e){
-																					  $conn -> rollBack();
-																					  echo'
-																					  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-																						<strong>ATTENZIONE!</strong> Non è possibile cancellare il gioco poichè è presente in uno o più ordini.
-																						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-																						  <span aria-hidden="true">&times;</span>
-																						</button>
-																					  </div>';
-																					}																					
-																			}
-																			if(isset($_POST['codice'.$i])){
-																				
-																					//aggiorna quantita prodotto
-																				
-																				//echo "la nuova quantita".$_POST['quantitaprodotto'.$i];
-																				//echo "il codice per la nuova quantita è".$_POST['codice'.$i];
-																				// QUERY CHE AGGIORNA QUANTITA PRODOTTO
-																				
-																			}
-																		}
-																	}
-																	
-																	//query per modifica ordine
-																	//aumentare la quantità nell'ordine
-																	/*if(isset($_POST['aggiorna'])){
-																		$aggiorna=$_POST['aggiorna']; //DEVO METTERE QUANTITAPRODOTTO MA NON VA PER QUALCHE MOTIVO DEL MENGA!!
-																		$query ="UPDATE GAME_ORDER SET quantity='$aggiorna' WHERE id_order='$ordine' and cod_game='$cod' ";
-																		$ris = ($conn->query($query));
-																	}*/
-																	//diminuire nella werehouse
-																	
-																	
-																	
-																	//query per elimina prodotto dall'ordine ?>
+																 
+														 <?php $somma+= $riga['GAME_PRICE'] * $quantita; //fare la quantita
+														 
+																$dt = new DateTime();
+																$dts = $dt->format('Y-m-d H:i:s');
+																$differenza = $dt - $dataordine ;
+																
+														} ?>
 											  </table>
 											  </div>
 											  <div class="modal-footer">
 												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+												<button type="button" class="btn btn-primary">Save changes</button>
 											  </div>
 											</div>
 										  </div>
@@ -1027,4 +990,4 @@ if(isset($_POST['paga'])){
 			}
 		</script>
   </body>
-</html>
+</html>

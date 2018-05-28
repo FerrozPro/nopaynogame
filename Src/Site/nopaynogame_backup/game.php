@@ -214,11 +214,32 @@
 									$Nome_utente = $riga['USERNAME'];
 								}			 
 						?>
+							<?php 
+							$codutente="SELECT * FROM USERS WHERE EMAIL='$utente' || USERNAME='$utente'";
+							$ris = ($conn->query($codutente));
+							foreach($ris as $riga){
+								$cod=$riga['ID_USER'];
+							}
+								
+							
+							
+							//if($cod==$ris_query_verificato){$acquistoverificato=1;}else {$acquistoverificato=0;}
+						
+						?>
+						
 						<div class="list-group">
 							<a  class="list-group-item list-group-item-action flex-column align-items-start ">
 								<div class="d-flex w-100 justify-content-between">
-									<h5 class="mb-1"><?php echo $Nome_utente ?></h5>
-									<small><?php  
+									<h5 class="mb-1"><?php echo $Nome_utente ?></h5><small>
+									<small style='color:green;'><?php 
+									$query_review_verificato = "SELECT ord.ID_USER FROM USERS us, GAME_ORDER go, ORDERS ord WHERE us.ID_USER = ord.ID_USER AND ord.ID_ORDER = go.ID_ORDER AND go.COD_GAME=60";
+									$ris_query_verificato = ($conn->query($query_review_verificato));
+									foreach($ris_query_verificato as $riga){
+										$acquistoverificato=$riga['ID_USER'];
+									}
+										if($acquistoverificato == $Id_user){ echo "ACQUISTO VERIFICATO"; } ?></small>
+									
+									<?php  
 										echo'<span class="fa fa-star'; if($Stelle[0] >= 1 ) { echo' checked'; } echo'"></span>';
 										echo'<span class="fa fa-star'; if($Stelle[0] >= 2 ) { echo' checked'; } echo'"></span>';
 										echo'<span class="fa fa-star'; if($Stelle[0] >= 3 ) { echo' checked'; } echo'"></span>';
@@ -233,11 +254,7 @@
 							}
 						?>
 						
-						<?php 
-							$query_review_verificato = "SELECT * FROM USERS us, GAME_ORDER go, ORDERS ord WHERE us.ID_USER = ord.ID_USER AND ord.ID_ORDER = go.ID_ORDER AND ord.ID_USER ='$utente'";
-							$ris_query_verificato = ($conn->query($query_review_verificato));
-							//if($ris_query_verificato->rowCount() > 0){ 
-						?>
+					
 						<?php 
 							if (isset($_POST ['invia_recensione'])){
 								if (isset($_POST ['star'])) {
@@ -300,7 +317,9 @@
 									
 									<button type='submit' class='btn btn-primary' name='invia_recensione'>Invia</button>
 							</form>
-					  <?php }else { echo "<p>Devi essere loggato per poter lasciare una recensione</p> <a href='sign.php'><button type='button' class='btn btn-primary'>Loggati</button></a>"; }  ?> 
+					  <?php 	}else { echo "<p>Devi essere loggato per poter lasciare una recensione</p> <a href='sign.php'><button type='button' class='btn btn-primary'>Loggati</button></a>"; }
+							
+						?> 
 					</div>
 				</div>
 			</div>
@@ -317,6 +336,7 @@
 									$i = 0;
 									foreach ($ris_random_game as $riga) {
 										$Immagine_gioco_random = $riga['IMAGE'];
+										$Codice_gioco_random = $riga['COD_GAME'];
 										$Titolo_gioco_random = $riga['TITLE'];
 										$Prezzo_gioco_random = $riga['PRICE'];
 										/*echo'
@@ -327,7 +347,7 @@
                                         echo'
                                         <div class="carousel-item col-md-3 '; if($i == 0){ echo 'active'; } echo'">
                                           <div class="card">
-                                            <img class="card-img-top" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'">
+                                            <a href="http://nopaynogame.altervista.org/nopaynogame_/game.php??cp=game&game='.$Codice_gioco_random.'"><img class="card-img-top" src="'; echo $Immagine_gioco_random; echo'" alt="slide '.$i.'"></a>
                                             <div class="card-body">
                                               <h5 class="card-title">'.$Titolo_gioco_random.'</h5>
                                               <h6 class="card-subtitle mb-2 text-muted">'.$Prezzo_gioco_random.' €</h6>

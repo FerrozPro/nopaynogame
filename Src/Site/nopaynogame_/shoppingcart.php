@@ -100,7 +100,6 @@ if(isset($_POST['modifica_cognome'])){
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>NoPayNoGame</title>
   </head>
@@ -405,9 +404,9 @@ if(isset($_POST['modifica_cognome'])){
 		  <div class="col-6 col-md-6">
 		  <p>Pagamento</p>
 		  <select>
-			  <option value="volvo">Paypal</option>
-			  <option value="saab">Postepay</option>
-			  <option value="mercedes">Bonifico</option>
+			  <option value="paypal">Paypal</option>
+			  <option value="postepay">Postepay</option>
+			  <option value="bonifico">Bonifico</option>
 			 
 		</select>
 		</div>
@@ -545,8 +544,18 @@ if(isset($_POST['modifica_cognome'])){
 						$query="UPDATE GAME_WAREHOUSE SET QUANTITY = QUANTITY - '$quantita' WHERE COD_GAME = '$cod_game' ";
 						$ris = ($conn->query($query));
 						
-						$query="UPDATE USERS SET WALLET = WALLET - '$game_price' WHERE ID_USER = '$ute' "; 
+						$query="SELECT * FROM USERS WHERE ID_USER = '$ute' "; 
 						$ris = ($conn->query($query));
+						foreach($ris as $riga){
+							$wallet=$riga['WALLET'];
+						}
+						if($wallet<$game_price){
+							$query="UPDATE USERS SET WALLET =0 WHERE ID_USER = '$ute' "; 
+							$ris = ($conn->query($query));
+						}else{
+							$query="UPDATE USERS SET WALLET = WALLET - '$game_price' WHERE ID_USER = '$ute' "; 
+							$ris = ($conn->query($query));
+						}
 						
 						$totale=$game_price+$totale;
 			 }
@@ -805,9 +814,6 @@ if(isset($_POST['modifica_cognome'])){
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 		<?php include 'script.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		<script type="text/javascript">
        int reply_click(clicked_id)
 		{

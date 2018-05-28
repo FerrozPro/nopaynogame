@@ -59,7 +59,7 @@ if($preparata->rowCount() > 0){
 	$email = $_POST['inputEmail'];
 	$password = MD5($_POST['inputPassword']);
 	
-	$sql = "SELECT * FROM USERS WHERE EMAIL='$email'";
+	$sql = "SELECT * FROM USERS WHERE EMAIL='$email || USERNAME='$username'";
 	$preparata = $conn->prepare($sql);
 	$preparata->execute();
 	if($preparata->rowCount() > 0){

@@ -130,9 +130,39 @@ if($punti > 0){
 
 //elimina e modifica ordine
 if(isset($_POST['eliminaordine'])){
-	$ordine=$_POST['eliminaordine'];
-	$query ="DELETE FROM ORDERS WHERE ID_ORDER='$ordine'";
-	$ris = ($conn->query($query));
+//	$ordine=$_POST['eliminaordine'];
+	$del_ordine = $_POST['eliminaordine'];
+    $id_user = $_POST['id_user_order'];
+
+    $order_games= ("SELECT cod_game,quantity,game_price FROM GAME_ORDER WHERE id_order = '$del_ordine'");
+    $ris = ($conn->query($order_games));  
+    foreach($ris as $riga){
+      $cod_game_result = $riga['cod_game'];
+      $quantity_result = $riga['quantity'];
+      $game_price_result = $riga['game_price'];
+      $warehouse = 'WH1';
+      
+      $quantity_warehouse= ("SELECT quantity FROM GAME_WAREHOUSE WHERE cod_game = '$cod_game_result'");
+      $risultato = ($conn->query($quantity_warehouse));  
+      foreach($risultato as $rigas) {
+        $safequantity = $rigas['quantity'];
+      }
+
+      $query = $conn -> prepare("UPDATE GAME_WAREHOUSE 
+      SET 
+      quantity = '$safequantity'+'$quantity_result' 
+      WHERE cod_game = '$cod_game_result' and cod_warehouse = '$warehouse'");
+      $query -> execute();
+      
+     
+    }
+
+
+    $query = $conn -> prepare("DELETE FROM GAME_ORDER WHERE id_order = '$del_ordine'");
+    $query -> execute();
+    
+    $query = $conn -> prepare("DELETE FROM ORDERS WHERE id_order = '$del_ordine'");
+    $query -> execute();
 }
 
 if(isset($_POST['paga'])){
@@ -276,56 +306,15 @@ if(isset($_POST['paga'])){
 						<!--home fine-->
 
 						<!--profilo-->
+						
+						
 						<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-							<?php //query per gli ordini//
-								$query ="SELECT * FROM ORDERS WHERE ID_USER='$id_utente' ORDER BY ID_ORDER DESC";
-								$ris = ($conn->query($query));
-								$ris->execute();
-								if($ris->rowCount() <= 0){
-									echo "<center><H2>Non hai ancora effettuato un ordine :( </H2> <img src=img/sad.png style=' width:30%; heigth:30%'></center>";
-								}else{
-									foreach($ris as $riga){
-										$pagato=$riga['FLAG_PAYD'];
-										$ordine=$riga['ID_ORDER'];
-							?>
-										<table class="table">
-											<thead>
-												<tr>
-													<td>Numero ordine</td>
-													<td>Data</td>
-													
-													<td>Visualizza</td>
-													<td>Paga</td>
-												</tr>
-											</thead>
-
-											<tbody>
-												<tr <?php if ($riga['FLAG_EVADE'] == 'Y') echo "class='table-success'"; else echo "class='table-warning'" ;?>>
-													<th><?php echo $riga['ID_ORDER'];?></th>
-													<td><?php echo $riga['DATE_ORDER'];?></th>
-													
-													
-													<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ordine<?php echo $riga['ID_ORDER'];?>">
-														♥
-													</button></td>
-													<td>
-													<?php if($pagato=='N'){ 
-														echo" <form method='post'><button type='submit' name='paga' class='btn btn-success' value=".$riga['ID_ORDER'].">
-															Paga
-														</button></form>";
-													} else {
-														echo "Pagato!";
-													}
-													
-													?>
-													</td>
-													<!--<td><i class="material-icons">favorite_border</i></td> -->
-												</tr>
-											</tbody>
-										</table>
-										
-							
-									<div class="modal fade" id="ordine<?php echo $riga['ID_ORDER'];?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+						
+						
+						
+						
+						
+						<div class="modal fade" id="ordine<?php echo $riga['ID_ORDER'];?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 								  <div class="modal-dialog" role="document">
 									<div class="modal-content">
 									  <div class="modal-header">
@@ -350,6 +339,16 @@ if(isset($_POST['paga'])){
 													   $somma=0;
 													   foreach($ris as $riga){
 														   $cod=$riga['COD_GAME'];
+														   $id_ordine=$riga['ID_ORDER'];
+														   $querys ="SELECT * FROM ORDERS WHERE ID_ORDER='$ordine' ";
+															   $riss = ($conn->query($querys));
+															   $riss->execute();
+															   foreach($riss as $rigas){
+																  
+																   $evaso=$rigas['FLAG_EVADE'];
+																   $pagato=$rigas['FLAG_PAYD'];
+																   $dataordine=$rigas['DATE_ORDER'];
+															   }
 															   ?>
 																<tbody>
 																  <tr>
@@ -363,33 +362,227 @@ if(isset($_POST['paga'])){
 																  </tr>
 																 </tbody>
 																 
-														 <?php $somma+= $riga['GAME_PRICE'] * $quantita; //fare la quantitaaa
-																$differenza = date_diff(date("Y-m-d H:i:s"), $riga['DATE_ORDER'] );
-																$evaso=$riga['FLAG_EVADED']; 
+														 <?php $somma+= $riga['GAME_PRICE'] * $quantita; //fare la quantita
+														 
+																$dt = new DateTime();
+																$dts = $dt->format('Y-m-d H:i:s');
+																$differenza = $dt - $dataordine ;
+																
 														} ?>
 											  </table>
-											  <p>Totale: <?php echo $somma; ?></p>
-											  <?php if( $differenza<=2 && $evaso!='Y'){
-														echo "<form method='post'>";
-														echo "<button type='submit' class='btn btn-danger' name='eliminaordine' value='$ordine'>Elimina ordine</button>";
-														echo "<button type='submit' class='btn btn-warning' name='modificaordine' value='$ordine'>Modifica ordine</button>";
-														echo "</form>";
-													} ?>
-											</div>
-									  </div>
-									  <div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											  <!-- <p>Totale: <?php //echo $somma;?></p>-->
+											 
 										
 									  </div>
+									  </div>
+									 
 									</div>
 								  </div>
 								</div>
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						<p><b>Legenda:</b><br> Giallo -> da spedire <br> Verde -> spedito</p> 
+							<?php //query per gli ordini//
+								$query ="SELECT * FROM ORDERS WHERE ID_USER='$id_utente' ORDER BY ID_ORDER DESC";
+								$ris = ($conn->query($query));
+								$ris->execute();
+								if($ris->rowCount() <= 0){
+									echo "<center><H2>Non hai ancora effettuato un ordine :( </H2> <img src=img/sad.png style=' width:30%; heigth:30%'></center>";
+								}else{
+									foreach($ris as $riga){
+										$pagato=$riga['FLAG_PAYD'];
+										$ordine=$riga['ID_ORDER'];
+							?>
+										<table class="table">
+											<thead>
+												<tr>
+													<td>Numero ordine</td>
+													<td>Data</td>
+													<td>Visualizza</td>
+													<td>Paga</td>
+													<td>Elimina ordine</td>
+													<td>Modifica ordine</td>
+												</tr>
+											</thead>
+
+											<tbody>
+												<tr <?php if ($riga['FLAG_EVADE'] == 'Y') echo "class='table-success'"; else echo "class='table-warning'" ;?>>
+													<th><?php echo $riga['ID_ORDER'];?></th>
+													<td><?php echo $riga['DATE_ORDER'];?></th>
+													
+													
+													<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ordine<?php echo $riga['ID_ORDER'];?>">
+														♥
+													</button></td>
+													<td>
+													<?php if($pagato=='N'){ 
+														echo" <form method='post'><button type='submit' name='paga' class='btn btn-success' value=".$riga['ID_ORDER'].">
+															Paga
+														</button></form>";
+													} else {
+														echo "Pagato!";
+													}
+													
+													?>
+													</td>
+													<!--<td><i class="material-icons">favorite_border</i></td> -->
+													<td> <?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){
+														echo "<form method='post'>";
+														echo "<button type='submit' class='btn btn-danger' name='eliminaordine' value='$ordine'>Elimina ordine</button>";
+														echo "</form>";
+													} ?>
+													</td>
+													<td>
+														 <?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){
+														echo "<form method='post'>";
+														echo "<button type='button' class='btn btn-warning' data-toggle='modal' data-target='.bd-example-modal-lg' name='modificaordine' value='$ordine'>Modifica ordine</button>";
+														echo "</form>";
+													} ?>
+													
+													
+													</td>
+												</tr>
+												
+											</tbody>
+										</table>
+										
+										
+										
+										<!-- Modal modifica ordine -->
+										<div class="modal fade bd-example-modal-lg" id="modificaordine<?php echo $ordine;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										  <div class="modal-dialog" role="document">
+											<div class="modal-content">
+											  <div class="modal-header">
+												<h5 class="modal-title" id="exampleModalLabel">Modifica ordine N^ <?php echo $ordine;?></h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												  <span aria-hidden="true">&times;</span>
+												</button>
+											  </div>
+											  <div class="modal-body">
+											  <table class="table table-striped">
+												<thead>
+												  <tr>
+													<th>Titolo</th>
+													<th>Prezzo</th>
+													<th>Quantità</th>
+													<th>Elimina</th>
+												  </tr>
+												</thead>
+												<?php  $query ="SELECT * FROM GAME_ORDER WHERE ID_ORDER='$ordine' ";
+													   $ris = ($conn->query($query));
+													   $ris->execute();
+													   $somma=0;
+													   $check=0;
+													   foreach($ris as $riga){
+														   $cod=$riga['COD_GAME'];
+														   $id_ordine=$riga['ID_ORDER'];
+														   $querys ="SELECT * FROM ORDERS WHERE ID_ORDER='$ordine' ";
+															   $riss = ($conn->query($querys));
+															   $riss->execute();
+															   
+															   foreach($riss as $rigas){
+																  
+																   $evaso=$rigas['FLAG_EVADE'];
+																   $pagato=$rigas['FLAG_PAYD'];
+																   $dataordine=$rigas['DATE_ORDER'];
+															   }
+															   ?>
+																<tbody>
+																  <tr>
+																	<td>
+																	<?php $squery ="SELECT * FROM GAMES WHERE COD_GAME='$cod'"; 
+																	$ris = ($conn->query($squery));
+																	$ris->execute();
+																	foreach($ris as $rigas){ echo $rigas['TITLE'];}
+																	
+																	?></td>
+																	<td><?php echo $riga['GAME_PRICE'];?></td>
+																		<form method='post'>
+																		     <input type='hidden' name='check' value=<?php echo $check;?>>
+																		     <input type='hidden' name='codice<?php echo $check; ?>' value=<?php echo $cod;?>>
+																			 <td><input type='number' name='quantitaprodotto<?php echo $check; ?>' value='<?php echo $riga['QUANTITY'];?>' min='1' style='width:60px;'  ></td>
+																			<td><input type='checkbox' name='eliminaprodotto<?php echo $check; ?>' value=<?php echo $cod;?>></input></td>
+																			<?php $check++;
+																}  ?>
+																			
+																   </tr>
+																			<th><button type='submit' name='aggiorna' class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
+																		</form>
+																 </tbody>
+															
+														<?php
+																	if(isset($_POST['check'])){
+																		for($i=0; $i<= $_POST['check']; ++$i){
+																			if(isset($_POST['eliminaprodotto'.$i])|| $_POST['quantitaprodotto'.$i]==0){
+																				// QUERY ELIMINAZIONE PRODOTTO DALL'ORDINE
+																					//echo "da eliminare".$_POST['eliminaprodotto'.$i];	
+																					/*QUERY PER ELIMINA GIOCO*/ 
+																					$modCodGame = $_POST['eliminaprodotto'.$i];
+																					try {
+																					  $conn -> beginTransaction();
+																					  
+																					  $conn -> exec("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
+																					  $conn -> exec("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
+																					  $conn -> exec("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
+																					  $conn -> commit();
+
+																					}catch (Exception $e){
+																					  $conn -> rollBack();
+																					  echo'
+																					  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+																						<strong>ATTENZIONE!</strong> Non è possibile cancellare il gioco poichè è presente in uno o più ordini.
+																						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																						  <span aria-hidden="true">&times;</span>
+																						</button>
+																					  </div>';
+																					}																					
+																			}
+																			if(isset($_POST['codice'.$i])){
+																				
+																					//aggiorna quantita prodotto
+																				
+																				//echo "la nuova quantita".$_POST['quantitaprodotto'.$i];
+																				//echo "il codice per la nuova quantita è".$_POST['codice'.$i];
+																				// QUERY CHE AGGIORNA QUANTITA PRODOTTO
+																				
+																			}
+																		}
+																	}
+																	
+																	//query per modifica ordine
+																	//aumentare la quantità nell'ordine
+																	/*if(isset($_POST['aggiorna'])){
+																		$aggiorna=$_POST['aggiorna']; //DEVO METTERE QUANTITAPRODOTTO MA NON VA PER QUALCHE MOTIVO DEL MENGA!!
+																		$query ="UPDATE GAME_ORDER SET quantity='$aggiorna' WHERE id_order='$ordine' and cod_game='$cod' ";
+																		$ris = ($conn->query($query));
+																	}*/
+																	//diminuire nella werehouse
+																	
+																	
+																	
+																	//query per elimina prodotto dall'ordine ?>
+											  </table>
+											  </div>
+											  <div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											  </div>
+											</div>
+										  </div>
+										</div>
+									
 								
 								
 								
 								
 							<?php 
-									}?><p>Legenda: Giallo -> da spedire Verde -> spedito</p> <?php
+									}?><?php
 							
 							}?>
 						</div>
