@@ -1,5 +1,4 @@
 <?php
-	
 	session_start();
 	if(isset($_SESSION['role']) && $_SESSION['role']=="RL1"){
 		if(isset($_SESSION['carrello'])){
@@ -12,5 +11,4 @@
 	}else{
 		header('Location: sign.php?cp=sign&msg=cart');
 	}
-
 ?>

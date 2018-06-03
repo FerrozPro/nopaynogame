@@ -1,116 +1,27 @@
 <!doctype html>
 <html lang="en">
   
-	<head>
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<style>
-			.checked {
-					color: orange;
-			}
-			
-			@media (min-width: 768px) {
-
-				/* show 3 items */
-				.carousel-inner .active,
-				.carousel-inner .active + .carousel-item,
-				.carousel-inner .active + .carousel-item + .carousel-item,
-				.carousel-inner .active + .carousel-item + .carousel-item + .carousel-item  {
-						display: block;
-				}
-
-				.carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
-				.carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item,
-				.carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item,
-				.carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item + .carousel-item {
-						transition: none;
-				}
-
-				.carousel-inner .carousel-item-next,
-				.carousel-inner .carousel-item-prev {
-					position: relative;
-					transform: translate3d(0, 0, 0);
-				}
-
-				.carousel-inner .active.carousel-item + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
-						position: absolute;
-						top: 0;
-						right: -25%;
-						z-index: -1;
-						display: block;
-						visibility: visible;
-				}
-
-				/* left or forward direction */
-				.active.carousel-item-left + .carousel-item-next.carousel-item-left,
-				.carousel-item-next.carousel-item-left + .carousel-item,
-				.carousel-item-next.carousel-item-left + .carousel-item + .carousel-item,
-				.carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item,
-				.carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
-						position: relative;
-						transform: translate3d(-100%, 0, 0);
-						visibility: visible;
-				}
-
-				/* farthest right hidden item must be abso position for animations */
-				.carousel-inner .carousel-item-prev.carousel-item-right {
-						position: absolute;
-						top: 0;
-						left: 0;
-						z-index: -1;
-						display: block;
-						visibility: visible;
-				}
-
-				/* right or prev direction */
-				.active.carousel-item-right + .carousel-item-prev.carousel-item-right,
-				.carousel-item-prev.carousel-item-right + .carousel-item,
-				.carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item,
-				.carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item,
-				.carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
-						position: relative;
-						transform: translate3d(100%, 0, 0);
-						visibility: visible;
-						display: block;
-						visibility: visible;
-				}
-			}
-			</style>
-
-		<title>NoPayNoGame</title>
-	</head>
-  
-	<header>
-		<?php include 'header.php'; 
-		if(isset($_SESSION['user']))
-			$utente=$_SESSION['user'];
-		?>
-	</header>
-  
 	<?php 
-		$codice_gioco = $_GET['game']; 	
-		$query_gioco = "SELECT * FROM GAMES WHERE COD_GAME ='$codice_gioco' ";	  
-		$ris_gioco = ($conn->query($query_gioco));
-		
-		foreach($ris_gioco as $riga){
-			$Cod_gioco = $riga['COD_GAME'];
-			$Titolo = $riga['TITLE'];
-			$Prezzo = $riga['PRICE'];
-			$Cod_console = $riga['COD_CONSOLE'];
-			$Prezzo_saldo = $riga['PRICE_ON_SALE'];
-			$Flag_vendita = $riga['FLAG_SALE'];
-			$Flag_novita = $riga['FLAG_NEWS'];
-			$Immagine = $riga['IMAGE'];
-			$Descrizione = $riga['DESCRIPTION'];
-			$Requisiti = $riga['SPEC_REQ'];
-			$Trailer = $riga['TRAILER'];
-			$Data = $riga['INSERTION_DATE'];
-		}
+	include 'header.php'; 
+	if(isset($_SESSION['user']))
+		$utente=$_SESSION['user'];
+	$codice_gioco = $_GET['game']; 	
+	$query_gioco = "SELECT * FROM GAMES WHERE COD_GAME ='$codice_gioco' ";	  
+	$ris_gioco = ($conn->query($query_gioco));
+	foreach($ris_gioco as $riga){
+		$Cod_gioco = $riga['COD_GAME'];
+		$Titolo = $riga['TITLE'];
+		$Prezzo = $riga['PRICE'];
+		$Cod_console = $riga['COD_CONSOLE'];
+		$Prezzo_saldo = $riga['PRICE_ON_SALE'];
+		$Flag_vendita = $riga['FLAG_SALE'];
+		$Flag_novita = $riga['FLAG_NEWS'];
+		$Immagine = $riga['IMAGE'];
+		$Descrizione = $riga['DESCRIPTION'];
+		$Requisiti = $riga['SPEC_REQ'];
+		$Trailer = $riga['TRAILER'];
+		$Data = $riga['INSERTION_DATE'];
+	}
 	?>
 
 	<body>
@@ -122,7 +33,10 @@
 					<img class='img-fluid' src="<?php echo $Immagine?>" alt="Non va">
 					<div>
 						<?php
-							$stars = mysql_fetch_row(mysql_query("select cast(AVG(stars)AS DECIMAL(10,1)) from my_nopaynogame.REVIEW where cod_game = '$Cod_gioco'"));
+						$query = ($conn->query("SELECT AVG(stars) from my_nopaynogame.REVIEW where cod_game = '$Cod_gioco'"));
+						foreach($query as $riga) {
+						  $stars = $riga[0];
+						}
 							echo'<span class="fa fa-star'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
 							echo'<span class="fa fa-star'; if($stars[0] >= 2 ) { echo' checked'; } echo'"></span>';
 							echo'<span class="fa fa-star'; if($stars[0] >= 3 ) { echo' checked'; } echo'"></span>';
@@ -163,9 +77,12 @@
 						<?php
 							echo "<form method='POST' action='addtocart.php'>
 							<input type='hidden' name='cod_gioco' value=".$Cod_gioco." />";
-							$quantita = mysql_fetch_row(mysql_query("select SUM(quantity) from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$Cod_gioco'"));
+							$query = ($conn->query("SELECT SUM(quantity) from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$Cod_gioco'"));
+							foreach($query as $riga) {
+								$quantita = $riga[0];
+							}
 							echo"<button type='submit' class='btn btn-block ";
-							if($quantita[0] == 0){
+							if($quantita == 0){
 								echo"btn-danger' disabled>Non Disponibile</button>";
 							}else{
 								echo"btn-warning'>Aggiungi al Carrello</button>";
@@ -373,8 +290,6 @@
 			</div>
 		</div>
 
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 		<?php include 'script.php'; ?>
 		<script js>
 			$('#carouselExample').on('slide.bs.carousel', function (e) {
@@ -398,43 +313,3 @@
 		</script>
 	</body>
 </html>
-
-<!--
-$stars = mysql_fetch_row(mysql_query("select AVG(stars) from my_nopaynogame.REVIEW where cod_game = '$cod_gioco'"));
-								echo'<span class="fa fa-star'; if($stars[0] >= 1 ) { echo' checked'; } echo'"></span>';
-								echo'<span class="fa fa-star'; if($stars[0] >= 2 ) { echo' checked'; } echo'"></span>';
-								echo'<span class="fa fa-star'; if($stars[0] >= 3 ) { echo' checked'; } echo'"></span>';
-								echo'<span class="fa fa-star'; if($stars[0] >= 4 ) { echo' checked'; } echo'"></span>';
-								echo'<span class="fa fa-star'; if($stars[0] == 5 ) { echo' checked'; } echo'"></span>';
-for($i = 0; $i < 5; $i++){
-															if($i < $stars){
-																echo " <span class='fa fa-star checked'></span>";
-															}else{
-																echo " <span class='fa fa-star'></span>";
-															}
-														}
-
-
-<form method='POST' action='addtocart.php'>
-                <input type='hidden' name='cod_gioco' value=".$cod_gioco." />";
-                $quantita = mysql_fetch_row(mysql_query("select SUM(quantity) from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$cod_gioco'"));
-                echo"<button type='submit' class='btn btn-block ";
-                if($quantita[0] == 0){
-                  echo"btn-danger' disabled>Non Disponibile</button>";
-                }else{
-                  echo"btn-warning'>Aggiungi al Carrello</button>";
-                } echo"
-							</form>
-
-if($prezzo_saldo < $prezzo_gioco){
-                  echo"<h5>€<del>".$prezzo_gioco."</del> <i class='fa fa-chevron-right'></i> €".$prezzo_saldo."</h5>";
-                  echo'<span class="badge badge-pill badge-danger">SALDO</span>';
-								}else{
-									echo"<h5>€".$prezzo_gioco."</h5>";
-                }
-
-								if($novita == 'Y'){
-                  echo'<span class="badge badge-pill badge-success">NUOVO!</span>';
-								}
-                
--->

@@ -405,10 +405,9 @@ if(isset($_POST['paga'])){
 												<tr>
 													<td>Numero ordine</td>
 													<td>Data</td>
-													<td>Visualizza</td>
 													<td>Paga</td>
 													<td>Elimina ordine</td>
-													<td>Modifica ordine</td>
+													<td>Visualizza e/o modifica ordine</td>
 												</tr>
 											</thead>
 
@@ -417,10 +416,6 @@ if(isset($_POST['paga'])){
 													<th><?php echo $riga['ID_ORDER'];?></th>
 													<td><?php echo $riga['DATE_ORDER'];?></th>
 													
-													
-													<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ordine<?php echo $riga['ID_ORDER'];?>">
-														♥
-													</button></td>
 													<td>
 													<?php if($pagato=='N'){ 
 														echo" <form method='post'><button type='submit' name='paga' class='btn btn-success' value=".$riga['ID_ORDER'].">
@@ -440,11 +435,11 @@ if(isset($_POST['paga'])){
 													} ?>
 													</td>
 													<td>
-														 <?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){
+													<?php
 														echo "<form method='post'>";
-														echo "<button type='button' class='btn btn-warning' data-toggle='modal' data-target='.bd-example-modal-lg' name='modificaordine' value='$ordine'>Modifica ordine</button>";
+														echo "<button type='button' class='btn btn-warning' data-toggle='modal' data-target='.bd-example-modal-lg' name='modificaordine' value='$ordine'>✚</button>";
 														echo "</form>";
-													} ?>
+													?>
 													
 													
 													</td>
@@ -512,8 +507,11 @@ if(isset($_POST['paga'])){
 																			<?php $check++;
 																}  ?>
 																			
-																   </tr>
+																   </tr>	<?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){ ?>
 																			<th><button type='submit' name='aggiorna' class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
+																			<?php }else?>
+																			<th><button type='submit' name='aggiorna' disabled class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
+																			
 																		</form>
 																 </tbody>
 															
@@ -522,52 +520,36 @@ if(isset($_POST['paga'])){
 																		for($i=0; $i<= $_POST['check']; ++$i){
 																			if(isset($_POST['eliminaprodotto'.$i])|| $_POST['quantitaprodotto'.$i]==0){
 																				// QUERY ELIMINAZIONE PRODOTTO DALL'ORDINE
-																					//echo "da eliminare".$_POST['eliminaprodotto'.$i];	
-																					/*QUERY PER ELIMINA GIOCO*/ 
 																					$modCodGame = $_POST['eliminaprodotto'.$i];
-																					try {
-																					  $conn -> beginTransaction();
-																					  
-																					  $conn -> exec("DELETE FROM GAME_GENRE WHERE cod_game = '$modCodGame'");
-																					  $conn -> exec("DELETE FROM GAME_WAREHOUSE WHERE cod_game = '$modCodGame'");
-																					  $conn -> exec("DELETE FROM GAMES WHERE cod_game = '$modCodGame'");
-																					  $conn -> commit();
-
-																					}catch (Exception $e){
-																					  $conn -> rollBack();
-																					  echo'
-																					  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-																						<strong>ATTENZIONE!</strong> Non è possibile cancellare il gioco poichè è presente in uno o più ordini.
-																						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-																						  <span aria-hidden="true">&times;</span>
-																						</button>
-																					  </div>';
-																					}																					
+																					$ordine=$_POST['aggiorna'];
+																					$conn -> exec("DELETE FROM GAME_ORDER WHERE cod_game = '$modCodGame' AND id_order='$ordine'");
+																					
+																					//se sono stati cancellati tutti i prodotti allora deve cancellarsi anche l'ordine
+																				    $query ="SELECT cod_game FROM GAME_ORDER WHERE id_order='$ordine'";
+																					$ris = ($conn->query($query));
+																					$ris->execute();
+																					
+																					if($ris->rowCount() <= 0){
+																						$conn -> exec("DELETE FROM ORDERS WHERE id_order = '$ordine'");
+																					}
+																				    echo "<meta http-equiv='refresh' content='0'>";
+																				
 																			}
 																			if(isset($_POST['codice'.$i])){
-																				
-																					//aggiorna quantita prodotto
-																				
-																				//echo "la nuova quantita".$_POST['quantitaprodotto'.$i];
-																				//echo "il codice per la nuova quantita è".$_POST['codice'.$i];
-																				// QUERY CHE AGGIORNA QUANTITA PRODOTTO
-																				
+																				$newquantita=$_POST['quantitaprodotto'.$i];
+																				$newcod=$_POST['codice'.$i];
+																				$query ="UPDATE GAME_ORDER SET QUANTITY='$newquantita' WHERE id_order='$ordine' && cod_game='$newcod'";
+																				$ris = ($conn->query($query));
+																				$query ="UPDATE GAME_WAREHOUSE SET QUANTITY=QUANTITY+'$newquantita' WHERE id_order='$ordine' && cod_game='$newcod'";
+																				$ris = ($conn->query($query));
+																				echo "<meta http-equiv='refresh' content='0'>";
 																			}
 																		}
 																	}
 																	
 																	//query per modifica ordine
 																	//aumentare la quantità nell'ordine
-																	/*if(isset($_POST['aggiorna'])){
-																		$aggiorna=$_POST['aggiorna']; //DEVO METTERE QUANTITAPRODOTTO MA NON VA PER QUALCHE MOTIVO DEL MENGA!!
-																		$query ="UPDATE GAME_ORDER SET quantity='$aggiorna' WHERE id_order='$ordine' and cod_game='$cod' ";
-																		$ris = ($conn->query($query));
-																	}*/
-																	//diminuire nella werehouse
-																	
-																	
-																	
-																	//query per elimina prodotto dall'ordine ?>
+																	 ?>
 											  </table>
 											  </div>
 											  <div class="modal-footer">
@@ -750,7 +732,7 @@ if(isset($_POST['paga'])){
 											<h5 class="card-title">250 punti</h5>
 											<p class="card-text">Con 250 punti potrai caricare il tuo portafoglio di 30 euro</p>
 											<form method='post'>
-											 <button type="submit" name="ricaricaconto30" <?php if($punti<250){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 30 euro</button>
+											 <button name="ricaricaconto30" <?php if($punti<250){ echo " type='button' class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "type='submit' class='btn btn-success btn-lg btn-block' ";} ?> > 30 euro</button>
 											</form>
 										  </div>
 										</div>
@@ -762,7 +744,7 @@ if(isset($_POST['paga'])){
 											<h5 class="card-title">500 punti</h5>
 											<p class="card-text">Con 500 punti potrai caricare il tuo portafoglio di 65 euro</p>
 											<form method='post'>
-												<button type="submit" name="ricaricaconto65" <?php if($punti<500){ echo "class='btn btn-success disabled btn-lg btn-block ' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 65 euro</button>
+												<button  name="ricaricaconto65" <?php if($punti<500){ echo " type='button' class='btn btn-success disabled btn-lg btn-block ' "; }else{ echo "type='submit' class='btn btn-success btn-lg btn-block' ";} ?> > 65 euro</button>
 											</form>
 										  </div>
 										</div>
@@ -774,7 +756,7 @@ if(isset($_POST['paga'])){
 											<h5 class="card-title">1000 punti</h5>
 											<p class="card-text">Con 1000 punti potrai caricare il tuo portafoglio di 140 euro</p>
 											<form method='post'>
-												<button type="submit" name="ricaricaconto140"  <?php if($punti<1000){ echo "class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "class='btn btn-success btn-lg btn-block' ";} ?> > 140 euro</button>
+												<button  name="ricaricaconto140"  <?php if($punti<1000){ echo "type='button' class='btn btn-success disabled btn-lg btn-block' "; }else{ echo "type='submit' class='btn btn-success btn-lg btn-block' ";} ?> > 140 euro</button>
 											</form>
 										  </div>
 										</div>

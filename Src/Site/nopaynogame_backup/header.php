@@ -1,4 +1,12 @@
-  <header>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<title>NoPayNoGame</title>
+</head>
+  
   <?php include 'connection.php';
 	session_start();?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,14 +30,11 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 		
           <?php 
-            $lista_generi = mysql_query("select * from my_nopaynogame.DOM_GENRE");
-            
-            while($genere=mysql_fetch_row($lista_generi)){
+          $lista_generi = ($conn->query("SELECT * from my_nopaynogame.DOM_GENRE"));
+          foreach($lista_generi as $genere) {
               $id_genere = $genere[0];
               $nome_genere = $genere[1];
               echo"<a class='dropdown-item' value=".$id_genere." href='gamelist.php?cp=gen&tipo_ricerca=genere&id=".$id_genere."'>".$nome_genere."</a>";
-			  //$_GET["genere"];
-			  //$_GET["tipo_ricerca"];
             }
           ?>
 
@@ -41,15 +46,12 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           
-          <?php 
-            $lista_console = mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
-            
-            while($console=mysql_fetch_row($lista_console)){
+          <?php
+          $lista_console = ($conn->query("SELECT * from my_nopaynogame.DOM_CONSOLE"));
+          foreach($lista_console as $console) { 
               $id_console = $console[0];
               $nome_console = $console[1];
               echo"<a class='dropdown-item' value=".$id_console." href='gamelist.php?cp=con&tipo_ricerca=console&id=".$id_console."'>".$nome_console."</a>";
-			  //$_GET["console"];
-			  //$_GET["tipo_ricerca"];
             }
         ?>
 
@@ -114,5 +116,4 @@
     </ul>
   </div>
 </nav>
-</header>
   

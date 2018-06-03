@@ -1,19 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>NoPayNoGame</title>
-  </head>
-  
-  <header>
   <?php	include 'header.php'; ?>
-  </header>
-  
-
   <body>
     <div class="container">
       <h1>Amministrazione</h1>
@@ -298,13 +285,16 @@
             <div id="accordion">
             <?php 
               $i = 0;
-              $lista_giochi = mysql_query("select g.*, SUM(gw.quantity) from my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_WAREHOUSE gw ON g.cod_game = gw.cod_game group by g.cod_game order by g.title");
-              while($gioco=mysql_fetch_row($lista_giochi)){
+              $lista_giochi = ($conn->query("SELECT g.*, SUM(gw.quantity) FROM my_nopaynogame.GAMES g LEFT JOIN my_nopaynogame.GAME_WAREHOUSE gw ON g.cod_game = gw.cod_game group by g.cod_game order by g.title"));  
+              foreach($lista_giochi as $gioco) {
                 $cod_game = $gioco[0];
                 $title = $gioco[1];
                 $price = $gioco[2];
                 $cod_console = $gioco[3];
-                $nome_console = mysql_fetch_row(mysql_query("select desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$cod_console'"));
+                $consoles = ($conn->query("SELECT desc_console from my_nopaynogame.DOM_CONSOLE where cod_console = '$cod_console'"));  
+                foreach($consoles as $console) {
+                  $nome_console = $console['desc_console'];
+                }
                 $price_on_sale = $gioco[4];
                 $flag_sale = $gioco[5];
                 $flag_news = $gioco[6];
@@ -331,9 +321,7 @@
                       }elseif($quantita_totale <= 10){
                         echo'<i class="fa fa-exclamation-triangle" style="color:yellow"></i>';
                       } 
-                      
-
-                      echo' <i class="fa fa-chevron-right"></i> '.$title.' - '.$nome_console[0].' - Copie attuali : '.$quantita_totale.'
+                      echo' <i class="fa fa-chevron-right"></i> '.$title.' - '.$nome_console.' - Copie attuali : '.$quantita_totale.'
                       </button>
                     </h5>
                   </div>
@@ -370,10 +358,9 @@
                           <div class="form-group col-md-2">
                             <label for="modConsole">Console</label>
                             <select id="modConsole" name="modConsole" class="form-control">
-                              <option value="'.$cod_console.'" selected>'.$nome_console[0].'</option>';
-                              
-                                $lista= mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
-                                while($elem = mysql_fetch_row($lista)){
+                              <option value="'.$cod_console.'" selected>'.$nome_console.'</option>';
+                              $lista = ($conn->query("SELECT * from my_nopaynogame.DOM_CONSOLE"));  
+                              foreach($lista as $elem) {
                                 $cod = $elem[1];
                                 $cod_value = $elem[0];
                                 echo"<option value='".$cod_value."'>".$cod."</option>";
@@ -406,15 +393,14 @@
                         <!--Riga Generi-->
                         <div class="form-row">
                           <div class="form-group col-md-12">';
-                                                        
-                              $lista= mysql_query("select * from my_nopaynogame.DOM_GENRE");
-                              while($elem = mysql_fetch_row($lista)){
+                              $lista = ($conn->query("SELECT * from my_nopaynogame.DOM_GENRE"));  
+                              foreach($lista as $elem) {
                                 $nome_genere = $elem[1];
                                 $codice_genere = $elem[0];
-                                $lista_generi = mysql_query("select dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'");
+                                $lista_generi = ($conn->query("SELECT dg.* from my_nopaynogame.GAME_GENRE gg, my_nopaynogame.DOM_GENRE dg where dg.cod_genre = gg.cod_genre and gg.cod_game = '$cod_game'"));  
                                 echo'<div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="modGeneri[]" value="'.$codice_genere.'" '; 
-                                  while($gen = mysql_fetch_row($lista_generi)){
+                                <input class="form-check-input" type="checkbox" name="modGeneri[]" value="'.$codice_genere.'" '; 
+                                foreach($lista_generi as $gen) {
                                     $cc = $gen[0];
                                     if($codice_genere == $cc){
                                       echo'checked';
@@ -432,16 +418,18 @@
 
                         <!--Riga Magazzini-->
                         <div class="form-row">';
-                          
-                          $lista= mysql_query("select * from my_nopaynogame.WAREHOUSE");
-                          while($elem = mysql_fetch_row($lista)){
+                        $lista = ($conn->query("SELECT * from my_nopaynogame.WAREHOUSE"));  
+                        foreach($lista as $elem) {
                             $cod_magazzino = $elem[0];
                             $indi_maga = $elem[1];
-                            $quantita_per_magazzino = mysql_fetch_row(mysql_query("select quantity from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$cod_game' and cod_warehouse = '$cod_magazzino'"));
+                            $quantities = ($conn->query("SELECT quantity from my_nopaynogame.GAME_WAREHOUSE where cod_game = '$cod_game' and cod_warehouse = '$cod_magazzino'"));
+                            foreach($quantities as $riga) {
+                              $quantita_per_magazzino = $riga['quantity'];
+                            }
                             echo'
                             <div class="form-group col-md-3">
                               <label for="magazzini[]">'.$cod_magazzino.' '.$indi_maga.'</label>
-                              <input class="form-control" type="number" name="modQuantita[]" value="'.$quantita_per_magazzino[0].'">
+                              <input class="form-control" type="number" name="modQuantita[]" value="'.$quantita_per_magazzino.'">
                               <input class="form-control" type="hidden" name="modMagazzini[]" value="'.$cod_magazzino.'">
                             </div>
                             ';
@@ -491,8 +479,8 @@
                   <select id="inputConsole" name='inputConsole' class="form-control" required>
                     <option selected></option>
                     <?php
-                      $lista= mysql_query("select * from my_nopaynogame.DOM_CONSOLE");
-                      while($elem = mysql_fetch_row($lista)){
+                    $lista = ($conn->query("SELECT * from my_nopaynogame.DOM_CONSOLE"));  
+                      foreach($lista as $elem) {
                       $cod = $elem[1];
                       $cod_value = $elem[0];
                       echo"<option value='".$cod_value."'>".$cod."</option>";
@@ -525,8 +513,8 @@
 						  <div class="form-row">
                 <div class="form-group col-md-12">
                 <?php
-                    $lista= mysql_query("select * from my_nopaynogame.DOM_GENRE");
-                    while($elem = mysql_fetch_row($lista)){
+                $lista = ($conn->query("SELECT * from my_nopaynogame.DOM_GENRE"));  
+                  foreach($lista as $elem) {
                     $nome_genere = $elem[1];
                     $codice_genere = $elem[0];
                     echo'<div class="form-check form-check-inline">
@@ -541,8 +529,8 @@
               <!--Riga Magazzini-->
 						  <div class="form-row">
                 <?php
-                    $lista= mysql_query("select * from my_nopaynogame.WAREHOUSE");
-                    while($elem = mysql_fetch_row($lista)){
+                $lista = ($conn->query("SELECT * from my_nopaynogame.WAREHOUSE"));  
+                  foreach($lista as $elem) {
                     $cod_magazzino = $elem[0];
                     $indi_maga = $elem[1];
                     echo'
@@ -580,14 +568,20 @@
                 </tr>
               </thead>
               <tbody>
-                <?php 
-                  $lista= mysql_query("select *, SUM(go.game_price * go.quantity), SUM(go.quantity) from my_nopaynogame.ORDERS o, my_nopaynogame.GAME_ORDER go where o.id_order = go.id_order group by o.id_order");
-                  while($elem = mysql_fetch_row($lista)){
+                <?php
+                $lista = ($conn->query("SELECT *, SUM(go.game_price * go.quantity), SUM(go.quantity) from my_nopaynogame.ORDERS o, my_nopaynogame.GAME_ORDER go where o.id_order = go.id_order group by o.id_order"));
+                foreach($lista as $elem) {
                     $id_order = $elem[0];
                     $id_user = $elem[1];
-                    $username= mysql_fetch_row(mysql_query("select username from my_nopaynogame.USERS where id_user = '$id_user'"));
+                    $query = ($conn->query("SELECT  username from my_nopaynogame.USERS where id_user = '$id_user'"));
+                    foreach($query as $riga) {
+                      $username = $riga['username'];
+                    }
                     $id_pagamento = $elem[2];
-                    $pagamento = mysql_fetch_row(mysql_query("select desc_payment from my_nopaynogame.DOM_PAYMENT where cod_payment = '$id_pagamento'"));
+                    $query = ($conn->query("SELECT desc_payment from my_nopaynogame.DOM_PAYMENT where cod_payment = '$id_pagamento'")); 
+                    foreach($query as $riga) {
+                      $pagamento = $riga['desc_payment'];
+                    }
                     $data = $elem[3];
                     $pagato = $elem[4];
                     $evaso = $elem[5];
@@ -596,8 +590,8 @@
                     echo'
                     <tr><form method="post">
                     <th scope="row">'.$id_order.'</th>
-                    <td>'.$username[0].'</td>
-                    <td>'.$pagamento[0].'</td>
+                    <td>'.$username.'</td>
+                    <td>'.$pagamento.'</td>
                     <td>'.$data.'</td>
                     <td>'.$quantita.'</td>
                     <td>'.$totale.'</td>
@@ -646,8 +640,8 @@
                           <!-- Modal body -->
                           <div class="modal-body">
                             <div class="row">
-                              <div class="col"><p><b>Username:</b> '.$username[0].'</p></div>
-                              <div class="col"><p><b>Pagamento:</b> '.$pagamento[0].'</p></div>
+                              <div class="col"><p><b>Username:</b> '.$username.'</p></div>
+                              <div class="col"><p><b>Pagamento:</b> '.$pagamento.'</p></div>
                               <div class="col"><p><b>Data:</b> '.$data.'</p></div>
                             </div>
                             <div class="row">
@@ -662,17 +656,23 @@
                                     </tr>
                                   </thead>
                                   <tbody>';
-                              $lista_giochi_ordine= mysql_query("select * from my_nopaynogame.GAME_ORDER where id_order ='$id_order'");
-                              while($game = mysql_fetch_row($lista_giochi_ordine)){
+                              $lista_giochi_ordine = ($conn->query("SELECT * from my_nopaynogame.GAME_ORDER where id_order ='$id_order'"));
+                              foreach($lista_giochi_ordine as $game) {
                                 $cod_game = $game[2];
-                                $nome_game = mysql_fetch_row(mysql_query("select title from my_nopaynogame.GAMES where cod_game = '$cod_game'"));
-                                $console = mysql_fetch_row(mysql_query("select c.desc_console from my_nopaynogame.GAMES g, my_nopaynogame.DOM_CONSOLE c where g.cod_game = '$cod_game' and g.cod_console = c.cod_console"));
+                                $query = ($conn->query("SELECT title from my_nopaynogame.GAMES where cod_game = '$cod_game'"));
+                                foreach($query as $riga) {
+                                  $nome_game = $riga['title'];
+                                }
+                                $query = ($conn->query("SELECT c.desc_console from my_nopaynogame.GAMES g, my_nopaynogame.DOM_CONSOLE c where g.cod_game = '$cod_game' and g.cod_console = c.cod_console"));
+                                foreach($query as $riga) {
+                                  $console = $riga['desc_console'];
+                                }
                                 $squantity = $game[3];
                                 $gameprice = $game[4];
                                 echo'
                                     <tr>
-                                      <th scope="row">'.$nome_game[0].'</th>
-                                      <td>'.$console[0].'</td>
+                                      <th scope="row">'.$nome_game.'</th>
+                                      <td>'.$console.'</td>
                                       <td>'.$squantity.'</td>
                                       <td>'.$gameprice.'</td>
                                     </tr>
@@ -728,11 +728,15 @@
               </thead>
               <tbody>
                 <?php 
-                  $lista= mysql_query("select * from my_nopaynogame.USERS");
-                  while($elem = mysql_fetch_row($lista)){
+                  $lista = ($conn->query("SELECT * from my_nopaynogame.USERS"));
+                  foreach($lista as $elem) {
                     $username = $elem[5];
                     $role = $elem[8];
-                    $name_role= mysql_fetch_row(mysql_query("select * from my_nopaynogame.DOM_ROLE where cod_role = '$role'"));
+                    $query = ($conn->query("SELECT * from my_nopaynogame.DOM_ROLE where cod_role = '$role'"));
+                    foreach($query as $riga) {
+                      $cod_role = $riga[0];
+                      $name_role = $riga[1];
+                    }
                     $points = $elem[10];
                     $flag_deleted = $elem[11];
                     $flag_active = $elem[12];
@@ -755,12 +759,12 @@
                     </th>
                     <td>
                       <select name="role" class="form-control">
-                        <option value="'.$name_role[0].'" selected>'.$name_role[1].'</option>';
-                        $lista_role= mysql_query("select * from my_nopaynogame.DOM_ROLE");
-                        while($ruolo=mysql_fetch_row($lista_role)){
-                        $cod = $ruolo[1];
-                        $cod_value = $ruolo[0];
-                        echo"<option  value='".$cod_value."'>".$cod."</option>";
+                        <option value="'.$cod_role.'" selected>'.$name_role.'</option>';
+                        $lista_role = ($conn->query("SELECT * from my_nopaynogame.DOM_ROLE"));
+                        foreach($lista_role as $ruolo) {
+                          $cod = $ruolo[1];
+                          $cod_value = $ruolo[0];
+                          echo"<option  value='".$cod_value."'>".$cod."</option>";
                         }
                       echo'
                       </select>
@@ -844,13 +848,13 @@
                   <label for="inputRuolo">Ruolo</label>
                   <select id="inputRuolo" name='inputRuolo' class="form-control" required>
                     <option value="RL1" selected></option>
-                    <?php    
-                    $lista= mysql_query("select * from my_nopaynogame.DOM_ROLE");
-                    while($elem=mysql_fetch_row($lista)){
-                    $cod = $elem[1];
-                    $cod_value = $elem[0];
-                    echo"<option  value='".$cod_value."'>".$cod."</option>";
-                    }
+                    <?php
+                    $lista_role = ($conn->query("SELECT * from my_nopaynogame.DOM_ROLE"));
+                    foreach($lista_role as $ruolo) {
+                      $cod = $ruolo[1];
+                      $cod_value = $ruolo[0];
+                      echo"<option  value='".$cod_value."'>".$cod."</option>";
+                    }    
                     ?>
                   </select>
                 </div>
