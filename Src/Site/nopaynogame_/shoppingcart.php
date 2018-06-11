@@ -66,11 +66,13 @@ $i=0;
 		//$max--;
 //}
 
+
 if(isset($_GET['delete_item'])){
 	$codice=$_GET['delete_item'];
 	foreach (array_keys($_SESSION['carrello'], $codice) as $key) {
 		unset($_SESSION['carrello'][$key]);
 	}
+
 }
 
 if(isset($_POST['modifica_cognome'])){
@@ -356,7 +358,7 @@ if(isset($_POST['modifica_cognome'])){
 				?>
 			  </tbody>
 			</table>
-			<p>Con questo ordine guadagnerai X punti</p>
+			
 		  </div>
 		  
 		  <div class="col-6 col-md-6">
@@ -382,53 +384,7 @@ if(isset($_POST['modifica_cognome'])){
 			</table>
 			
 		  </div>
-		  
-		  <div class="col-6 col-md-6">
-		  <p>Pagamento</p>
-		  <select>
-			  <option value="paypal">Paypal</option>
-			  <option value="postepay">Postepay</option>
-			  <option value="bonifico">Bonifico</option>
-			 
-		</select>
-		</div>
-		 <!-- <div class="col-6 col-md-6">
-				 <p>Pagamento</p>
-	     <table class="table">
-			  <thead>
-				<tr>
-				  <th scope="col">Metodo</th>
-				 </tr>
-			  </thead>
-			  <tbody>
-				<tr>
-				  <th scope="row">Bonifico bancario</th>
-				 <form>
-				  <td><label >
-					  <input type="radio" value="bonifico" name='a' />
-					  <img src="img/bonifico.png" style='width:20%; heigth:20%;'>
-					</label></td>
-				  
-				</tr>
-				<tr>
-				  <th scope="row">PayPal</th>
-				 <td><label>
-					  <input type="radio" value="paypal" name='a' />
-					  <img src="img/paypal.png" style='width:20%; heigth:20%;'>
-					</label></td>
-				  
-				</tr>
-				<tr>
-				  <th scope="row">Contrassegno</th>
-				  <td><label>
-					  <input type="radio" value="contrassegno" name='a' />
-					  <img src="img/contrassegno.png" style='width:20%; heigth:20%;'>
-					</label></td>
-				 </form>
-				</tr>
-			  </tbody>
-			</table>
-		  </div> -->
+	
 		</div>
 			<form method='post'>
 			<button type='submit' class='btn btn-warning btn-md' name='buttoncheck'>Torna indietro</button>
@@ -565,17 +521,21 @@ if(isset($_POST['modifica_cognome'])){
 				
 	   ?>
 	     <h2>Ordine ricevuto!</h2>
+		 <p>Con questo ordine guadagnerai <?php echo $punti; ?> punti</p>
 		 <p>Id ordine: <?php echo $id_order; ?></p>
 		 <p>Saldo punti: <?php echo $fidelity; ?> </p>
 		 <p>Il tuo portafoglio: <?php echo $portafoglio; ?> </p>
 	      <img src="img/check.png"></img>
 		 <p> Riceverai il tuo ordine tra 48h</p>
 	   
-	   <?php 
-	    unset($_SESSION['carrello']);
+	   <?php
+		
+	     $_SESSION['carrello'] = array();
 	     unset($array);
-	     unset($result);?>
-		<meta http-equiv="refresh" content="2;URL=http://www.nopaynogame.altervista.org/nopaynogame_">	
+	     unset($result);
+		 
+		 ?>
+		<meta http-equiv="refresh" content="3;URL=http://www.nopaynogame.altervista.org/nopaynogame_">	
 	   <?php } ?> 
 	    	
 	

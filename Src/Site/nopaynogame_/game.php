@@ -248,8 +248,7 @@
 						<div id="carouselExample" class="carousel slide" data-ride="carousel" data-interval="9000">
 							<div class="carousel-inner row w-100 mx-auto" role="listbox">
 								<?php 
-									/*$query_random_game = "SELECT * FROM GAMES ga, GAME_GENRE gg,DOM_CONSOLE dm, DOM_GENRE dg WHERE ga.COD_CONSOLE=dm.COD_CONSOLE AND dg.COD_GENRE = gg.COD_GENRE AND gg.COD_GAME = ga.COD_GAME AND gg.COD_GENRE in (SELECT gg2.COD_GENRE FROM GAMES ga2 , GAME_GENRE gg2, DOM_CONSOLE dm2 WHERE dm2.COD_CONSOLE=ga2.COD_CONSOLE AND ga2.COD_GAME=$Cod_gioco AND gg2.COD_GAME = ga2.COD_GAME ) ORDER BY RAND() LIMIT 8";
-									*/$query_random_game = "SELECT * FROM GAMES g JOIN GAME_GENRE gg ON g.COD_GAME = gg.COD_GAME WHERE g.COD_CONSOLE = '$Cod_console' AND gg.COD_GENRE  in ( SELECT gg2.COD_GENRE FROM GAME_GENRE gg2 WHERE gg2.COD_GAME = '$Cod_gioco') ORDER BY RAND() LIMIT 8";
+									$query_random_game = "SELECT * FROM GAMES g JOIN GAME_GENRE gg ON g.COD_GAME = gg.COD_GAME WHERE g.COD_CONSOLE = '$Cod_console' AND gg.COD_GENRE  in ( SELECT gg2.COD_GENRE FROM GAME_GENRE gg2 WHERE gg2.COD_GAME = '$Cod_gioco') ORDER BY RAND() LIMIT 8";
 ;
 									$ris_random_game = ($conn->query($query_random_game));
 									$i = 0;
