@@ -166,8 +166,11 @@ if(isset($_POST['eliminaordine'])){
 }
 
 if(isset($_POST['paga'])){
+	$selezione_pagamento=$_POST['selezione_pagamento'];
 	$pagamento=$_POST['paga'];
 	$query ="UPDATE ORDERS SET FLAG_PAYD='Y' WHERE ID_ORDER='$pagamento'";
+	$ris = ($conn->query($query));
+	$query ="UPDATE ORDERS SET COD_PAYMENT='$selezione_pagamento' WHERE ID_ORDER='$pagamento'";
 	$ris = ($conn->query($query));
 }
 ?>
@@ -417,10 +420,42 @@ if(isset($_POST['paga'])){
 													<td><?php echo $riga['DATE_ORDER'];?></th>
 													
 													<td>
-													<?php if($pagato=='N'){ 
-														echo" <form method='post'><button type='submit' name='paga' class='btn btn-success' value=".$riga['ID_ORDER'].">
-															Paga
-														</button></form>";
+													<?php if($pagato=='N'){  ?>
+														
+														<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pagamento<?php echo $riga['ID_ORDER'];?>">
+														  Paga
+														</button>
+
+														<!-- Modal -->
+														<div class="modal fade" id="pagamento<?php echo $riga['ID_ORDER'];?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+														  <div class="modal-dialog" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalLabel">Pagamento <?php echo $riga['ID_ORDER'];?> </h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  <div class="modal-body">
+																
+																 <form method='post'>
+																		<label class="my-1 mr-2" >Metodo di pagamento</label>
+																		<select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name='selezione_pagamento'>
+																			<option selected>Scegli...</option>
+																			<option value="PAY1">Paypal</option>
+																			<option value="PAY2">Bonifico</option>
+																			<option value="PAY3">Carta di credito</option>
+																			<option value="PAY4">Contrassegno</option>
+																		</select>
+																		<button type='submit' name='paga' class='btn btn-success' value="<?php echo $riga['ID_ORDER']; ?>">Paga</button>
+																</div>
+																 <div class="modal-footer">	
+																 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>																 
+															  </div>
+															</div>
+														  </div>
+														</div>
+														<?php
 													} else {
 														echo "Pagato!";
 													}
@@ -437,7 +472,7 @@ if(isset($_POST['paga'])){
 													<td>
 													<?php
 														echo "<form method='post'>";
-														echo "<button type='button' class='btn btn-warning' data-toggle='modal' data-target='.bd-example-modal-lg' name='modificaordine' value='$ordine'>✚</button>";
+														echo "<button type='button' class='btn btn-warning' data-toggle='modal' data-target='#modificaordine$ordine' name='modificaordine' value='$ordine'>✚</button>";
 														echo "</form>";
 													?>
 													
@@ -448,10 +483,8 @@ if(isset($_POST['paga'])){
 											</tbody>
 										</table>
 										
-										
-										
 										<!-- Modal modifica ordine -->
-										<div class="modal fade bd-example-modal-lg" id="modificaordine<?php echo $ordine;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										<div class="modal fade bd-example-modal-lg" id="modificaordine<?php echo $ordine; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 										  <div class="modal-dialog" role="document">
 											<div class="modal-content">
 											  <div class="modal-header">
@@ -503,15 +536,17 @@ if(isset($_POST['paga'])){
 																		     <input type='hidden' name='check' value=<?php echo $check;?>>
 																		     <input type='hidden' name='codice<?php echo $check; ?>' value=<?php echo $cod;?>>
 																			 <td><input type='number' name='quantitaprodotto<?php echo $check; ?>' value='<?php echo $riga['QUANTITY'];?>' min='1' style='width:60px;'  ></td>
-																			<td><input type='checkbox' name='eliminaprodotto<?php echo $check; ?>' value=<?php echo $cod;?>></input></td>
+																			<?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){ ?>
+																				<td><input type='checkbox' name='eliminaprodotto<?php echo $check; ?>' value=<?php echo $cod;?>></input></td>
+																			<?php } else echo "<th>X</th>"; ?>
 																			<?php $check++;
 																}  ?>
 																			
 																   </tr>	<?php if( $differenza<=2 && $evaso!='Y' && $pagato!='Y'){ ?>
 																			<th><button type='submit' name='aggiorna' class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
-																			<?php }else?>
+																			<?php }else{ ?>
 																			<th><button type='submit' name='aggiorna' disabled class='btn btn-warning' value=<?php echo $ordine; ?>>Aggiorna</button></th>
-																			
+																			<?php } ?>
 																		</form>
 																 </tbody>
 															
@@ -998,7 +1033,10 @@ if(isset($_POST['paga'])){
 
 		
     <!-- Bootstrap core JavaScript -->
-	<?php include 'script.php'; ?>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		
 		<script type="text/javascript">
 			function setnewpicidvalue(divid){
 				clickid = "imageuploadform" + divid;
