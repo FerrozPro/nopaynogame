@@ -1,0 +1,7 @@
+ DESCRIZIONE DIAGRAMMA DI FLUSSO NOPAYNOGAME
+
+
+Il seguente diagramma rappresenta il flusso del sito NopayNogame.
+E’ stato deciso, per evitare troppa confusione all’interno del diagramma stesso, di utilizzare una tabella "header", la quale sarà presente in ogni pagina del sito, e che, inoltre, rappresenta l’header che si trova nella parte superiore di quasi tutte le pagine.
+Ogni tabella è composta dal nome della pagina (con background blu) e una lista contenente i nomi delle rispettive tabelle contenute nel database e che vengono utilizzate all’interno di quella pagina.
+Le frecce rappresentano lo spostamento tra le pagine,in particolare dove si può arrivare da una determinata pagina, le descrizioni sulle frecce indicano il come ci si sposta. Ad esempio utilizzando un determinato bottone o compiendo determinate azioni.
