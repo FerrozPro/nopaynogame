@@ -26,15 +26,6 @@ $sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passwor
 $preparata = $conn->prepare($sql);
 $preparata->execute();
 
-
-/*$ris= $preparata -> fetch();
-foreach($ris as $riga){
-	$delete=$riga['flag_deleted'];
-	}
-if($delete=='Y'){
-	header('Location: riattiva.php');
-}
-*/
 if($preparata->rowCount() > 0){	
 	while($user = $preparata->fetch()){
 		$_SESSION['role']=$user[0];
