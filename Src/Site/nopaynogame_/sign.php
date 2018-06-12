@@ -26,6 +26,15 @@ $sql = "SELECT cod_role,id_user,name,surname FROM USERS WHERE PASSWORD='$passwor
 $preparata = $conn->prepare($sql);
 $preparata->execute();
 
+
+/*$ris= $preparata -> fetch();
+foreach($ris as $riga){
+	$delete=$riga['flag_deleted'];
+	}
+if($delete=='Y'){
+	header('Location: riattiva.php');
+}
+*/
 if($preparata->rowCount() > 0){	
 	while($user = $preparata->fetch()){
 		$_SESSION['role']=$user[0];
@@ -50,7 +59,7 @@ if($preparata->rowCount() > 0){
 	$email = $_POST['inputEmail'];
 	$password = MD5($_POST['inputPassword']);
 	
-	$sql = "SELECT * FROM USERS WHERE EMAIL='$email || USERNAME='$username'";
+	$sql = "SELECT * FROM USERS WHERE EMAIL='$email' || USERNAME='$username'";
 	$preparata = $conn->prepare($sql);
 	$preparata->execute();
 	if($preparata->rowCount() > 0){
@@ -114,7 +123,7 @@ if($preparata->rowCount() > 0){
 							  <input type="text" class="form-control" name="inputName" placeholder="Mario" required>
 							</div>
 							<div class="form-group col-md-6">
-							  <label for="inputSurname">Cosgnome</label>
+							  <label for="inputSurname">Cognome</label>
 							  <input type="text" class="form-control" name="inputSurname" placeholder="Rossi" required>
 						</div>
 						  </div>
@@ -140,7 +149,7 @@ if($preparata->rowCount() > 0){
 					  <div class="form-row">
 							<div class="form-group col-md-6">
 							  <label for="inputPhone">Telefono</label>
-							  <input type="tel" class="form-control" name="inputPhone" placeholder="3294252886" required>
+							  <input type="" class="form-control" name="inputPhone" placeholder="3294252886" required>
 							</div>
 							
 						  </div>
